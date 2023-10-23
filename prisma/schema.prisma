@@ -1,0 +1,175 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Todo {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  isCompleted Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  roles         Role[]
+  isActive      Boolean   @default(true)
+  terms         Boolean   @default(true)
+  googleLogin   Boolean   @default(false)
+  provider      String?
+  refreshToken  String[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  notificationCount Int @default(0)
+
+  knowHows Knowhow[]
+  votes    Vote[]
+
+  memberProcessedBys MemberRequestAndProcess[] @relation("memberProcessedBys")
+  memberRequestedBys  MemberRequestAndProcess[] @relation("memberRequestedBys")
+}
+
+model KnowhowType {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+
+  knowHows Knowhow[]
+}
+
+model Category {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String @unique
+
+  knowHows Knowhow[]
+}
+
+model Knowhow {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  title             String
+  description       String
+  thumbnailFilename String?
+
+  viewCount       Int     @default(0)
+  thumbsUpCount   Int     @default(0)
+  thumbsDownCount Int     @default(0)
+  isPublic        Boolean @default(true)
+
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String @db.ObjectId
+
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String   @db.ObjectId
+
+  KnowhowType   KnowhowType? @relation(fields: [knowHowTypeId], references: [id])
+  knowHowTypeId String?      @db.ObjectId
+
+  tagIds String[] @db.ObjectId
+  tags   Tag[]    @relation(fields: [tagIds], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  votes Vote[]
+
+  knowhowDetailInfo KnowhowDetailInfo?
+  memberRequest     MemberRequestAndProcess[]
+
+  @@unique([title, authorId])
+}
+
+enum ThumbsStatus {
+  ThumbsUp
+  ThumbsDown
+  None
+}
+
+model Vote {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  thumbsStatus ThumbsStatus
+  forked       Boolean      @default(false)
+
+  knowhow   Knowhow @relation(fields: [knowHowId], references: [id], onDelete: Cascade)
+  knowHowId String  @db.ObjectId
+
+  voter   User   @relation(fields: [voterId], references: [id])
+  voterId String @db.ObjectId
+}
+
+model MemberRequestAndProcess {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  memberRequestStatus MemberRequestAndProcessStatus
+
+  knowhow   Knowhow @relation(fields: [knowhowId], references: [id])
+  knowhowId String  @db.ObjectId
+
+  memberProcessedBy   User?   @relation("memberProcessedBys", fields: [memberProcessedById], references: [id])
+  memberProcessedById String? @db.ObjectId
+  
+  memberRequestedBy    User   @relation("memberRequestedBys", fields: [memberRequestedById], references: [id])
+  memberRequestedById  String @db.ObjectId
+
+  processedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model KnowhowDetailInfo {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  videoIds      String[]
+  thumbnailType ThumbnailType?
+
+  imgFileNames String[]
+  pdfFileNames String[]
+
+  detailText String?
+
+  knowhow   Knowhow @relation(fields: [knowHowId], references: [id])
+  knowHowId String  @unique @db.ObjectId
+}
+
+enum MemberRequestAndProcessStatus {
+  NONE
+  REQUESTED
+  APPROVED
+  REJECTED
+  PENDING
+  // ENROLLED
+}
+
+enum ThumbnailType {
+  DEFAULT
+  MEDIUM
+  height
+  STANDARD
+  MAXRES
+}
+
+model Tag {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  name String @unique
+
+  knowHowIds String[]  @db.ObjectId
+  knowHows   Knowhow[] @relation(fields: [knowHowIds], references: [id])
+}
+
+enum Role {
+  USER
+  ADMIN
+}

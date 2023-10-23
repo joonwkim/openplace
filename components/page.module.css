@@ -1,0 +1,8 @@
+.todoCheckbox{
+    width: 16px;
+    height: 16px;
+}
+.registerError{
+    font-size: 6pt;
+    color:red;
+}
