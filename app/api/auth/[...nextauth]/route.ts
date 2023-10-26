@@ -1,9 +1,9 @@
-import NextAuth, { NextAuthOptions } from "next-auth"
-import GoogleProvider from "next-auth/providers/google"
-import CredentialsProvider from "next-auth/providers/credentials"
-import { GoogleUser } from "@/app/auth/types"
-import { loginAction } from "@/app/actions/userAction"
-import { findUpdateGoogleUser, getUserByEmail } from "@/app/services/userService"
+import NextAuth, { NextAuthOptions } from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { GoogleUser } from "@/app/auth/types";
+import { loginAction } from "@/app/actions/userAction";
+import { findUpdateGoogleUser, getUserByEmail } from "@/app/services/userService";
 
 export const authOptions: NextAuthOptions = {
 
@@ -22,16 +22,16 @@ export const authOptions: NextAuthOptions = {
           const input = {
             email: credentials?.email,
             password: credentials?.password
+          };
+          const user = await loginAction(input);
+          if (user === 'password do not match' || user === 'user not registered') {
+            throw new Error('password do not match or user not registered');
           }
-          const user = await loginAction(input)
-          if(user === 'password do not match' || user === 'user not registered' ){
-            throw new Error('password do not match or user not registered')
-          }
-          return user
+          return user;
         } catch (error) {
-          throw new Error(JSON.stringify(error))
+          throw new Error(JSON.stringify(error));
         }
-        return null
+        return null;
       },
 
     }),
@@ -54,53 +54,53 @@ export const authOptions: NextAuthOptions = {
           roles: ["USER"],
           provider: 'google',
           googleLogin: true
-        }
+        };
 
-        const result = findUpdateGoogleUser(user.email, googleUser)
+        const result = findUpdateGoogleUser(user.email, googleUser);
       }
       else if (account?.provider === 'credentials') {
       }
-      return true
+      return true;
     },
     async session({ session, user, token }) {
       if (token) {
-        session.user.id = token.id
-        session.user.name = token.name
-        session.user.email = token.email
-        session.user.image = token.picture
-        session.user.roles = token.roles
-        session.user.notificationCount = token.notificationCount
-        session.user.memberProcessedBys = token.memberProcessedBys
-        session.user.memberRequestedBys = token.memberRequestedBys
+        session.user.id = token.id;
+        session.user.name = token.name;
+        session.user.email = token.email;
+        session.user.image = token.picture;
+        session.user.roles = token.roles;
+        session.user.notificationCount = token.notificationCount;
+        session.user.membershipProcessedBys = token.membershipProcessedBys;
+        session.user.membershipRequestedBys = token.membershipRequestedBys;
       }
-      return session
+      return session;
     },
 
     async jwt({ token, user }) {
-      const dbUser:any =await getUserByEmail(token.email || " ")
+      const dbUser: any = await getUserByEmail(token.email || " ");
       if (!dbUser) {
-        token.id = user!.id
-        token.roles = dbUser.roles 
-        return token
+        token.id = user!.id;
+        token.roles = dbUser.roles;
+        return token;
       }
       return {
-        id:dbUser.id,
-        name:dbUser.name,
+        id: dbUser.id,
+        name: dbUser.name,
         email: dbUser.email,
         picture: dbUser.image,
         roles: dbUser.roles,
-        notificationCount:dbUser.notificationCount,
-        memberProcessedBys : dbUser.memberProcessedBys,
-        memberRequestedBys: dbUser.memberRequestedBys,
-      }
+        notificationCount: dbUser.notificationCount,
+        membershipProcessedBys: dbUser.membershipProcessedBys,
+        membershipRequestedBys: dbUser.membershipRequestedBys,
+      };
     },
   },
-    pages: {
+  pages: {
     signIn: '/auth/login'
   }
-}
+};
 
-const handler = NextAuth(authOptions)
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
 

@@ -10,7 +10,7 @@ type FileProps = {
     setRegDataToSave: (data: any) => void;
 };
 
-export const RegiPdfFiles = forwardRef<CanHandleSubmit, FileProps>((props: FileProps, ref) => {
+export const RegiPdfFiles = forwardRef<any, FileProps>((props: FileProps, ref) => {
     const foldername = 'openplace';
     const { showFileInput, setRegDataToSave } = props;
     const [files, setFiles] = useState<any[]>([]);
@@ -21,9 +21,9 @@ export const RegiPdfFiles = forwardRef<CanHandleSubmit, FileProps>((props: FileP
         ref,
         () => ({
             handleSubmit() {
-                const pdfFilenames = files.map(s=>s.name)
+                const pdfFilenames = files.map(s => s.name);
                 getFormData();
-                setRegDataToSave({pdfFilenames, pdfFormdata});
+                setRegDataToSave({ pdfFilenames, pdfFormdata });
             }
         }),
     );
@@ -59,10 +59,10 @@ export const RegiPdfFiles = forwardRef<CanHandleSubmit, FileProps>((props: FileP
     };
 
     const handleRemove = (indexToDelete: number) => {
-        const cfs = files.filter((file, i) => i !== indexToDelete)
+        const cfs = files.filter((file, i) => i !== indexToDelete);
         setFiles(cfs);
     };
-    const acceptedFileItems = files.map((file: any, index:number) => (
+    const acceptedFileItems = files.map((file: any, index: number) => (
         <li className='list-group-item' key={index}>
             <div className='row'>
                 <div className='col-4 mt-1'>{file.path} - {file.size} bytes</div>
@@ -71,7 +71,7 @@ export const RegiPdfFiles = forwardRef<CanHandleSubmit, FileProps>((props: FileP
         </li>
     ));
 
-    const fileRejectionItems = fileRejections.map(({ file,index, errors }: { file: any,index:number, errors: any; }) => (
+    const fileRejectionItems = fileRejections.map(({ file, index, errors }: { file: any, index: number, errors: any; }) => (
         <li className='list-group-item' key={index}>
             {file.path} - {file.size} bytes
         </li>

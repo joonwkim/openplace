@@ -1,46 +1,58 @@
 'use client';
 import Image from 'next/image';
-import React, { forwardRef, useState, useLayoutEffect } from 'react';
+import React, { useState } from 'react';
 import styles from '@/app/regContents/page.module.css';
-import { getImgUrlByFilename } from '@/app/actions/cloudinary';
+import { getImgUrlByFilenameAction } from '@/app/actions/imageAction';
 
 type RegProps = {
     imgFileNames: string[],
 };
+interface SecureUrl {
+    filename: string,
+    secureUrl: string,
+}
 
-export const DispImages = forwardRef<CanHandleSubmit, RegProps>((props: RegProps, ref) => {
+export const DispImages = (props: RegProps) => {
     const { imgFileNames } = props;
-    const [secureUrls, setSecureUrls] = useState<string[]>([]);
+    const [urls, setUrls] = useState<SecureUrl[]>([]);
 
-    useLayoutEffect(() => {
-        const fetchData = () => {
-            if (imgFileNames) {
-                imgFileNames.forEach(async s => {
-                    const url = await getImgUrlByFilename('openplace', s);
-                    if (url) {
-                        setSecureUrls(prev => [...prev, url]);
-                    }
-                });
-            }
-        };
-        fetchData();
-    }, [imgFileNames]);
+    const getSecureUrl = async (filename: string) => {
+        const url = await getImgUrlByFilenameAction('openplace', filename);
+        const result = await Promise.resolve(url);
+        return result;
+    };
+    // const getSecureUrls = () => {
+    //     console.log('getSecureUrls');
+    //     imgFileNames.forEach(async filename => {
+    //         // const url = await getImgUrlByFilenameAction('openplace', filename);
+    //         // const result = await Promise.resolve(url);
+    //         getSecureUrl(filename).then((url: string) => {
+    //             const nu: SecureUrl = {
+    //                 filename: filename,
+    //                 secureUrl: url,
+    //             };
+    //             setUrls(prev => [...prev, nu]);
+    //         });
+    //     });
+    //     console.log('secureUrls', urls);
+    //     return urls;
+    // };
 
     return (<>
-        {secureUrls && secureUrls.length > 0 && (<div>
+        {imgFileNames && imgFileNames.length > 0 && (<div>
             <h3 className='mt-3'>이미지</h3>
             <div className='row row-cols-1 row-cols-md-3 row-cols-sm-3 mt-0 gap-0'>
-                {secureUrls?.map((secureUrl, index) => (
+                {/* {getSecureUrls().map((secureUrl: SecureUrl, index: number) => (
                     <div key={index} className={styles.listItem}                    >
                         <div className={`card ${styles.fillImage}`}>
-                            {secureUrl && (<Image alt={secureUrl} src={secureUrl} quality={100} fill sizes="100vw" style={{ objectFit: 'contain', }} />)}
+                            {secureUrl && (<Image alt={secureUrl.filename} src={secureUrl.secureUrl} quality={100} fill sizes="100vw" style={{ objectFit: 'contain', }} />)}
 
                         </div>
                     </div>
-                ))}
+                ))} */}
             </div>
         </div>)}
     </>
     );
-});
-DispImages.displayName = "DispImages";
+};
+export default DispImages;

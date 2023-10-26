@@ -1,9 +1,10 @@
 'use client';
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import Image from 'next/image';
 import styles from '../../page.module.css';
-import { YoutubeInfo, getYoutubeData, getWatchUrl, Default } from '../../lib/convert';
+import { YoutubeInfo, getWatchUrl, Default } from '../../lib/convert';
 import { Alert } from 'react-bootstrap';
+import { getYoutubeDataAction } from '@/app/actions/youtubeAction';
 
 type YTProps = {
   videoIds: string[] | undefined,
@@ -11,27 +12,9 @@ type YTProps = {
 };
 
 export const DispYoutube = (props: YTProps) => {
-  const { videoIds, thumbnailType } = props;
+  const { videoIds, } = props;
   const [embedUrl, setEmbedUrl] = useState('');
-  const [url, setUrl] = useState<string>('');
   const [ytdata, setYtData] = useState<YoutubeInfo[]>([]);
-
-  useEffect(() => {
-    const fetchData = () => {
-      if (videoIds) {
-        videoIds.forEach(async id => {
-          const url = getWatchUrl(id);
-          const yd = await getYoutubeData(url) as YoutubeInfo;
-          if (!ytdata.find(s => s.videoId === yd.videoId)) {
-            setYtData(s => [...s, yd]);
-          }
-          // console.log('url', url)
-        });
-      }
-    };
-    fetchData();
-
-  }, [videoIds, ytdata]);
 
   const handleHide = () => {
     setEmbedUrl('');
@@ -41,9 +24,22 @@ export const DispYoutube = (props: YTProps) => {
     setEmbedUrl(url);
   };
 
+  const getYtData = () => {
+    if (videoIds && videoIds.length > 0) {
+
+      videoIds.forEach(async id => {
+        const yd = await getYoutubeDataAction(id) as YoutubeInfo;
+        if (ytdata.length < videoIds.length) {
+          setYtData([...ytdata, yd]);
+        }
+      });
+    }
+    return ytdata as YoutubeInfo[];
+  };
+
   return (
     <>
-      {ytdata.length > 0 && (<div>
+      {videoIds && videoIds.length > 0 && (<div>
         <h3 className='mt-3'>유튜브</h3>
         <div>
           {embedUrl ?
@@ -54,18 +50,20 @@ export const DispYoutube = (props: YTProps) => {
             : <div></div>}
 
         </div>
-        {ytdata.length > 0 && <div className='ms-3 mb-0'>썸네일을 클릭하시면 비디오를 볼 수 있습니다.</div>}
+        {videoIds.length > 0 && <div className='ms-3 mb-0'>썸네일을 클릭하시면 비디오를 볼 수 있습니다.</div>}
         <div className='row row-cols-1 row-cols-md-3 row-cols-sm-2 mt-0 g-2'>
-          {ytdata.map((item, index) => (
+          {getYtData().map((item, index) => (
             <div key={index} className={styles.listItem} >
               <Alert variant="white">
-                <Image src={item.thumbnails.medium.url} width={item.thumbnails.medium.width} height={item.thumbnails.medium.height} alt={item.videoId} onClick={(e) => handleImageClick(item.embedUrl)} />
+                {item.thumbnails !== undefined ? (<Image src={item.thumbnails.medium.url} width={item.thumbnails.medium.width} height={item.thumbnails.medium.height} alt={item.videoId} onClick={(e) => handleImageClick(item.embedUrl)} />) : (
+                  <h6>대표 이미지가 등록되지 않았습니다.</h6>
+                )}
+
               </Alert>
             </div>
           ))}
         </div>
       </div>)}
-
     </>
   );
 

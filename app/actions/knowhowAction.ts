@@ -1,6 +1,6 @@
 'use server';
 import { revalidatePath } from "next/cache";
-import { addKnowhowViewCount, createKnowHowWithDetailInfo, createKnowhow, updateKnowhow } from "../services/knowhowService";
+import { addKnowhowViewCount, createChildKnowHowWithDetailInfo, createKnowHowWithDetailInfo, createKnowhow, updateKnowhow } from "../services/knowhowService";
 import { } from "../services/tagService";
 import { Knowhow, KnowhowDetailInfo } from "@prisma/client";
 import { uploadFile } from "./cloudinary";
@@ -10,6 +10,31 @@ const getFormDataEntry = (formData: any) => {
   return JSON.stringify(oe, null, 2);
 };
 
+export async function createChildKnowHowWithDetailAction(parentKnowhowId: string, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, imgFormData: any[], pdfFormData: any[]) {
+
+  console.log('parentKnow in createChildKnowHowWithDetailAction', parentKnowhowId);
+
+  const { otherFormData, thumbNailFormData } = genFormData;
+
+  try {
+
+    await createChildKnowHowWithDetailInfo(parentKnowhowId, otherFormData, knowhowDetailInfo);
+    const res = await uploadFile(thumbNailFormData);
+
+    imgFormData.forEach(async s => {
+      const res = await uploadFile(s);
+    });
+    pdfFormData.forEach(async s => {
+      const res = await uploadFile(s);
+    });
+    revalidatePath('/');
+
+  } catch (error) {
+    console.log(error);
+  }
+
+  revalidatePath('/');
+}
 export async function createKnowHowWithDetailAction(genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, imgFormData: any[], pdfFormData: any[]) {
 
   const { otherFormData, thumbNailFormData } = genFormData;

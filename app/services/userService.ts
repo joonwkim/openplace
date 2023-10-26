@@ -1,32 +1,32 @@
-import { GoogleUser } from '@/app/auth/types'
-import prisma from '@/prisma/prisma'
-import { MemberRequestAndProcessStatus } from '@prisma/client';
+import { GoogleUser } from '@/app/auth/types';
+import prisma from '@/prisma/prisma';
+import { MembershipRequestStatus } from '@prisma/client';
 import bcrypt from "bcrypt";
 
 export async function getUsers() {
     try {
         const users = await prisma.user.findMany({
-            include:{
-                knowHows:true,
-                votes:true,
-                memberProcessedBys:true,
-                memberRequestedBys:true,
+            include: {
+                knowHows: true,
+                votes: true,
+                membershipProcessedBys: true,
+                membershipRequestedBys: true,
             }
-        })
-        return  users
+        });
+        return users;
     } catch (error) {
-        return ({ error })
+        return ({ error });
     }
 }
 
 export async function isUserRegistered(email: string): Promise<boolean> {
-    return await getUserByEmail(email) != null
+    return await getUserByEmail(email) != null;
 }
 
 export async function isPasswordValid(email: string, password: string): Promise<boolean> {
     try {
-        if (!email || !password) return false
-        var user: any = await getUserByEmail(email)
+        if (!email || !password) return false;
+        var user: any = await getUserByEmail(email);
         const result = await bcrypt.compare(password, user.password).catch((e) => false);
         return result;
     } catch (error: any) {
@@ -38,11 +38,11 @@ export async function isPasswordValid(email: string, password: string): Promise<
 export async function createUser(input: any) {
     try {
 
-        const user = await prisma.user.create({ data: input })
-        return { user }
+        const user = await prisma.user.create({ data: input });
+        return { user };
     }
     catch (error) {
-        return ('user not created')
+        return ('user not created');
     }
 }
 
@@ -52,33 +52,33 @@ export async function getUserByEmail(emailInput: string) {
             where: {
                 email: emailInput,
             },
-            include:{
+            include: {
                 // knowHows:true,
-                votes:true,
-                memberProcessedBys:{
-                    include:{
-                        knowhow:true,
-                        memberRequestedBy:true,
+                votes: true,
+                membershipProcessedBys: {
+                    include: {
+                        knowhow: true,
+                        membershipRequestedBy: true,
                     }
                 },
-                memberRequestedBys:{
-                    include:{
-                        knowhow:true,
-                        memberProcessedBy:true,
+                membershipRequestedBys: {
+                    include: {
+                        knowhow: true,
+                        membershipProcessedBy: true,
                     }
                 },
             }
-        })
-      
-        if(user){
-            const requests = user.memberProcessedBys.filter(s=>s.memberRequestStatus === MemberRequestAndProcessStatus.REQUESTED);
+        });
+
+        if (user) {
+            const requests = user.membershipProcessedBys.filter(s => s.membershipRequestStatus === MembershipRequestStatus.REQUESTED);
             // console.log('memberRequestedTos', JSON.stringify(requests,null,2))
-            user.notificationCount = requests.length
+            user.notificationCount = requests.length;
         }
-         
-        return user
+
+        return user;
     } catch (error) {
-        return ({ error })
+        return ({ error });
     }
 }
 
@@ -89,10 +89,10 @@ export async function updateUser(email: string, input: any) {
                 email: email,
             },
             data: input
-        })
+        });
 
     } catch (error) {
-        return ({ error })
+        return ({ error });
     }
 }
 
@@ -100,17 +100,17 @@ export async function findUpdateGoogleUser(email: string, input: GoogleUser) {
     try {
 
 
-        let user = await getUserByEmail(email)
+        let user = await getUserByEmail(email);
         if (!user) {
-            const userCreated = await createUser(input)
+            const userCreated = await createUser(input);
         }
         else {
-            const userStored = user as GoogleUser
-            input.roles = userStored.roles
-            const userUpdated = await updateUser(email, input)
+            const userStored = user as GoogleUser;
+            input.roles = userStored.roles;
+            const userUpdated = await updateUser(email, input);
         }
         return true;
     } catch (error) {
-        return ({ error })
+        return ({ error });
     }
 }

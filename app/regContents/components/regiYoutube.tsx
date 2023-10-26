@@ -2,13 +2,18 @@
 import React, { forwardRef, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import styles from '../page.module.css';
-import { YoutubeInfo,  getYoutubeData } from '../../lib/convert';
+import { YoutubeInfo, getYoutubeData } from '../../lib/convert';
 import { Alert } from 'react-bootstrap';
 
 type YTProps = {
   showYtInput: boolean;
   setRegDataToSave: (data: any) => void;
 };
+
+type CanHandleSubmit = {
+  handleSubmit: () => void;
+};
+
 
 export const RegiYoutube = forwardRef<CanHandleSubmit, YTProps>((props: YTProps, ref) => {
 

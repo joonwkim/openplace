@@ -1,22 +1,22 @@
 'use client';
-import React, { useRef, useState, } from 'react';
+import React, { useEffect, useRef, useState, } from 'react';
 import { Category, KnowhowDetailInfo, KnowhowType, Tag, ThumbnailType } from '@prisma/client';
 import { RegiGeneral } from './regiGeneral';
 import { RegiYoutube } from './regiYoutube';
 import { RegiImages } from './regiImages';
-import { createKnowHowWithDetailAction } from '@/app/actions/knowhowAction';
+import { createChildKnowHowWithDetailAction, createKnowHowWithDetailAction } from '@/app/actions/knowhowAction';
 import { RegiText } from './regiText';
 import { RegiPdfFiles } from './regiPdfFiles';
 import { useRouter } from 'next/navigation';
-import { userAgent } from 'next/server';
 
 type RegProps = {
     categories: Category[],
     knowHowTypes: KnowhowType[],
     tags: Tag[],
+    parentKnowhowId: string | undefined;
 };
 
-const Registeration = ({ categories, knowHowTypes, tags }: RegProps) => {
+const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId }: RegProps) => {
     const router = useRouter();
 
     const [showDetail, setShowDetail] = useState(false);
@@ -27,15 +27,23 @@ const Registeration = ({ categories, knowHowTypes, tags }: RegProps) => {
     const [pdfFormData, setPdfFormData] = useState<any[]>([]);
     const [pdfFilenames, setPdfFilenames] = useState<string[]>([]);
     const [text, setText] = useState('');
-    const regGenRef = useRef<CanHandleSubmit>(null);
-    const ytRef = useRef<CanHandleSubmit>(null);
-    const imgRef = useRef<CanHandleSubmit>(null);
-    const fileRef = useRef<CanHandleSubmit>(null);
-    const textRef = useRef<CanHandleSubmit>(null);
+    const regGenRef = useRef<any>(null);
+    const ytRef = useRef<any>(null);
+    const imgRef = useRef<any>(null);
+    const fileRef = useRef<any>(null);
+    const textRef = useRef<any>(null);
     const [showYoutube, setShowYoutube] = useState(false);
     const [showImg, setShowImg] = useState(false);
     const [showFile, setShowFile] = useState(false);
     const [showTextEditor, setShowTextEditor] = useState(false);
+    const [parentId, setParentId] = useState('');
+
+    useEffect(() => {
+        if (parentKnowhowId) {
+            setParentId(parentKnowhowId);
+        }
+
+    }, [parentKnowhowId]);
 
     const handleSaveBtnClick = async () => {
         const knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId"> = {
@@ -46,7 +54,12 @@ const Registeration = ({ categories, knowHowTypes, tags }: RegProps) => {
             detailText: text,
         };
 
-        await createKnowHowWithDetailAction(genFormData, knowhowDetailInfo, imgFormData, pdfFormData);
+        if (parentId) {
+            await createChildKnowHowWithDetailAction(parentId, genFormData, knowhowDetailInfo, imgFormData, pdfFormData);
+            router.push(`/regContents/?parentKnowhowId=${parentId}`);
+        } else {
+            await createKnowHowWithDetailAction(genFormData, knowhowDetailInfo, imgFormData, pdfFormData);
+        }
         router.push('/');
     };
 

@@ -13,7 +13,7 @@ type RegProps = {
     setRegDataToSave: (data: any) => void;
 };
 
-export const RegiImages = forwardRef<CanHandleSubmit, RegProps>((props: RegProps, ref) => {
+export const RegiImages = forwardRef<any, RegProps>((props: RegProps, ref) => {
     const { showImg, setRegDataToSave, } = props;
     const foldername = 'openplace';
     const [files, setFiles] = useState<any[]>([]);

@@ -36,8 +36,8 @@ model User {
   knowHows Knowhow[]
   votes    Vote[]
 
-  memberProcessedBys MemberRequestAndProcess[] @relation("memberProcessedBys")
-  memberRequestedBys  MemberRequestAndProcess[] @relation("memberRequestedBys")
+  membershipProcessedBys MembershipRequest[] @relation("membershipProcessedBys")
+  membershipRequestedBys MembershipRequest[] @relation("membershipRequestedBys")
 }
 
 model KnowhowType {
@@ -84,7 +84,12 @@ model Knowhow {
   votes Vote[]
 
   knowhowDetailInfo KnowhowDetailInfo?
-  memberRequest     MemberRequestAndProcess[]
+  membershipRequest MembershipRequest[]
+
+  parentId String?  @db.ObjectId
+  parent   Knowhow? @relation("KnowhowParentChildren", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  children Knowhow[] @relation("KnowhowParentChildren")
 
   @@unique([title, authorId])
 }
@@ -108,19 +113,19 @@ model Vote {
   voterId String @db.ObjectId
 }
 
-model MemberRequestAndProcess {
+model MembershipRequest {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  memberRequestStatus MemberRequestAndProcessStatus
+  membershipRequestStatus MembershipRequestStatus
 
   knowhow   Knowhow @relation(fields: [knowhowId], references: [id])
   knowhowId String  @db.ObjectId
 
-  memberProcessedBy   User?   @relation("memberProcessedBys", fields: [memberProcessedById], references: [id])
-  memberProcessedById String? @db.ObjectId
-  
-  memberRequestedBy    User   @relation("memberRequestedBys", fields: [memberRequestedById], references: [id])
-  memberRequestedById  String @db.ObjectId
+  membershipProcessedBy   User?   @relation("membershipProcessedBys", fields: [membershipProcessedById], references: [id])
+  membershipProcessedById String? @db.ObjectId
+
+  membershipRequestedBy   User   @relation("membershipRequestedBys", fields: [membershipRequestedById], references: [id])
+  membershipRequestedById String @db.ObjectId
 
   processedAt DateTime?
 
@@ -143,7 +148,7 @@ model KnowhowDetailInfo {
   knowHowId String  @unique @db.ObjectId
 }
 
-enum MemberRequestAndProcessStatus {
+enum MembershipRequestStatus {
   NONE
   REQUESTED
   APPROVED

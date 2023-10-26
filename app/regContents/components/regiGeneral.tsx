@@ -18,11 +18,11 @@ type RegProps = {
     setRegDataToSave: (data: any) => void;
 };
 
-export const RegiGeneral = forwardRef<CanHandleSubmit, RegProps>((props: RegProps, ref) => {
+export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
 
     const { categories, knowHowTypes, tags, setRegDataToSave } = props;
-    const [otherFormData, setOtherFormData] = useState<any>(null)
-    const [thumbNailFormData, setThumbNailFormData] = useState<any>(null)
+    const [otherFormData, setOtherFormData] = useState<any>(null);
+    const [thumbNailFormData, setThumbNailFormData] = useState<any>(null);
     const { data: session } = useSession();
     const [validated, setValidated] = useState(false);
     const [file, setFile] = useState<any>();
@@ -36,7 +36,7 @@ export const RegiGeneral = forwardRef<CanHandleSubmit, RegProps>((props: RegProp
         () => ({
             handleSubmit() {
                 handleSubmit(formRef.current);
-                setRegDataToSave({otherFormData,thumbNailFormData});
+                setRegDataToSave({ otherFormData, thumbNailFormData });
             }
         }),
     );
@@ -90,7 +90,7 @@ export const RegiGeneral = forwardRef<CanHandleSubmit, RegProps>((props: RegProp
                 alert('로그인을 하셔야 합니다.');
                 return;
             }
-            if(!file){
+            if (!file) {
                 alert('썸네일 이미지를 등록하세요');
                 return;
             }
@@ -99,21 +99,21 @@ export const RegiGeneral = forwardRef<CanHandleSubmit, RegProps>((props: RegProp
             }
             setValidated(true);
             const formData = new FormData(form);
-            formData.append('file',file)
+            formData.append('file', file);
             formData.append('authorId', session?.user.id);
             formData.set('thumbNailImage', imgSrc);
             setOtherFormData(formData);
 
-            const td =await getFormdata(file, 'openplace')
+            const td = await getFormdata(file, 'openplace');
             setThumbNailFormData(td);
         } catch (error) {
             console.log(error);
         }
     };
 
-    const getThumbNailFormData = (file:any) =>{
+    const getThumbNailFormData = (file: any) => {
 
-    }
+    };
     const createOrRemoveDuplicate = () => {
         const words = tagText.trim().split(" ");
         if (words.length > 1) {

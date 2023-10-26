@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useEffect, useState } from "react";
 
@@ -8,9 +8,9 @@ import { useRouter } from 'next/navigation';
 import { literal, object, string, TypeOf, ZodType } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { createUserAction } from "../../actions/userAction"
+import { createUserAction } from "../../actions/userAction";
 
-import styles from '../page.module.css'
+import styles from '../page.module.css';
 import { RegisterForm } from "../types";
 import FormContainer from "@/components/controls/formContainer";
 // import { useAddNewUserMutation } from '@/globalRedux/api/usersApi';
@@ -28,7 +28,7 @@ const registerSchema: ZodType<RegisterForm> = object({
     passwordConfirmation: string({ required_error: "비밀번호를 재입력하세요", }).min(6, "위와 동일한 비밀번호를 입력하세요."),
     terms: literal(true, { errorMap: () => ({ message: "이용약관과 개인정보 처리방침을 확인하고 동의해야 합니다." }), }),
     email: string({ required_error: "이메일을 입력하세요", }).email("이메일 형태에 맞게 입력하세요.")
-}).refine((data:any) => data.password === data.passwordConfirmation, {
+}).refine((data: any) => data.password === data.passwordConfirmation, {
     message: "비밀번호가 일치하지 않습니다.",
     path: ["passwordConfirmation"],
 });
@@ -37,36 +37,35 @@ export type RegisterInput = TypeOf<typeof registerSchema>;
 
 export function RegisterPage() {
 
-    const router = useRouter()
+    const router = useRouter();
 
     const { register, formState: { errors }, handleSubmit, reset } = useForm<RegisterForm>({ resolver: zodResolver(registerSchema), });
 
     async function onSubmit(values: RegisterForm): Promise<void> {
-        // alert('start registering' + JSON.stringify(values))
-        try{
-           var result =  await createUserAction(values)
-           if(result ==='email is being useed, use other email'){
-            alert('등록된 Email입니다.')
-            reset({ 'email': '' })
-           }
-           else if(result ==='user not created') {
-            alert('회원가입을 위하여 관리자에게 문의 하세요.')
-            router.push('/')
-           }
-           else{
-            alert('회원가입해 주셔서 감사합니다.')
+        try {
+            var result = await createUserAction(values);
+            if (result === 'email is being useed, use other email') {
+                alert('등록된 Email입니다.');
+                reset({ 'email': '' });
+            }
+            else if (result === 'user not created') {
+                alert('회원가입을 위하여 관리자에게 문의 하세요.');
+                router.push('/');
+            }
+            else {
+                alert('회원가입해 주셔서 감사합니다.');
 
-            router.push('/')
-           }
-         
-        }catch(error:any){
-            alert('등록되지 않았습니다. 관리자에게 문의 하세요' + JSON.stringify(error))
-        }      
+                router.push('/');
+            }
+
+        } catch (error: any) {
+            alert('등록되지 않았습니다. 관리자에게 문의 하세요' + JSON.stringify(error));
+        }
     }
     return (
         <>
             <FormContainer>
-                <form className='border p-4'  onSubmit={handleSubmit(onSubmit)}>
+                <form className='border p-4' onSubmit={handleSubmit(onSubmit)}>
                     <div className="d-flex flex-row align-items-center mb-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="24" fill="currentColor" className="bi bi-person" viewBox="0 0 16 16">
                             <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z" />
@@ -171,7 +170,7 @@ export function RegisterPage() {
                 </form>
             </FormContainer>
         </>
-    )
+    );
 }
 
 export default RegisterPage

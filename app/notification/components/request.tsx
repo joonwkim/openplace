@@ -1,31 +1,31 @@
 'use client';
-import { updateRequestProcessAction } from '@/app/actions/memberRequestProcessAction';
+import { updatemembershipRequestAction } from '@/app/actions/membershipRequestAction';
 import { getDateToLocale } from '@/app/lib/convert';
-import { MemberRequestAndProcess, MemberRequestAndProcessStatus } from '@prisma/client';
+import { MembershipRequest, MembershipRequestStatus } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
 
 interface MemberRequestAndProcesses {
-    memberProcessedBys: MemberRequestAndProcess[],
+    membershipProcessedBys: MembershipRequest[],
 }
 interface StatusChanged {
-    memberRequestProcess: MemberRequestAndProcess,
-    status: MemberRequestAndProcessStatus;
+    membershipRequestProcess: MembershipRequest,
+    status: MembershipRequestStatus;
 }
 
 const RequestStatusPage = (props: MemberRequestAndProcesses) => {
-    const router = useRouter()
-    const { memberProcessedBys } = props;
+    const router = useRouter();
+    const { membershipProcessedBys } = props;
     const [statusChanged, setStatusChanged] = useState<StatusChanged[]>([]);
-    const requestStatus = (mr: MemberRequestAndProcess) => {
-        const st = mr.memberRequestStatus;
-        type statusValue = [MemberRequestAndProcessStatus, string];
+    const requestStatus = (mr: MembershipRequest) => {
+        const st = mr.membershipRequestStatus;
+        type statusValue = [MembershipRequestStatus, string];
         let statusValues: statusValue[] = [
-            [MemberRequestAndProcessStatus.REQUESTED, "가입요청"],
-            [MemberRequestAndProcessStatus.APPROVED, "승인"],
-            [MemberRequestAndProcessStatus.PENDING, "보류"],
-            [MemberRequestAndProcessStatus.REJECTED, "거절"],
+            [MembershipRequestStatus.REQUESTED, "가입요청"],
+            [MembershipRequestStatus.APPROVED, "승인"],
+            [MembershipRequestStatus.PENDING, "보류"],
+            [MembershipRequestStatus.REJECTED, "거절"],
         ];
 
         return statusValues;
@@ -34,15 +34,15 @@ const RequestStatusPage = (props: MemberRequestAndProcesses) => {
 
     const handleSave = () => {
         statusChanged.map(async (s: any) => {
-            const res = await updateRequestProcessAction(s);
-          
+            const res = await updatemembershipRequestAction(s);
+
         });
-        router.push('/')
+        router.push('/');
     };
 
-    const isSelected = (mr: MemberRequestAndProcess, status: any) => {
+    const isSelected = (mr: MembershipRequest, status: any) => {
         let result = false;
-        if (mr.memberRequestStatus === status) {
+        if (mr.membershipRequestStatus === status) {
             result = true;
         }
         return result;
@@ -52,12 +52,12 @@ const RequestStatusPage = (props: MemberRequestAndProcesses) => {
         return statusChanged.length === 0;
     };
 
-    const handleChanged = (mr: MemberRequestAndProcess, value: any) => {
+    const handleChanged = (mr: MembershipRequest, value: any) => {
         const cv: StatusChanged = {
-            memberRequestProcess: mr,
+            membershipRequestProcess: mr,
             status: value
         };
-        const sc = statusChanged.find(s => s.memberRequestProcess.id === cv.memberRequestProcess.id);
+        const sc = statusChanged.find(s => s.membershipRequestProcess.id === cv.membershipRequestProcess.id);
         if (sc) {
             sc.status = value;
         } else {
@@ -84,13 +84,13 @@ const RequestStatusPage = (props: MemberRequestAndProcesses) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {memberProcessedBys.map((mr: any, index: number) => (
+                        {membershipProcessedBys.map((mr: any, index: number) => (
                             <tr key={index}>
                                 <td>{mr.knowhow.title}</td>
-                                <td>{mr.memberRequestedBy.name}</td>
+                                <td>{mr.membershipRequestedBy.name}</td>
                                 <td>{getDateToLocale(mr.createdAt as Date)}</td>
                                 <td>
-                                    <Form.Select name='memberRequestStatus' onChange={(e) => handleChanged(mr, e.target.value)}>
+                                    <Form.Select name='membershipRequestStatus' onChange={(e) => handleChanged(mr, e.target.value)}>
                                         {requestStatus(mr).map((st) => (
                                             <option key={st[0]} selected={isSelected(mr, st[0])} value={st[0]}>{st[1]}</option>
                                         ))}

@@ -9,6 +9,10 @@ type FileProps = {
     setRegDataToSave: (data: any) => void;
 };
 
+type CanHandleSubmit = {
+    handleSubmit: () => void;
+};
+
 export const RegiText = forwardRef<CanHandleSubmit, FileProps>((props: FileProps, ref) => {
 
     const [data, setData] = useState<string>("");

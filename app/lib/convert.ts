@@ -39,7 +39,9 @@ export const convertToEmbed = (watchUrl: string) => {
 
 export const getThumbnails = async (watchUrl: string) => {
   let yi = await getYoutubeInfo(watchUrl);
-  return yi?.items[0].snippet.thumbnails;
+  if (yi?.items !== undefined) {
+    return yi?.items[0].snippet.thumbnails;
+  }
 };
 export const getYoutubeInfo = async (watchUrl: string) => {
   //https://www.googleapis.com/youtube/v3/videos?part=snippet&id={COMMA_DELIMITED_LIST_OF_IDS}&key={YOUR_API_KEY}

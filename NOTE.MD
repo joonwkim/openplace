@@ -19,7 +19,7 @@ pnpx create-next-app@latest .
 // bootstrap and basic libs
 pnpm add bootstrap react-bootstrap @hookform/resolvers @next-auth/prisma-adapter @prisma/client bcrypt jsonwebtoken next-auth react-hook-form react-icons zod react-toastify
 
-pnpm add -D @types/react-bootstrap @types/bcrypt @types/jsonwebtoken @types/react-bootstrap
+pnpm add -D @types/react-bootstrap @types/bcrypt @types/jsonwebtoken @types/react-bootstrap html-react-parser
 
 //components folder 복사
 //lib 복사
