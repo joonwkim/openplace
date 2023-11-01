@@ -5,7 +5,6 @@ import styles from '@/app/regContents/page.module.css';
 import { DropzoneOptions } from 'react-dropzone';
 import ImgUploader from '@/components/controls/imgUploader';
 import Alert from 'react-bootstrap/Alert';
-import { getSignature, saveToDatabase } from '@/app/actions/cloudinary';
 import { getFormdata } from '../lib/formData';
 
 type RegProps = {

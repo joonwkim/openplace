@@ -53,7 +53,6 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId }: RegP
             pdfFileNames: pdfFilenames,
             detailText: text,
         };
-
         if (parentId) {
             await createChildKnowHowWithDetailAction(parentId, genFormData, knowhowDetailInfo, imgFormData, pdfFormData);
             router.push(`/regContents/?parentKnowhowId=${parentId}`);

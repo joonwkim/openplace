@@ -10,7 +10,7 @@ type FileProps = {
     detailText: string;
 };
 
-export const DispText = forwardRef<CanHandleSubmit, FileProps>((props: FileProps, ref) => {
+export const DispText = forwardRef<any, FileProps>((props: FileProps, ref) => {
     const { detailText } = props;
     const [data, setData] = useState<string>("");
     const [showModal, setShowModal] = useState(false);
@@ -20,8 +20,8 @@ export const DispText = forwardRef<CanHandleSubmit, FileProps>((props: FileProps
     return (
         <>
             {data && (<>
-            <h3 className='mt-3'>텍스트와 이미지</h3>
-            <p className='border rounded border-info p-3'>{parser(data)}</p>
+                <h3 className='mt-3'>텍스트와 이미지</h3>
+                <div className='border rounded border-info p-3'>{parser(data)}</div>
             </>)}
         </>
     );

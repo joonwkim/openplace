@@ -180,3 +180,18 @@ pnpm add html-react-parser
 //build 시 error가 발생할 시 
 //ReferenceError: self is not defined
 //ckeditor를 import할 때 dynamic을 이용할 것
+
+
+//git
+
+// log 보기
+git log --oneline --all --graph
+
+// brach 만들기
+git checkout -b develop
+
+//
+git push
+
+//set to upstream
+git push --set-upstream origin develop

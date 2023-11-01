@@ -2,6 +2,7 @@ import { GoogleUser } from '@/app/auth/types';
 import prisma from '@/prisma/prisma';
 import { MembershipRequestStatus } from '@prisma/client';
 import bcrypt from "bcrypt";
+import exp from 'constants';
 
 export async function getUsers() {
     try {
@@ -37,7 +38,7 @@ export async function isPasswordValid(email: string, password: string): Promise<
 
 export async function createUser(input: any) {
     try {
-
+        
         const user = await prisma.user.create({ data: input });
         return { user };
     }
