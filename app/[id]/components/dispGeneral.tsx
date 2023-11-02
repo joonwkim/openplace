@@ -1,9 +1,5 @@
 'use client';
 import Image from 'next/image';
-import React, { useCallback, useLayoutEffect, useState } from 'react';
-import styles from '@/app/regContents/page.module.css';
-
-import { Knowhow } from '@prisma/client';
 import { Card, CardFooter } from 'react-bootstrap';
 import GeneralFooter from '../../components/controls/generalFooter';
 

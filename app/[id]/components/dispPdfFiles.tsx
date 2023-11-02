@@ -1,6 +1,4 @@
 'use client';
-import React, { forwardRef, useEffect, useState } from 'react';
-import styles from '@/app/regContents/page.module.css';
 
 type FileProps = {
     pdfUrls: string[];

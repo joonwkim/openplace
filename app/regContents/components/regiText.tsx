@@ -19,7 +19,6 @@ export const RegiText = forwardRef<CanHandleSubmit, FileProps>((props: FileProps
     const { showTextEditor, setRegDataToSave } = props;
     const [showModal, setShowModal] = useState(false);
     const textRef = useRef<CanHandleSubmit>(null);
-    // const Editor = dynamic(() => import('@/components/controls/simpleEditor'), { ssr: false, });
     useImperativeHandle(
         ref,
         () => ({
@@ -35,7 +34,6 @@ export const RegiText = forwardRef<CanHandleSubmit, FileProps>((props: FileProps
         }
     }, [showTextEditor]);
     const setTextData = (data: any) => {
-        // alert('setTextData:' + data);
         setData(data);
     };
     return (
@@ -48,12 +46,7 @@ export const RegiText = forwardRef<CanHandleSubmit, FileProps>((props: FileProps
                 </Modal.Header>
                 <Modal.Body>
                     <Editor ref={textRef} setRegDataToSave={setTextData} />
-                    {/* <Editor ref={textRef} showTextEditor={showTextEditor} setRegDataToSave={setTextData} /> */}
                 </Modal.Body>
-                {/* <Modal.Footer>
-                    <Button variant="secondary" onClick={()=>setShowTextEditor(false)}>취소</Button>
-                    <Button variant="primary" onClick={()=>handleSaveText}>저장</Button>
-                </Modal.Footer> */}
             </Modal>)}
             {!showModal && (<div onClick={() => setShowModal(true)} >
                 {data && (<p className='border rounded border-info p-3'>{parser(data)}</p>)}

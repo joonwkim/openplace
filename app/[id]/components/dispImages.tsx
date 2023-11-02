@@ -3,7 +3,6 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import styles from '@/app/regContents/page.module.css';
 import { getImgUrlByFilenameAction } from '@/app/actions/imageAction';
-import { KnowhowDetailOnCloudinary } from '@prisma/client';
 
 type RegProps = {
     secureUrls: string[],

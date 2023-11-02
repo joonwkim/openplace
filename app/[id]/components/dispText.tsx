@@ -1,19 +1,14 @@
 'use client';
-import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
-import { Modal } from 'react-bootstrap';
-import dynamic from 'next/dynamic';
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { useEffect, useState } from 'react';
 import parser from 'html-react-parser';
 
 type FileProps = {
     detailText: string;
 };
 
-export const DispText = forwardRef<any, FileProps>((props: FileProps, ref) => {
+export const DispText = (props: FileProps) => {
     const { detailText } = props;
     const [data, setData] = useState<string>("");
-    const [showModal, setShowModal] = useState(false);
     useEffect(() => {
         setData(detailText);
     }, [detailText]);
@@ -25,5 +20,4 @@ export const DispText = forwardRef<any, FileProps>((props: FileProps, ref) => {
             </>)}
         </>
     );
-});
-DispText.displayName = "DispText";
+};

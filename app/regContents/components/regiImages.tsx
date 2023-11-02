@@ -27,14 +27,11 @@ export const RegiImages = forwardRef<any, RegProps>((props: RegProps, ref) => {
                 const imgFilenames: string[] = files.map(s => s.name);
                 getFormData();
                 setRegDataToSave({ imgFilenames, imgFormdata });
-                // handlePost();
-                // setRegDataToSave(files);
             }
         }),
     );
 
     const onDrop = useCallback((acceptedFiles: any[], fileRejections: any[]) => {
-        // alert('onDrop:' + JSON.stringify(acceptedFiles,null,2))
         if (acceptedFiles.length === 1) {
             if (!files.some(s => s.name === acceptedFiles[0].name)) {
                 setFiles(prev => [...prev, Object.assign(acceptedFiles[0], { preview: URL.createObjectURL(acceptedFiles[0]) })]);
@@ -42,7 +39,6 @@ export const RegiImages = forwardRef<any, RegProps>((props: RegProps, ref) => {
         }
         else {
             acceptedFiles.forEach(file => {
-                // console.log('condition:', !files.some(s => s.name !== file.name));
                 if (files.length === 0 || !files.some(s => s.name !== file.name)) {
                     setFiles(prev => [...prev, Object.assign(file, { preview: URL.createObjectURL(file) })]);
                 }
