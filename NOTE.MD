@@ -180,3 +180,29 @@ pnpm add html-react-parser
 //build 시 error가 발생할 시 
 //ReferenceError: self is not defined
 //ckeditor를 import할 때 dynamic을 이용할 것
+
+
+//git
+
+// log 보기
+git log --oneline --all --graph
+
+// brach 만들기
+git checkout -b develop
+
+//
+git push
+
+//set to upstream
+git push --set-upstream origin develop
+
+// youtube address https://www.youtube.com/watch?v=3o_01F04bZ4
+//git rebase와 git squash를 하기위하여 gitlens extension을 설치 
+// run  command  to config rebase 
+git config --global core.editor "code --wait"
+// rebase command main is target
+git rebase -i main
+
+//github pull requests and issues extension
+// https://www.youtube.com/watch?v=LdSwWxVzUpo
+// extension GitHub Pull Requests and Issues

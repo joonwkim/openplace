@@ -1,14 +1,13 @@
 'use client';
-import React, { forwardRef, useEffect, useState } from 'react';
-import styles from '../page.module.css';
 
 type FileProps = {
+    pdfUrls: string[];
     pdfFileNames: string[];
 };
 
-export const DispPdfFiles = forwardRef<CanHandleSubmit, FileProps>((props: FileProps, ref) => {
+export const DispPdfFiles = (props: FileProps) => {
 
-    const { pdfFileNames } = props;
+    const { pdfUrls, pdfFileNames } = props;
 
     const acceptedFileItems = pdfFileNames.map((file: any) => (
         <li className='list-group-item' key={file.path}>
@@ -30,8 +29,7 @@ export const DispPdfFiles = forwardRef<CanHandleSubmit, FileProps>((props: FileP
             </aside>
         </>
     );
-});
-DispPdfFiles.displayName = "DispPdfFiles"
+};
 
 
 

@@ -2,7 +2,7 @@ import { MembershipRequest, MembershipRequestStatus } from "@prisma/client";
 
 const getMembershipStatus = (membershipRequestStatus: any) => {
     if (membershipRequestStatus === MembershipRequestStatus.REQUESTED) {
-        return ('수락대기중');
+        return ('멤버 수락 대기중');
     } else if (membershipRequestStatus === MembershipRequestStatus.APPROVED) {
         return ('그룹승인');
     } else if (membershipRequestStatus === MembershipRequestStatus.REJECTED) {

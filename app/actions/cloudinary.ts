@@ -24,10 +24,37 @@ export async function getSignature(foldername: string) {
 }
 
 const imgExists = async (filename: string) => {
-  const resources = await getAssetResources();
-  // console.log('resources: ', resources)
-  return resources?.some(s => s.filename === filename);
+  let result;
+  const cloudinaryInfoArray = await getAssetResources();
+  result = [cloudinaryInfoArray?.some(s => s.filename === filename), cloudinaryInfoArray];
+  // return cloudinaryInfoArray?.some(s => s.filename === filename);
+  return result;
 };
+
+export async function uploadImage(formData: FormData) {
+  try {
+
+    const endpoint = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL as string;
+    const data = await fetch(endpoint, {
+      method: 'POST',
+      body: formData
+    }).then(res => res.json());
+    const ci: CloudiaryInfo = {
+      asset_id: data.asset_id,
+      public_id: data.public_id,
+      filename: data.public_id.split('_')[0],
+      format: data.format,
+      bytes: data.bytes,
+      folder: data.folder,
+      secure_url: data.secure_url,
+      thumbnail_url: data.thumbnail_url,
+    };
+    console.log('upload result:', ci);
+    return ci;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 export async function uploadFile(formData: FormData) {
   try {
@@ -35,20 +62,31 @@ export async function uploadFile(formData: FormData) {
     const file: any = formData.get('file');
     const name = file?.name.split('.')[0];
     const filename = `${folder}/${name}`;
-    const exists = await imgExists(filename);
-    // console.log(exists);
-    if (!exists) {
+    const result = await imgExists(filename);
+    if (!result[0]) {
       // console.log('uploading...');
       const endpoint = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL as string;
       const data = await fetch(endpoint, {
         method: 'POST',
         body: formData
       }).then(res => res.json());
-      // console.log('upload result:', data);
-      return data.public_id;
+      const ci: CloudiaryInfo = {
+        asset_id: data.asset_id,
+        public_id: data.public_id,
+        filename: data.public_id.split('_')[0],
+        format: data.format,
+        bytes: data.bytes,
+        folder: data.folder,
+        secure_url: data.secure_url,
+        thumbnail_url: data.thumbnail_url,
+      };
+      console.log('upload result:', ci);
+      return ci;
     } else {
+      console.log('resources:', result[1]);
       console.log('file already exists...');
     }
+
   } catch (error) {
     console.log(error);
   }
@@ -68,8 +106,8 @@ export const getImgUrlByFilename = async (foldername: string, filename: string) 
   const searchExp = `resource_type:image AND public_id:${folderFilename}*`;
   try {
     const result = await cloudinary.search.expression(searchExp).max_results(2).execute();
-    if (result && result.total_count ===1) {
-      return result.resources[0].secure_url
+    if (result && result.total_count === 1) {
+      return result.resources[0].secure_url;
     }
   } catch (error) {
     console.log(error);
@@ -107,41 +145,32 @@ export async function saveToDatabase({ public_id, version, signature }: { public
   }
 }
 
+
+
 export async function getAssetResources() {
   try {
     const result = await cloudinary.api.resources();
     const { resources }: { resources: CloudiaryInfo[]; } = result;
-    // console.log('getAssetResources:', resources)
-    let mr: CloudiaryInfo[] = [];
+    let cloudinaryInfoArray: CloudiaryInfo[] = [];
 
     resources?.forEach(s => {
       const tn = s.secure_url.split('upload');
       const thtag = 'c_thumb,w_200,g_face';
-      // console.log(tn[0])
-      // console.log(tn[1])
       const thumbnail_url = `${tn[0]}upload/${thtag}${tn[1]}`;
-      // console.log('thumbnail img:', thumbnail_url);
       const ci: CloudiaryInfo = {
         asset_id: s.asset_id,
         public_id: s.public_id,
         filename: s.public_id.split('_')[0],
         format: s.format,
-        // resource_type:s.resource_type,
         bytes: s.bytes,
-        // width:s.width,
-        // height:s.height,
         folder: s.folder,
-        // url:s.url,
         secure_url: s.secure_url,
         thumbnail_url: thumbnail_url,
       };
-      // const ci:CloudiaryInfo = s;
       ci.filename = s.public_id.split('_')[0];
-      // s.filename = s.public_id.split('_')[0];
-      mr.push(ci);
+      cloudinaryInfoArray.push(ci);
     });
-    // console.log('getAssetResources:', mr)
-    return mr;
+    return cloudinaryInfoArray;
   } catch (error) {
     console.log(error);
   }

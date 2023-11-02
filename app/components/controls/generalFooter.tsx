@@ -3,7 +3,7 @@ import EyeFill from '@/app/components/icons/eyeFill';
 import Fork from '@/app/components/icons/fork';
 import ThumbDown from '@/app/components/icons/thumbDown';
 import Thumbup from '@/app/components/icons/thumbUp';
-import { getDaysFromToday } from '@/lib/dateTimeLib';
+import { getDaysFromToday, getHoursFromToday, getMinsFromToday } from '@/lib/dateTimeLib';
 import { Knowhow, MembershipRequest, MembershipRequestStatus, ThumbsStatus, User, Vote } from '@prisma/client';
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import style from '@/app/page.module.css';
@@ -68,9 +68,7 @@ export const GeneralFooter = (props: FooterProps) => {
     }, [thumbsStatus, forked, voteLoaded, voteChanged]);
 
     useEffect(() => {
-        // console.log('use Effect, voteChanged', voteChanged);
         if (voteChanged && voter !== null) {
-            // console.log('do something here!!', thumbsStatus, forked, voter.id, knowhow.id);
             const voteToVote: VoteData = {
                 thumbsStatus: thumbsStatus,
                 forked: forked,
@@ -126,13 +124,22 @@ export const GeneralFooter = (props: FooterProps) => {
         }
     };
 
+    const getDaysOrHoursFromNow = () => {
+        const days = getDaysFromToday(props.knowhow?.createdAt);
+        const hours = getHoursFromToday(props.knowhow?.createdAt);
+        const mins = getMinsFromToday(props.knowhow?.createdAt);
+        if (days > 0) {
+            return (<>{days} <span>일전</span></>);
+        } else if (hours > 0) {
+            return (<>{hours} <span>시간전</span></>);
+        }
+        return (<>{mins} <span>분전</span></>);
+    };
 
     return (
-
         <div>
             <small className="text-muted">
-
-                {getDaysFromToday(props.knowhow?.createdAt as Date)} <span>일전</span>
+                {getDaysOrHoursFromNow()}
                 <EyeFill className='ms-3 me-2' />
                 <span>{knowhow?.viewCount}</span>
                 <span className="ms-3 me-2">
@@ -145,9 +152,7 @@ export const GeneralFooter = (props: FooterProps) => {
                     </span>
                 </span>
                 <span className='ms-3'>
-                    {
-                        getMembershipApprovalStatus(session?.user, knowhow.id)
-                    }
+                    {getMembershipApprovalStatus(session?.user, knowhow.id)}
                 </span>
             </small>
         </div>

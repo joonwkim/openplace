@@ -56,7 +56,7 @@ export async function updateMembershipRequest({ membershipRequestProcess, status
                 processedAt: new Date()
             }
         });
-        console.log('updated:', res);
+        // console.log('updated:', res);
         return res;
     } catch (error) {
 

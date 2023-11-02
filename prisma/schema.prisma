@@ -33,6 +33,8 @@ model User {
 
   notificationCount Int @default(0)
 
+  profile Profile?
+
   knowHows Knowhow[]
   votes    Vote[]
 
@@ -40,9 +42,18 @@ model User {
   membershipRequestedBys MembershipRequest[] @relation("membershipRequestedBys")
 }
 
+model Profile {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  cellPhoneNumber String?
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique @db.ObjectId
+}
+
 model KnowhowType {
   id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
+  name String @unique
 
   knowHows Knowhow[]
 }
@@ -52,46 +63,6 @@ model Category {
   name String @unique
 
   knowHows Knowhow[]
-}
-
-model Knowhow {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  title             String
-  description       String
-  thumbnailFilename String?
-
-  viewCount       Int     @default(0)
-  thumbsUpCount   Int     @default(0)
-  thumbsDownCount Int     @default(0)
-  isPublic        Boolean @default(true)
-
-  author   User   @relation(fields: [authorId], references: [id])
-  authorId String @db.ObjectId
-
-  category   Category @relation(fields: [categoryId], references: [id])
-  categoryId String   @db.ObjectId
-
-  KnowhowType   KnowhowType? @relation(fields: [knowHowTypeId], references: [id])
-  knowHowTypeId String?      @db.ObjectId
-
-  tagIds String[] @db.ObjectId
-  tags   Tag[]    @relation(fields: [tagIds], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  votes Vote[]
-
-  knowhowDetailInfo KnowhowDetailInfo?
-  membershipRequest MembershipRequest[]
-
-  parentId String?  @db.ObjectId
-  parent   Knowhow? @relation("KnowhowParentChildren", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  children Knowhow[] @relation("KnowhowParentChildren")
-
-  @@unique([title, authorId])
 }
 
 enum ThumbsStatus {
@@ -133,6 +104,49 @@ model MembershipRequest {
   updatedAt DateTime @updatedAt
 }
 
+model Knowhow {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  title             String
+  description       String
+  thumbnailFilename String?
+
+  viewCount       Int     @default(0)
+  thumbsUpCount   Int     @default(0)
+  thumbsDownCount Int     @default(0)
+  isPublic        Boolean @default(true)
+
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String @db.ObjectId
+
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String   @db.ObjectId
+
+  KnowhowType   KnowhowType? @relation(fields: [knowHowTypeId], references: [id])
+  knowHowTypeId String?      @db.ObjectId
+
+  tagIds String[] @db.ObjectId
+  tags   Tag[]    @relation(fields: [tagIds], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  votes Vote[]
+
+  knowhowDetailInfo KnowhowDetailInfo?
+  membershipRequest MembershipRequest[]
+
+  parentId String?  @db.ObjectId
+  parent   Knowhow? @relation("KnowhowParentChildren", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  children Knowhow[] @relation("KnowhowParentChildren")
+
+  cloudinaryData   CloudinaryData? @relation(fields: [cloudinaryDataId], references: [id])
+  cloudinaryDataId String?         @db.ObjectId
+
+  @@unique([title, authorId])
+}
+
 model KnowhowDetailInfo {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
@@ -146,6 +160,33 @@ model KnowhowDetailInfo {
 
   knowhow   Knowhow @relation(fields: [knowHowId], references: [id])
   knowHowId String  @unique @db.ObjectId
+
+  knowhowDetailOnCloudinaries KnowhowDetailOnCloudinary[]
+}
+
+model CloudinaryData {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  asset_id      String?
+  public_id     String?
+  filename      String?
+  format        String?
+  bytes         Int?
+  folder        String?
+  secure_url    String?
+  thumbnail_url String?
+
+  knowhow                     Knowhow[]
+  knowhowDetailOnCloudinaries KnowhowDetailOnCloudinary[]
+}
+
+model KnowhowDetailOnCloudinary {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  knowhowDetailInfo   KnowhowDetailInfo? @relation(fields: [knowhowDetailInfoId], references: [id])
+  knowhowDetailInfoId String?            @db.ObjectId
+
+  cloudinaryData   CloudinaryData? @relation(fields: [cloudinaryDataId], references: [id])
+  cloudinaryDataId String?         @db.ObjectId
 }
 
 enum MembershipRequestStatus {
@@ -154,7 +195,6 @@ enum MembershipRequestStatus {
   APPROVED
   REJECTED
   PENDING
-  // ENROLLED
 }
 
 enum ThumbnailType {
