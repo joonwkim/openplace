@@ -111,6 +111,128 @@ export async function createChildKnowHowWithDetailInfo(parentKnowhowId: string, 
     }
 }
 
+export async function updateKnowHowWithDetailInfo(knowhow: Knowhow, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, imgFormData: any[], pdfFormData: any[]) {
+    try {
+
+
+        const { otherFormData, thumbNailFormData } = genFormData;
+
+        const formDataObj = Object.fromEntries(otherFormData.entries());
+        console.log('updateKnowHowWithDetailInfo: ', JSON.stringify(formDataObj, null, 2));
+
+
+        // !  create or connect tags
+        if (otherFormData === null) {
+            return;
+        }
+        const tag = otherFormData.get('tags') as string;
+        const tagNames = tag.toLocaleLowerCase().split(" ");
+        const tagWhere: any = [];
+        tagNames.map(n => {
+            {
+                const wh = { name: n };
+                tagWhere.push(wh);
+            }
+        });
+        const tags = await prisma.tag.findMany({
+            where: {
+                OR: tagWhere,
+            },
+        });
+        let tagConnect: any = [];
+        tags.map(t => { const con = { id: t.id }; tagConnect.push(con); });
+
+        // ! create or get regi general thumbnail cloudinary data
+        const result = await uploadImagesToCloudinaryAndCreateCloudinaryData(thumbNailFormData) as CloudinaryData;
+
+
+        try {
+            // const file: any = otherFormData.get('file');
+            // const knowhow = await prisma.knowhow.create({
+            //     data: {
+            //         title: otherFormData.get('title') as string,
+            //         description: otherFormData.get('description') as string,
+            //         thumbnailFilename: file.name,
+            //         knowHowTypeId: otherFormData.get('knowHowTypeId') as string,
+            //         categoryId: otherFormData.get('categoryId') as string,
+            //         authorId: otherFormData.get('authorId') as string,
+            //         cloudinaryDataId: result?.id,
+            //         tags: {
+            //             connect: tagConnect,
+            //         },
+            //     },
+            //     include: {
+            //         tags: true,
+            //         knowhowDetailInfo: true,
+            //         cloudinaryData: true,
+            //     }
+            // });
+            // console.log('knowhow created:', knowhow);
+            // if (knowhow) {
+            //     // ! create knowhow detail info
+            //     const knowhowDetail = await prisma.knowhowDetailInfo.create({
+            //         data: {
+            //             videoIds: knowhowDetailInfo.videoIds,
+            //             thumbnailType: knowhowDetailInfo.thumbnailType as ThumbnailType,
+            //             imgFileNames: knowhowDetailInfo.imgFileNames,
+            //             pdfFileNames: knowhowDetailInfo.pdfFileNames,
+            //             detailText: knowhowDetailInfo.detailText,
+            //             knowhow: {
+            //                 connect: {
+            //                     id: knowhow.id
+            //                 }
+            //             }
+            //         }
+            //     });
+            //     console.log('knowhowDetailInfo created: ', knowhowDetail);
+
+            //     try {
+            //         //!img and pdf files upload for knowhow Detail info
+            //         console.log('image form data starting');
+            //         //! img
+            //         imgFormData.forEach(async imgFormData => {
+            //             const imgUpload = await uploadImagesToCloudinaryAndCreateCloudinaryData(imgFormData) as CloudinaryData;
+            //             console.log('img upload result', imgUpload);
+
+            //             // ! create  KnowhowDetailOnCloudinary
+            //             const kdoc = await prisma.knowhowDetailOnCloudinary.create({
+            //                 data: {
+            //                     knowhowDetailInfoId: knowhowDetail.id,
+            //                     cloudinaryDataId: imgUpload.id
+            //                 }
+            //             });
+            //             console.log('knowhowDetailOnCloudinary', kdoc);
+
+            //         });
+            //         console.log('pdf form data starting');
+
+            //         //! pdf 
+            //         pdfFormData.forEach(async pdfFormData => {
+
+            //             const pdfUpload = await uploadImagesToCloudinaryAndCreateCloudinaryData(pdfFormData) as CloudinaryData;
+            //             console.log('pdf upload result', pdfUpload);
+
+            //             // ! create  KnowhowDetailOnCloudinary
+            //             const kdoc = await prisma.knowhowDetailOnCloudinary.create({
+            //                 data: {
+            //                     knowhowDetailInfoId: knowhowDetail.id,
+            //                     cloudinaryDataId: pdfUpload.id
+            //                 }
+            //             });
+            //             console.log('knowhowDetailOnCloudinary', kdoc);
+            //         });
+            //     } catch (error) {
+            //         console.log(error);
+            //     }
+            // }
+            // return knowhow;
+        } catch (error) {
+            console.log('knowhow creation error: ', error);
+        }
+    } catch (error) {
+        console.log('createKnowHow error:', error);
+    }
+}
 export async function createKnowHowWithDetailInfo(genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, imgFormData: any[], pdfFormData: any[]) {
     try {
         // const formDataObj = Object.fromEntries(formData.entries());

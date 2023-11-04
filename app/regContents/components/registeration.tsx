@@ -4,7 +4,7 @@ import { Category, Knowhow, KnowhowDetailInfo, KnowhowType, Tag, ThumbnailType }
 import { RegiGeneral } from './regiGeneral';
 import { RegiYoutube } from './regiYoutube';
 import { RegiImages } from './regiImages';
-import { createChildKnowHowWithDetailAction, createKnowHowWithDetailAction } from '@/app/actions/knowhowAction';
+import { createChildKnowHowWithDetailAction, createKnowHowWithDetailAction, updateKnowHowWithDetailAction } from '@/app/actions/knowhowAction';
 import { RegiText } from './regiText';
 import { RegiPdfFiles } from './regiPdfFiles';
 import { useRouter } from 'next/navigation';
@@ -41,6 +41,7 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
     const [showFile, setShowFile] = useState(false);
     const [showTextEditor, setShowTextEditor] = useState(false);
     const [parentId, setParentId] = useState('');
+    const [knowhowSelected, setKnowhowSelected] = useState<Knowhow | undefined>();
 
     // const imgUrls = getImgUrls(knowhow);
     // const pdfUrls = getPdfUrls(knowhow);
@@ -49,8 +50,11 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
         if (parentKnowhowId) {
             setParentId(parentKnowhowId);
         }
+        if (knowhow) {
+            setKnowhowSelected(knowhow);
+        }
 
-    }, [parentKnowhowId]);
+    }, [knowhow, parentKnowhowId]);
 
     const handleSaveBtnClick = async () => {
         const knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId"> = {
@@ -60,13 +64,22 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
             pdfFileNames: pdfFilenames,
             detailText: text,
         };
-        if (parentId) {
-            await createChildKnowHowWithDetailAction(parentId, genFormData, knowhowDetailInfo, imgFormData, pdfFormData);
-            router.push(`/regContents/?knowhowId=${parentId}`);
-        } else {
-            await createKnowHowWithDetailAction(genFormData, knowhowDetailInfo, imgFormData, pdfFormData);
+
+        // alert('knowhowSelected' + JSON.stringify(knowhowSelected, null, 2));
+
+        if (knowhowSelected) {
+            await updateKnowHowWithDetailAction(knowhowSelected, genFormData, knowhowDetailInfo, imgFormData, pdfFormData);
         }
-        router.push('/');
+        // else {
+        //     if (parentId) {
+        //         await createChildKnowHowWithDetailAction(parentId, genFormData, knowhowDetailInfo, imgFormData, pdfFormData);
+        //         router.push(`/regContents/?knowhowId=${parentId}`);
+        //     } else {
+        //         await createKnowHowWithDetailAction(genFormData, knowhowDetailInfo, imgFormData, pdfFormData);
+        //     }
+        // }
+
+        // router.push('/');
     };
 
     const handleCancelBtnClick = () => {

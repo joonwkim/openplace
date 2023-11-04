@@ -10,7 +10,6 @@ const RegContentPage = async ({ searchParams }: { searchParams: { searchBy: stri
   const { searchBy, parentKnowhowId, knowhowId, editMode } = searchParams;
   if (editMode) {
     knowhow = await getKnowHow(knowhowId) as Knowhow;
-    console.log('knowhow selected:', JSON.stringify(knowhow, null, 2));
   }
 
   const categories = await getCategories() as Array<Category>;

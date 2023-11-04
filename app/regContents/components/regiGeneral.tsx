@@ -10,19 +10,21 @@ import { createTagAction } from '@/app/actions/tagAction';
 import { useRouter } from 'next/navigation';
 import ImgUploader from '@/components/controls/imgUploader';
 import { getFormdata } from '../lib/formData';
+import { EditMode } from '@/app/lib/convert';
+import { getThumbnailSecureUrl } from '@/app/lib/arrayLib';
 
 type RegProps = {
     categories: Category[],
     knowHowTypes: KnowhowType[],
     tags: Tag[],
     setRegDataToSave: (data: any) => void,
-    knowhow: Knowhow | undefined,
+    knowhow: any | undefined,
     editMode: boolean | undefined,
 };
 
 export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
 
-    const { categories, knowHowTypes, tags, setRegDataToSave } = props;
+    const { categories, knowHowTypes, tags, setRegDataToSave, knowhow, editMode } = props;
     const [otherFormData, setOtherFormData] = useState<any>(null);
     const [thumbNailFormData, setThumbNailFormData] = useState<any>(null);
     const { data: session } = useSession();
@@ -31,8 +33,13 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
     const [imgSrc, setImgSrc] = useState('');
     const [tagText, setTagText] = useState('');
     const [selectedTag, setTagSelected] = useState<Tag | null>(null);
+    const [thumbnailSecureUrl, setThumbnailSecureUrl] = useState(getThumbnailSecureUrl(knowhow) as string);
+    const [initialCategoryId, setInitialCategoryId] = useState(knowhow?.categoryId);
+    const [initialKnowhowTypeId, setInitialKnowhowTypeId] = useState(knowhow?.knowHowTypeId);
+
     const router = useRouter();
     const formRef = useRef<any>();
+
     useImperativeHandle(
         ref,
         () => ({
@@ -43,6 +50,17 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
         }),
     );
 
+    // console.log("formRef.current", formRef.current);
+
+    useEffect(() => {
+        if (knowhow?.tags) {
+            const lst = knowhow.tags.map((t: any) => t.name);
+            const ttext = lst.join(', ');
+            if (ttext) {
+                setTagText(ttext);
+            }
+        }
+    }, [knowhow, tags]);
 
     useEffect(() => {
         if (selectedTag !== null) {
@@ -92,7 +110,7 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
                 alert('로그인을 하셔야 합니다.');
                 return;
             }
-            if (!file) {
+            if (!file && !thumbnailSecureUrl) {
                 alert('썸네일 이미지를 등록하세요');
                 return;
             }
@@ -155,11 +173,37 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
         }
     });
 
+    const getKnowhowTypeSelected = (knowhowTypeId: string) => {
+        // alert(initialKnowhowTypeId);
+        if (knowhowTypeId === initialKnowhowTypeId) {
+            return true;
+        }
+        return false;
+    };
+    const getCategorySelected = (categoryId: string) => {
+        if (categoryId === initialCategoryId) {
+            return true;
+        }
+        return false;
+    };
+
     return (<>
+
         <Form ref={formRef} noValidate validated={validated} onSubmit={handleSubmit}>
             <div className='d-flex mt-3 gap-2'>
                 <div className="card shadow p-3 mb-5 col-4" tabIndex={0}>
-                    {file ? (
+                    {thumbnailSecureUrl ? (<div className='col-5 p-3'>
+                        <Image
+                            alt={thumbnailSecureUrl}
+                            src={thumbnailSecureUrl}
+                            quality={100}
+                            fill
+                            sizes="100vw"
+                            style={{
+                                objectFit: 'contain',
+                            }}
+                        />
+                    </div>) : (<>{file ? (
                         <div className='col-5 p-3'>
                             <Image
                                 alt={file.name}
@@ -177,7 +221,8 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
                         <div className={styles.inputDrop}>
                             <ImgUploader loaderMessage='썸네일 이미지를 끌어오거나 선택하세요 ' dropMessage='Drag &amp; drop files here, or click to select files' options={options} showUploadIcon={true} />
                         </div>
-                    </div>)}
+                    </div>)}</>)}
+
 
                 </div>
                 <div className="card shadow p-3 mb-5 col-7">
@@ -187,7 +232,7 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
                                 제목 <b className={styles.redColor}>*</b>
                             </Form.Label>
                             <Col>
-                                <Form.Control size="lg" type="text" required placeholder="제목을 입력하세요" name='title' />
+                                <Form.Control size="lg" type="text" required placeholder="제목을 입력하세요" name='title' defaultValue={knowhow?.title} />
                                 <Form.Control.Feedback type="invalid">
                                     제목을 입력하세요
                                 </Form.Control.Feedback>
@@ -204,7 +249,11 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
                                 <Form.Select required aria-label="know how type select" name='knowHowTypeId' >
                                     <option value="">경험유형(필수)</option>
                                     {knowHowTypes.map(knowhowType => (
-                                        <option key={knowhowType.id} value={knowhowType.id}>{knowhowType.name}</option>
+                                        <>
+
+                                            <option key={knowhowType.id} selected={getKnowhowTypeSelected(knowhowType.id)} value={knowhowType.id}>{knowhowType.name}</option>
+                                        </>
+
                                     ))}
                                 </Form.Select>
                                 <Form.Control.Feedback type="invalid">
@@ -223,7 +272,7 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
                                 <Form.Select required as='select' name='categoryId' >
                                     <option value="">카테고리(필수)</option>
                                     {categories.map(category => (
-                                        <option key={category.id} value={category.id}>{category.name}</option>
+                                        <option key={category.id} selected={getCategorySelected(category.id)} value={category.id}>{category.name}</option>
                                     ))}
                                 </Form.Select>
                                 <Form.Control.Feedback type="invalid">
@@ -243,6 +292,7 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
                                     as="textarea"
                                     placeholder="자세한 설명을 입력하세요"
                                     style={{ height: '100px' }}
+                                    defaultValue={knowhow?.description}
                                 />
                                 <Form.Control.Feedback type="invalid" >
                                     자세한 설명을 입력하세요
@@ -265,14 +315,15 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
                         </Row>
                         <Row>
                             <Form.Label column="lg" lg={3}>
-
                             </Form.Label>
                             <Col className='ms-1'>
                                 {tags?.length > 0 ? <div className='bt-1 d-flex gap-1'>{
                                     tags?.map((t) => (
-                                        <div className={`mt-1 ${styles.cursorHand}`} key={t.id}> <h6>
-                                            <Badge onClick={e => onBadgeClick(t)} bg="info">{t.name}</Badge>
-                                        </h6></div>
+                                        <div className={`mt-1 ${styles.cursorHand}`} key={t.id}>
+                                            <h6>
+                                                <Badge onClick={e => onBadgeClick(t)} bg="info">{t.name}</Badge>
+                                            </h6>
+                                        </div>
                                     ))
                                 }</div> : <></>}
                             </Col>
@@ -282,8 +333,6 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
                     </Form.Group>
                 </div>
             </div>
-
-
         </Form>
     </>
     );
