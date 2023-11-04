@@ -3,7 +3,7 @@ import Image from 'next/image';
 import React, { useCallback, useEffect, forwardRef, useState, useImperativeHandle, useRef } from 'react';
 import { Col, Form, Row, Badge } from 'react-bootstrap';
 import styles from '@/app/regContents/page.module.css';
-import { Category, KnowhowType, Tag } from '@prisma/client';
+import { Category, Knowhow, KnowhowType, Tag } from '@prisma/client';
 import { DropzoneOptions } from 'react-dropzone';
 import { useSession, } from 'next-auth/react';
 import { createTagAction } from '@/app/actions/tagAction';
@@ -15,7 +15,9 @@ type RegProps = {
     categories: Category[],
     knowHowTypes: KnowhowType[],
     tags: Tag[],
-    setRegDataToSave: (data: any) => void;
+    setRegDataToSave: (data: any) => void,
+    knowhow: Knowhow | undefined,
+    editMode: boolean | undefined,
 };
 
 export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {

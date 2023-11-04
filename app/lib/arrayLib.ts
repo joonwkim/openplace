@@ -18,6 +18,6 @@ export const getPdfUrls = (knowhow: any) => {
 };
 export const getThumbnailSecureUrl = (knowhow: any) => {
     if (!knowhow) return;
-    const secure_url = knowhow.cloudinaryData.secure_url;
+    const secure_url = knowhow.cloudinaryData?.secure_url;
     return secure_url;;
 };

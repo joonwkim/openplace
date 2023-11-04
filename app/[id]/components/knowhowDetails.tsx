@@ -11,6 +11,8 @@ import { createMembershipRequestAction } from '@/app/actions/membershipRequestAc
 import { getMembershipApprovalStatus } from '@/app/lib/membership';
 import { useRouter } from 'next/navigation';
 import KnowHowItem from '@/app/components/knowHowItem';
+import { Session } from 'inspector';
+import { getImgUrls, getPdfUrls, getThumbnailSecureUrl } from '@/app/lib/arrayLib';
 
 type RegProps = {
     knowhow: any | Knowhow,
@@ -23,21 +25,16 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     const [showChildrenContents, setShowChildrenContents] = useState(true);
     const [membershipRequestBtnText, setMembershipRequestBtnText] = useState('');
 
-    const imgUrls = knowhow?.knowhowDetailInfo?.knowhowDetailOnCloudinaries?.map((s: any) => {
-        if (s.cloudinaryData.format !== 'pdf') {
-            return s.cloudinaryData.secure_url;
-        };
-    }).flatMap((f: any) => f ? [f] : []);
-
-    const pdfUrls = knowhow?.knowhowDetailInfo?.knowhowDetailOnCloudinaries?.map((s: any) => {
-        if (s.cloudinaryData.format === 'pdf') {
-            return s.cloudinaryData.secure_url;
-        };
-    }).flatMap((f: any) => f ? [f] : []);
+    const imgUrls = getImgUrls(knowhow);
+    const pdfUrls = getPdfUrls(knowhow);
+    const thumbnailSecureUrl = getThumbnailSecureUrl(knowhow) as string;
 
     const isLoggedIn = useCallback(() => {
         return session?.user;
     }, [session?.user]);
+    const isAuthorLoggedIn = useCallback(() => {
+        return session?.user.id === knowhow.author.id;
+    }, [knowhow.author.id, session?.user.id]);
 
     useEffect(() => {
         const fetch = () => {
@@ -51,7 +48,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
                 }
             }
             else {
-                if (session?.user.id === knowhow.author.id) {
+                if (isAuthorLoggedIn()) {
                     setMembershipRequestBtnText('그룹 컨텐츠 등록');
                 }
                 else {
@@ -63,7 +60,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
             }
         };
         fetch();
-    }, [isLoggedIn, knowhow.author.id, knowhow.id, session?.user]);
+    }, [isAuthorLoggedIn, isLoggedIn, knowhow.author.id, knowhow.id, session?.user]);
 
 
     const handleMembershipRequest = async () => {
@@ -129,9 +126,14 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
         }
     };
 
+    const handleEditContents = () => {
+        router.push(`/regContents/?knowhowId=${knowhow.id}&editMode=true`);
+    };
+
     return (
         <>
             <div className='mt-3'>
+                {isAuthorLoggedIn() && (<button className='me-3 btn btn-primary' type="submit" onClick={handleEditContents}>컨텐츠 수정</button>)}
                 <button className='me-3 btn btn-primary' type="submit" onClick={handleMembershipRequest} >{membershipRequestBtnText}</button>
                 <button className='me-3 btn btn-primary' type="submit" onClick={handleShowDetailContens}>{getContentsBtnText()}</button>
                 <button className='me-3 btn btn-primary' type="submit" onClick={handleShowChildrenContens}>{getChildrenContentsBtnText()}</button>
@@ -142,7 +144,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
                 <button className='me-3 btn btn-primary' type="submit">공지사항</button>
                 <button className='me-3 btn btn-primary' type="submit">게시판</button>
             </div>
-            <DispGeneral knowhow={knowhow} session={session} />
+            <DispGeneral knowhow={knowhow} session={session} thumbnailSecureUrl={thumbnailSecureUrl} />
             {showKnowhowContents()}
             {showChildrenContents && knowhow.children.length > 0 && (<>
                 <h4 className='mt-3'>그룹멤버</h4>

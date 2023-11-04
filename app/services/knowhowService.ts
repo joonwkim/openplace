@@ -353,6 +353,7 @@ export async function getKnowHow(id: string) {
                 votes: true,
                 KnowhowType: true,
                 category: true,
+                cloudinaryData: true,
                 knowhowDetailInfo: {
                     include: {
                         knowhowDetailOnCloudinaries: {
