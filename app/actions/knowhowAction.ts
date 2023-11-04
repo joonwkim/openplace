@@ -25,13 +25,6 @@ export async function createChildKnowHowWithDetailAction(parentKnowhowId: string
   const { otherFormData, thumbNailFormData } = genFormData;
   try {
     await createChildKnowHowWithDetailInfo(parentKnowhowId, otherFormData, knowhowDetailInfo);
-    // const res = await uploadFile(thumbNailFormData);
-    // imgFormData.forEach(async s => {
-    //   const res = await uploadFile(s);
-    // });
-    // pdfFormData.forEach(async s => {
-    //   const res = await uploadFile(s);
-    // });
     revalidatePath('/');
 
   } catch (error) {

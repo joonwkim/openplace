@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useRef, useState, } from 'react';
-import { Category, KnowhowDetailInfo, KnowhowType, Tag, ThumbnailType } from '@prisma/client';
+import { Category, Knowhow, KnowhowDetailInfo, KnowhowType, Tag, ThumbnailType } from '@prisma/client';
 import { RegiGeneral } from './regiGeneral';
 import { RegiYoutube } from './regiYoutube';
 import { RegiImages } from './regiImages';
@@ -8,17 +8,21 @@ import { createChildKnowHowWithDetailAction, createKnowHowWithDetailAction } fro
 import { RegiText } from './regiText';
 import { RegiPdfFiles } from './regiPdfFiles';
 import { useRouter } from 'next/navigation';
+import { getImgUrls, getPdfUrls } from '@/app/lib/arrayLib';
+import { EditMode } from '@/app/lib/convert';
 
 type RegProps = {
     categories: Category[],
     knowHowTypes: KnowhowType[],
     tags: Tag[],
-    parentKnowhowId: string | undefined;
+    parentKnowhowId: string | undefined,
+    knowhow: Knowhow | undefined,
+    editMode: boolean | undefined,
 };
 
-const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId }: RegProps) => {
-    const router = useRouter();
+const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowhow, editMode }: RegProps) => {
 
+    const router = useRouter();
     const [showDetail, setShowDetail] = useState(false);
     const [genFormData, setGenFormData] = useState<any>();
     const [videoIds, setVideoIds] = useState<any>();
@@ -38,6 +42,9 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId }: RegP
     const [showTextEditor, setShowTextEditor] = useState(false);
     const [parentId, setParentId] = useState('');
 
+    // const imgUrls = getImgUrls(knowhow);
+    // const pdfUrls = getPdfUrls(knowhow);
+
     useEffect(() => {
         if (parentKnowhowId) {
             setParentId(parentKnowhowId);
@@ -55,7 +62,7 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId }: RegP
         };
         if (parentId) {
             await createChildKnowHowWithDetailAction(parentId, genFormData, knowhowDetailInfo, imgFormData, pdfFormData);
-            router.push(`/regContents/?parentKnowhowId=${parentId}`);
+            router.push(`/regContents/?knowhowId=${parentId}`);
         } else {
             await createKnowHowWithDetailAction(genFormData, knowhowDetailInfo, imgFormData, pdfFormData);
         }
@@ -109,7 +116,8 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId }: RegP
                 <button className='btn btn-secondary' onClick={handleCancelBtnClick} type="submit">취소</button>
             </div>
             <div onMouseLeave={handleMouseLeaveGenInfo}>
-                <RegiGeneral ref={regGenRef} setRegDataToSave={getFormGenData} categories={categories} knowHowTypes={knowHowTypes} tags={tags} />
+
+                <RegiGeneral ref={regGenRef} setRegDataToSave={getFormGenData} categories={categories} knowHowTypes={knowHowTypes} tags={tags} knowhow={knowhow} editMode={editMode} />
             </div>
             <div className='mt-3'>
                 <button type="button" className="btn btn-success me-3" onClick={() => { regGenRef.current?.handleSubmit(); setShowDetail(!showDetail); setShowYoutube(true); setShowImg(false); setShowFile(false); setShowTextEditor(false); }}>{showDetail ? (<div>세부사항 숨기기</div>) : (<div>세부사항 등록하기</div>)}</button>
