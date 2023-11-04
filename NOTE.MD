@@ -206,3 +206,24 @@ git rebase -i main
 //github pull requests and issues extension
 // https://www.youtube.com/watch?v=LdSwWxVzUpo
 // extension GitHub Pull Requests and Issues
+
+
+// how to clean up all the history and branches in github
+
+git checkout --orphan last
+
+//-A : --all --no-ignore-removal
+git add -A
+
+git commit -am "refsh init"
+
+// delete master branch
+git branch -D master
+
+// rename
+git branch -m main
+
+git push -f origin main
+
+//garbage collection
+git gc --aggressive --prune=all
