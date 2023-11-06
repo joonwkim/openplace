@@ -1,6 +1,6 @@
 import { Category, Knowhow, KnowhowType, Tag } from '@prisma/client';
 import { getCategories } from '../services/categoryService';
-import { getKnowHow, getKnowHowTypes } from '../services/knowhowService';
+import { getKnowhow, getKnowHowTypes } from '../services/knowhowService';
 import { getTags, getTagsStartsWith } from '../services/tagService';
 import dynamic from 'next/dynamic';
 
@@ -9,7 +9,7 @@ const RegContentPage = async ({ searchParams }: { searchParams: { searchBy: stri
 
   const { searchBy, parentKnowhowId, knowhowId, editMode } = searchParams;
   if (editMode) {
-    knowhow = await getKnowHow(knowhowId) as Knowhow;
+    knowhow = await getKnowhow(knowhowId) as Knowhow;
   }
 
   const categories = await getCategories() as Array<Category>;
@@ -23,7 +23,6 @@ const RegContentPage = async ({ searchParams }: { searchParams: { searchBy: stri
   return (<>
     <Registeration categories={categories} knowHowTypes={knowHowTypes} tags={tags} parentKnowhowId={parentKnowhowId} knowhow={knowhow} editMode={editMode} />
   </>
-
   );
 };
 
