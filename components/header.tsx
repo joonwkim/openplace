@@ -44,7 +44,7 @@ const Header = () => {
     <Navbar bg="dark" variant='dark' expand="lg" collapseOnSelect>
       <Container>
         <Navbar.Brand href="/">
-          {'서비스홈'}
+          {'오픈플레이스홈'}
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />

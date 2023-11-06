@@ -8,11 +8,7 @@ import { createCloudinaryData, getCloudinaryAndSave, getCloudinaryData } from ".
 import { CloudiaryInfo } from "../lib/convert";
 import { log } from "console";
 
-const getFormDataEntry = (formData: any) => {
-  const formDataObj = Object.fromEntries(formData.entries());
-  // const oe = Object.fromEntries(formData.entries());
-  return JSON.stringify(formDataObj, null, 2);
-};
+
 
 // process to be changed
 // get images from cloudinary and save them to cloudinarydata table as initial data
@@ -45,7 +41,6 @@ export async function updateKnowHowWithDetailAction(knowhow: Knowhow, genFormDat
   revalidatePath('/');
 }
 export async function createKnowHowWithDetailAction(genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, imgFormData: any[], pdfFormData: any[]) {
-  // const { otherFormData, thumbNailFormData } = genFormData;
   try {
     await createKnowHowWithDetailInfo(genFormData, knowhowDetailInfo, imgFormData, pdfFormData);
     revalidatePath('/');

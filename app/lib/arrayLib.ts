@@ -1,4 +1,5 @@
 import { Knowhow } from "@prisma/client";
+import { getImgSecureUrl, getImgSecureUrls } from "../services/cloudinaryService";
 
 export const getImgUrls = (knowhow: any) => {
     const imgUrls = knowhow?.knowhowDetailInfo?.knowhowDetailOnCloudinaries?.map((s: any) => {
@@ -16,8 +17,4 @@ export const getPdfUrls = (knowhow: any) => {
     }).flatMap((f: any) => f ? [f] : []);
     return pdfUrls;
 };
-export const getThumbnailSecureUrl = (knowhow: any) => {
-    if (!knowhow) return;
-    const secure_url = knowhow.cloudinaryData?.secure_url;
-    return secure_url;;
-};
+

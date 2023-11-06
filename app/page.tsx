@@ -1,11 +1,12 @@
 import { Knowhow, } from '@prisma/client';
 import React from 'react';
-import { getKnowHows } from './services/knowhowService';
+import { getKnowhows } from './services/knowhowService';
 import KnowHowItem from './components/knowHowItem';
 
 
 const PlaceHomePage = async () => {
-  const knowHows = (await getKnowHows() as Array<Knowhow>);
+
+  const knowHows = (await getKnowhows() as Array<Knowhow>);
 
   return (
     <>

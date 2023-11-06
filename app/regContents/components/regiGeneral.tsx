@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import ImgUploader from '@/components/controls/imgUploader';
 import { getFormdata } from '../lib/formData';
 import { EditMode } from '@/app/lib/convert';
-import { getThumbnailSecureUrl } from '@/app/lib/arrayLib';
+import { getThumbnailSecureUrl } from '@/app/services/cloudinaryService';
 
 type RegProps = {
     categories: Category[],
@@ -49,8 +49,6 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
             }
         }),
     );
-
-    // console.log("formRef.current", formRef.current);
 
     useEffect(() => {
         if (knowhow?.tags) {
@@ -193,15 +191,9 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
             <div className='d-flex mt-3 gap-2'>
                 <div className="card shadow p-3 mb-5 col-4" tabIndex={0}>
                     {thumbnailSecureUrl ? (<div className='col-5 p-3'>
-                        <Image
-                            alt={thumbnailSecureUrl}
-                            src={thumbnailSecureUrl}
-                            quality={100}
-                            fill
-                            sizes="100vw"
-                            style={{
-                                objectFit: 'contain',
-                            }}
+                        <Image alt={thumbnailSecureUrl} src={thumbnailSecureUrl} quality={100} fill sizes="100vw" style={{
+                            objectFit: 'contain',
+                        }}
                         />
                     </div>) : (<>{file ? (
                         <div className='col-5 p-3'>

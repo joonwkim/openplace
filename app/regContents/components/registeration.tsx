@@ -70,14 +70,15 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
         if (knowhowSelected) {
             await updateKnowHowWithDetailAction(knowhowSelected, genFormData, knowhowDetailInfo, imgFormData, pdfFormData);
         }
-        // else {
-        //     if (parentId) {
-        //         await createChildKnowHowWithDetailAction(parentId, genFormData, knowhowDetailInfo, imgFormData, pdfFormData);
-        //         router.push(`/regContents/?knowhowId=${parentId}`);
-        //     } else {
-        //         await createKnowHowWithDetailAction(genFormData, knowhowDetailInfo, imgFormData, pdfFormData);
-        //     }
-        // }
+        else {
+            if (parentId) {
+                await createChildKnowHowWithDetailAction(parentId, genFormData, knowhowDetailInfo, imgFormData, pdfFormData);
+                router.push(`/regContents/?knowhowId=${parentId}`);
+            } else {
+                alert('createKnowHowWithDetailAction');
+                await createKnowHowWithDetailAction(genFormData, knowhowDetailInfo, imgFormData, pdfFormData);
+            }
+        }
 
         // router.push('/');
     };

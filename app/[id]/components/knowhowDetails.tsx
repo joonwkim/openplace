@@ -12,7 +12,8 @@ import { getMembershipApprovalStatus } from '@/app/lib/membership';
 import { useRouter } from 'next/navigation';
 import KnowHowItem from '@/app/components/knowHowItem';
 import { Session } from 'inspector';
-import { getImgUrls, getPdfUrls, getThumbnailSecureUrl } from '@/app/lib/arrayLib';
+import { getImgUrls, getPdfUrls } from '@/app/lib/arrayLib';
+import { getThumbnailSecureUrl } from '@/app/services/cloudinaryService';
 
 type RegProps = {
     knowhow: any | Knowhow,
@@ -33,8 +34,8 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
         return session?.user;
     }, [session?.user]);
     const isAuthorLoggedIn = useCallback(() => {
-        return session?.user.id === knowhow.author.id;
-    }, [knowhow.author.id, session?.user.id]);
+        return session?.user.id === knowhow?.author.id;
+    }, [knowhow?.author.id, session?.user.id]);
 
     useEffect(() => {
         const fetch = () => {
@@ -60,13 +61,13 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
             }
         };
         fetch();
-    }, [isAuthorLoggedIn, isLoggedIn, knowhow.author.id, knowhow.id, session?.user]);
+    }, [isAuthorLoggedIn, isLoggedIn, knowhow?.author.id, knowhow?.id, session?.user]);
 
 
     const handleMembershipRequest = async () => {
         if (membershipRequestBtnText === '멤버 참여신청') {
             if (isLoggedIn()) {
-                await createMembershipRequestAction(knowhow.authorId, session?.user.id, knowhow.id);
+                await createMembershipRequestAction(knowhow?.authorId, session?.user.id, knowhow.id);
                 alert('그룹참여를 요청하였습니다');
             }
             else {
@@ -113,7 +114,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     };
 
     const showKnowhowContents = () => {
-        if (knowhow.children.length === 0 || showDetailContents) {
+        if (knowhow?.children.length === 0 || showDetailContents) {
             return (<div>
                 <DispYoutube videoIds={knowhow?.knowhowDetailInfo?.videoIds} thumbnailType="medium" />
                 {imgUrls.length > 0 && (
@@ -146,7 +147,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
             </div>
             <DispGeneral knowhow={knowhow} session={session} thumbnailSecureUrl={thumbnailSecureUrl} />
             {showKnowhowContents()}
-            {showChildrenContents && knowhow.children.length > 0 && (<>
+            {showChildrenContents && knowhow?.children.length > 0 && (<>
                 <h4 className='mt-3'>그룹멤버</h4>
                 <div className="row row-cols-1 row-cols-md-3 row-cols-sm-2 mt-0 g-4">
                     {knowhow.children?.map((child: any) => (

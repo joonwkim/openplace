@@ -1,6 +1,7 @@
 import { KnowhowDetailOnCloudinary } from "@prisma/client";
 import { CloudiaryInfo } from "../lib/convert";
-import { getAssetResources } from "../actions/cloudinary";
+import { getAssetResources, uploadImage } from "../actions/cloudinary";
+import prisma from '@/prisma/prisma';
 
 export const getCloudinaryData = async (foldername: string, filename: string, format: string) => {
     const res = await prisma?.cloudinaryData.findFirst({
@@ -46,19 +47,53 @@ export const getCloudinaryAndSave = async () => {
     }
 };
 
-export const getImgSecureUrls = async (cloudinaryData:KnowhowDetailOnCloudinary[]) =>{
+export const getImgSecureUrls = async (cloudinaryData: KnowhowDetailOnCloudinary[]) => {
 
-    console.log(cloudinaryData)
-    
-    cloudinaryData?.forEach(async (kdc:KnowhowDetailOnCloudinary) => {
-      console.log(kdc)
+    console.log(cloudinaryData);
+
+    cloudinaryData?.forEach(async (kdc: KnowhowDetailOnCloudinary) => {
+        console.log(kdc);
     });
-   
-    // const result = await prisma?.knowhowDetailOnCloudinary.findMany({
-    //     where:{
-    //         OR: []
-    //     },
-    // })
-
     return null;
-}
+};
+
+export const uploadImagesToCloudinaryAndCreateCloudinaryData = async (thumbNailFormData: any) => {
+    try {
+        const file = thumbNailFormData.get('file');
+        if (file !== "undefined") {
+            const filename = file.name.split('.');
+            const res = await getCloudinaryData('openplace', filename[0], filename[1]);
+            if (!res) {
+                const ci = await uploadImage(thumbNailFormData);
+                if (ci) {
+                    const uploaded = await createCloudinaryData(ci);
+                    return uploaded;
+                }
+            }
+            else {
+                return res;
+            }
+        }
+    } catch (error) {
+        console.log('uploadImagesToCloudinaryAndCreateCloudinaryData error:', error);
+        throw error;
+    }
+};
+
+export const getThumbnailSecureUrl = (knowhow: any) => {
+    if (!knowhow) return;
+    const secure_url = knowhow.cloudinaryData?.secure_url;
+    return secure_url;;
+};
+
+export const getImgSecureUrl = async (id: string) => {
+    const cd = await prisma.cloudinaryData.findFirst({
+        where: {
+            id: id,
+        }
+    });
+    if (cd) {
+        console.log('getImgSecureUrl', cd.secure_url);
+        return cd.secure_url;
+    }
+};
