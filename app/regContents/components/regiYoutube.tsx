@@ -1,29 +1,31 @@
 'use client';
-import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import Image from 'next/image';
 import styles from '../page.module.css';
 import { YoutubeInfo, getYoutubeData } from '../../lib/convert';
 import { Alert } from 'react-bootstrap';
+import { getYoutubeDataAction } from '@/app/actions/youtubeAction';
 
 type YTProps = {
-  showYtInput: boolean;
-  setRegDataToSave: (data: any) => void;
+  showYtInput: boolean,
+  setRegDataToSave: (data: any) => void,
+  initialYtData: YoutubeInfo[],
+  editMode: boolean | undefined,
 };
 
 type CanHandleSubmit = {
   handleSubmit: () => void;
 };
 
-
 export const RegiYoutube = forwardRef<CanHandleSubmit, YTProps>((props: YTProps, ref) => {
 
-  const { showYtInput, setRegDataToSave } = props;
+  const { showYtInput, setRegDataToSave, initialYtData, editMode } = props;
+
   const [embedUrl, setEmbedUrl] = useState('');
   const [url, setUrl] = useState<string>('');
-  const [ytdata, setYtData] = useState<YoutubeInfo[]>([]);
+  const [ytdata, setYtData] = useState<YoutubeInfo[]>(initialYtData);
   const dragItem = useRef<any>(null);
   const dragOverItem = useRef<any>(null);
-
 
   useImperativeHandle(
     ref,

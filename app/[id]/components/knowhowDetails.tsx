@@ -11,8 +11,7 @@ import { createMembershipRequestAction } from '@/app/actions/membershipRequestAc
 import { getMembershipApprovalStatus } from '@/app/lib/membership';
 import { useRouter } from 'next/navigation';
 import KnowHowItem from '@/app/components/knowHowItem';
-import { Session } from 'inspector';
-import { getImgUrls, getPdfUrls } from '@/app/lib/arrayLib';
+import { getImgUrls, getPdfUrls, getYtInfos } from '@/app/lib/arrayLib';
 import { getThumbnailSecureUrl } from '@/app/services/cloudinaryService';
 
 type RegProps = {
@@ -29,6 +28,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     const imgUrls = getImgUrls(knowhow);
     const pdfUrls = getPdfUrls(knowhow);
     const thumbnailSecureUrl = getThumbnailSecureUrl(knowhow) as string;
+    const ytInfos = getYtInfos(knowhow?.knowhowDetailInfo?.videoIds);
 
     const isLoggedIn = useCallback(() => {
         return session?.user;
@@ -116,9 +116,9 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     const showKnowhowContents = () => {
         if (knowhow?.children.length === 0 || showDetailContents) {
             return (<div>
-                <DispYoutube videoIds={knowhow?.knowhowDetailInfo?.videoIds} thumbnailType="medium" />
+                <DispYoutube ytInfos={ytInfos} thumbnailType="medium" />
                 {imgUrls.length > 0 && (
-                    <DispImages secureUrls={imgUrls} />
+                    <DispImages imgUrls={imgUrls} />
                 )}
 
                 <DispPdfFiles pdfUrls={pdfUrls} pdfFileNames={knowhow?.knowhowDetailInfo?.pdfFileNames} />

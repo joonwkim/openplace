@@ -104,7 +104,7 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
     const handleSubmit = async (form: any) => {
 
         try {
-            if (!session?.user) {
+            if (!session?.user && !editMode) {
                 alert('로그인을 하셔야 합니다.');
                 return;
             }

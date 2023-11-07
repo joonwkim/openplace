@@ -1,17 +1,20 @@
-import { forwardRef, useImperativeHandle, useState } from "react";
+'use client';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { CanHandleSubmit } from "@/app/lib/types";
 
 type FileProps = {
     // showTextEditor: boolean;
     setRegDataToSave: (data: any) => void;
+    initialData: string,
 };
-export const Editor = forwardRef<CanHandleSubmit, FileProps>((props: FileProps, ref) => {
 
-    const [data, setData] = useState<string>("");
-    const {setRegDataToSave } = props;
-    // const { showTextEditor, setRegDataToSave } = props;
-    // const [showEditor, setEditor] = useState(true);
+
+
+export const Editor = forwardRef<CanHandleSubmit, FileProps>((props: FileProps, ref) => {
+    const { setRegDataToSave, initialData } = props;
+    const [data, setData] = useState(initialData);
 
     useImperativeHandle(
         ref,
@@ -24,35 +27,33 @@ export const Editor = forwardRef<CanHandleSubmit, FileProps>((props: FileProps, 
     );
     const setMinHeight = (editor: any) => {
         editor.ui.view.editable.element.style.minHeight = "400px";
-      };
+    };
 
-    return (<>
-        <CKEditor 
-            editor={ClassicEditor}
-            data={data}
-            onReady={editor => {
-                setMinHeight(editor);
-                // You can store the "editor" and use when it is needed.
-                console.log('Editor is ready to use!', editor);
-            }}
-            onChange={(event, editor) => {
-                setMinHeight(editor);
-                const data = editor.getData();
-                setData(data);
-                console.log({ event, editor, data });
-            }}
-            onBlur={(event, editor) => {
-                // setMinHeight(editor);
-                console.log('Blur.', editor);
-                // setEditor(false)
-            }}
-            onFocus={(event, editor) => {
-                setMinHeight(editor);
-                console.log('Focus.', editor);
-            }}
-        />
-    
-       
-    </>);
-})
-Editor.displayName = "Editor"
+    return (
+        <>
+            <CKEditor
+                editor={ClassicEditor}
+                data={data}
+                onReady={(editor: any) => {
+                    setMinHeight(editor);
+                }}
+                onChange={(event, editor: any) => {
+
+                    const data = editor.getData();
+                    setData(data);
+                    setMinHeight(editor);
+                    // console.log({ event, editor, data });
+                }}
+                onBlur={(event, editor) => {
+                    // console.log('Blur.', editor);
+                }}
+                onFocus={(event, editor) => {
+
+                    // console.log('Focus.', editor);
+                }}
+            />
+        </>
+    );
+
+});
+Editor.displayName = "Editor";

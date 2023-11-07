@@ -10,15 +10,29 @@ import { getFormdata } from '../lib/formData';
 type RegProps = {
     showImg: boolean;
     setRegDataToSave: (data: any) => void;
+    imgUrls: string[],
+    editMode: boolean | undefined,
 };
 
 export const RegiImages = forwardRef<any, RegProps>((props: RegProps, ref) => {
-    const { showImg, setRegDataToSave, } = props;
+    const { showImg, setRegDataToSave, imgUrls, editMode } = props;
     const foldername = 'openplace';
-    const [files, setFiles] = useState<any[]>([]);
+
+    const getFiles = () => {
+        let fs: File[] = [];
+        imgUrls.forEach(s => {
+            let f = new File([], '');
+            Object.assign(f, { preview: s });
+            fs.push(f);
+        });
+        return fs;
+    };
+    const [files, setFiles] = useState<any[]>(getFiles());
     const [imgFormdata, setImgFormData] = useState<any[]>([]);
     const dragItem = useRef<any>(null);
     const dragOverItem = useRef<any>(null);
+
+
 
     useImperativeHandle(
         ref,
@@ -34,6 +48,7 @@ export const RegiImages = forwardRef<any, RegProps>((props: RegProps, ref) => {
     const onDrop = useCallback((acceptedFiles: any[], fileRejections: any[]) => {
         if (acceptedFiles.length === 1) {
             if (!files.some(s => s.name === acceptedFiles[0].name)) {
+
                 setFiles(prev => [...prev, Object.assign(acceptedFiles[0], { preview: URL.createObjectURL(acceptedFiles[0]) })]);
             }
         }
@@ -69,21 +84,23 @@ export const RegiImages = forwardRef<any, RegProps>((props: RegProps, ref) => {
         dragOverItem.current = null;
         setFiles(_files);
     };
+
     const handleRemove = (indexToDelete: number) => {
         const cfs = files.filter((file, i) => i !== indexToDelete);
         setFiles(cfs);
     };
 
     return (<>
+
         {showImg && (<div className={`border border-primary ${styles.inputDropNoBg}`}>
             <ImgUploader loaderMessage='이미지를 끌어오거나 선택하세요 ' dropMessage='여기에 놓으세요...' options={options} showUploadIcon={false} />
         </div>)}
-
         <div className='row row-cols-1 row-cols-md-3 row-cols-sm-3 mt-0 gap-0'>
             {files && (
                 files.map((file, index) => (
+
                     <div key={index} className={styles.listItem} draggable onDragStart={(e) => (dragItem.current = index)} onDragEnter={(e) => (dragOverItem.current = index)}
-                        onDragEnd={handleSort} onDragOver={(e) => e.preventDefault()}                    >
+                        onDragEnd={handleSort} onDragOver={(e) => e.preventDefault()}>
                         <Alert variant="white" onClose={() => handleRemove(index)} dismissible>
                             <div className={`card ${styles.fillImage}`}>
                                 <Image
@@ -102,7 +119,6 @@ export const RegiImages = forwardRef<any, RegProps>((props: RegProps, ref) => {
                 ))
             )}
         </div>
-
     </>
     );
 });
