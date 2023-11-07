@@ -10,6 +10,7 @@ import { RegiPdfFiles } from './regiPdfFiles';
 import { useRouter } from 'next/navigation';
 import { getImgUrls, getPdfUrls, getYtInfos } from '@/app/lib/arrayLib';
 import { EditMode } from '@/app/lib/convert';
+import KnowhowDetails from '@/app/[id]/components/knowhowDetails';
 
 type RegProps = {
     categories: Category[],
@@ -47,6 +48,8 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
     const pdfUrls = getPdfUrls(knowhow);
     const ytInfos = getYtInfos(knowhow?.knowhowDetailInfo?.videoIds);
 
+
+
     useEffect(() => {
         if (parentKnowhowId) {
             setParentId(parentKnowhowId);
@@ -61,11 +64,19 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
         const knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId"> = {
             videoIds: videoIds,
             thumbnailType: ThumbnailType.MEDIUM,
-            imgFileNames: imgFilenames,
-            pdfFileNames: pdfFilenames,
+            // imgFileNames: imgFilenames,
+            // pdfFileNames: pdfFilenames,
             detailText: text,
         };
+        // const knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId"> = {
+        //     videoIds: videoIds,
+        //     thumbnailType: ThumbnailType.MEDIUM,
+        //     imgFileNames: imgFilenames,
+        //     pdfFileNames: pdfFilenames,
+        //     detailText: text,
+        // };
         if (knowhowSelected) {
+            console.log('knowhowSelected', JSON.stringify(knowhowSelected, null, 2));
             await updateKnowHowWithDetailAction(knowhowSelected, genFormData, knowhowDetailInfo, imgFormData, pdfFormData);
         }
         else {

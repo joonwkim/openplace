@@ -117,7 +117,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
         if (knowhow?.children.length === 0 || showDetailContents) {
             return (<div>
                 <DispYoutube ytInfos={ytInfos} thumbnailType="medium" />
-                {imgUrls.length > 0 && (
+                {imgUrls?.length > 0 && (
                     <DispImages imgUrls={imgUrls} />
                 )}
 

@@ -107,9 +107,9 @@ model MembershipRequest {
 model Knowhow {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  title             String
-  description       String
-  thumbnailFilename String?
+  title       String
+  description String
+  // thumbnailFilename String?
 
   viewCount       Int     @default(0)
   thumbsUpCount   Int     @default(0)
@@ -153,8 +153,9 @@ model KnowhowDetailInfo {
   videoIds      String[]
   thumbnailType ThumbnailType?
 
-  imgFileNames String[]
-  pdfFileNames String[]
+  //to be removed later(replaced by KnowhowDetailOnCloudinary)
+  // imgFileNames String[]
+  // pdfFileNames String[]
 
   detailText String?
 

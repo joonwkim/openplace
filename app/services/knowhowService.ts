@@ -33,7 +33,7 @@ export async function createChildKnowHowWithDetailInfo(parentKnowhowId: string, 
                 data: {
                     title: formData.get('title') as string,
                     description: formData.get('description') as string,
-                    thumbnailFilename: file.name,
+                    // thumbnailFilename: file.name,
                     knowHowTypeId: formData.get('knowHowTypeId') as string,
                     categoryId: formData.get('categoryId') as string,
                     authorId: formData.get('authorId') as string,
@@ -53,8 +53,8 @@ export async function createChildKnowHowWithDetailInfo(parentKnowhowId: string, 
                     data: {
                         videoIds: knowhowDetailInfo.videoIds,
                         thumbnailType: knowhowDetailInfo.thumbnailType as ThumbnailType,
-                        imgFileNames: knowhowDetailInfo.imgFileNames,
-                        pdfFileNames: knowhowDetailInfo.pdfFileNames,
+                        // imgFileNames: knowhowDetailInfo.imgFileNames,
+                        // pdfFileNames: knowhowDetailInfo.pdfFileNames,
                         detailText: knowhowDetailInfo.detailText,
                         knowhow: {
                             connect: {
@@ -95,13 +95,9 @@ export async function updateKnowHowWithDetailInfo(knowhowSelected: Knowhow, genF
         let tagConnect = await createTags(tagList) as any[];
 
         // ! create or get regi general thumbnail cloudinary data
+
         try {
-            //! upload thumbnail to cloudinary to be checked later
             const result = await uploadImagesToCloudinaryAndCreateCloudinaryData(thumbNailFormData) as CloudinaryData;
-        } catch (error) {
-            console.log('uploadImagesToCloudinaryAndCreateCloudinaryData error', error);
-        }
-        try {
             const file: any = otherFormData.get('file');
             const knowhowUpdated = await prisma.knowhow.update({
                 where: {
@@ -110,80 +106,97 @@ export async function updateKnowHowWithDetailInfo(knowhowSelected: Knowhow, genF
                 data: {
                     title: otherFormData.get('title') as string,
                     description: otherFormData.get('description') as string,
-                    // thumbnailFilename: file.name,
                     knowHowTypeId: otherFormData.get('knowHowTypeId') as string,
                     categoryId: otherFormData.get('categoryId') as string,
                     authorId: otherFormData.get('authorId') as string,
-                    // cloudinaryDataId: result?.id,
+                    cloudinaryDataId: result?.id,
                     tags: {
                         connect: tagConnect,
                     },
                 },
-                include: {
-                    tags: true,
-                    knowhowDetailInfo: true,
-                    cloudinaryData: true,
+                // include: {
+                //     tags: true,
+                //     knowhowDetailInfo: true,
+                //     cloudinaryData: true,
+                // }
+            });
+            // console.log('knowhow updated:', knowhowUpdated);
+
+            //! update knowhowdetail info
+
+            console.log('knowhowDetailInfo:', knowhowUpdated);
+
+            const khd = await prisma.knowhowDetailInfo.findFirst({
+                where: {
+                    knowHowId: knowhowUpdated.id
                 }
             });
-            console.log('knowhow updated:', knowhowUpdated);
-            // if (knowhow) {
-            //     // ! create knowhow detail info
-            //     const knowhowDetail = await prisma.knowhowDetailInfo.create({
-            //         data: {
-            //             videoIds: knowhowDetailInfo.videoIds,
-            //             thumbnailType: knowhowDetailInfo.thumbnailType as ThumbnailType,
-            //             imgFileNames: knowhowDetailInfo.imgFileNames,
-            //             pdfFileNames: knowhowDetailInfo.pdfFileNames,
-            //             detailText: knowhowDetailInfo.detailText,
-            //             knowhow: {
-            //                 connect: {
-            //                     id: knowhow.id
-            //                 }
-            //             }
-            //         }
-            //     });
-            //     console.log('knowhowDetailInfo created: ', knowhowDetail);
+            if (khd) {
+                const khdiUpdateted = await prisma.knowhowDetailInfo.update({
+                    where: {
+                        id: khd.id,
+                        knowHowId: knowhowUpdated.id,
+                    },
+                    data: {
+                        videoIds: knowhowDetailInfo.videoIds,
+                        // thumbnailType: knowhowDetailInfo.thumbnailType as ThumbnailType,
+                        // imgFileNames: knowhowDetailInfo.imgFileNames,
+                        // pdfFileNames: knowhowDetailInfo.pdfFileNames,
+                        detailText: knowhowDetailInfo.detailText,
 
-            //     try {
-            //         //!img and pdf files upload for knowhow Detail info
-            //         console.log('image form data starting');
-            //         //! img
-            //         imgFormData.forEach(async imgFormData => {
-            //             const imgUpload = await uploadImagesToCloudinaryAndCreateCloudinaryData(imgFormData) as CloudinaryData;
-            //             console.log('img upload result', imgUpload);
+                    },
+                    include: {
+                        knowhowDetailOnCloudinaries: true,
+                    }
 
-            //             // ! create  KnowhowDetailOnCloudinary
-            //             const kdoc = await prisma.knowhowDetailOnCloudinary.create({
-            //                 data: {
-            //                     knowhowDetailInfoId: knowhowDetail.id,
-            //                     cloudinaryDataId: imgUpload.id
-            //                 }
-            //             });
-            //             console.log('knowhowDetailOnCloudinary', kdoc);
+                });
 
-            //         });
-            //         console.log('pdf form data starting');
+                console.log('knowhowDetailInfo:', khdiUpdateted);
 
-            //         //! pdf 
-            //         pdfFormData.forEach(async pdfFormData => {
+                //!img and pdf files upload for knowhow Detail info
+                //! img
+                // imgFormData.forEach(async imgFormData => {
+                //     const imgUpload = await uploadImagesToCloudinaryAndCreateCloudinaryData(imgFormData) as CloudinaryData;
+                //     console.log('img upload result', imgUpload);
 
-            //             const pdfUpload = await uploadImagesToCloudinaryAndCreateCloudinaryData(pdfFormData) as CloudinaryData;
-            //             console.log('pdf upload result', pdfUpload);
+                //     // ! create  KnowhowDetailOnCloudinary
+                //     const kdoc = await prisma.knowhowDetailOnCloudinary.create({
+                //         data: {
+                //             knowhowDetailInfoId: khdiUpdateted.id,
+                //             cloudinaryDataId: imgUpload.id
+                //         }
+                //     });
+                //     console.log('knowhowDetailOnCloudinary', kdoc);
 
-            //             // ! create  KnowhowDetailOnCloudinary
-            //             const kdoc = await prisma.knowhowDetailOnCloudinary.create({
-            //                 data: {
-            //                     knowhowDetailInfoId: knowhowDetail.id,
-            //                     cloudinaryDataId: pdfUpload.id
-            //                 }
-            //             });
-            //             console.log('knowhowDetailOnCloudinary', kdoc);
-            //         });
-            //     } catch (error) {
-            //         console.log(error);
-            //     }
-            // }
-            // return knowhow;
+                // });
+                //! pdf 
+                // pdfFormData.forEach(async pdfFormData => {
+
+                //     const pdfUpload = await uploadImagesToCloudinaryAndCreateCloudinaryData(pdfFormData) as CloudinaryData;
+                //     console.log('pdf upload result', pdfUpload);
+
+                //     // ! create  KnowhowDetailOnCloudinary
+                //     const kdoc = await prisma.knowhowDetailOnCloudinary.create({
+                //         data: {
+                //             knowhowDetailInfoId: knowhowDetailInfo.id,
+                //             cloudinaryDataId: pdfUpload.id
+                //         }
+                //     });
+                //     console.log('knowhowDetailOnCloudinary', kdoc);
+                // });
+            }
+
+
+
+            try {
+
+
+
+
+            } catch (error) {
+                console.log(error);
+            }
+
         } catch (error) {
             console.log('knowhow update error: ', error);
         }
@@ -221,11 +234,6 @@ export async function createKnowHowWithDetailInfo(genFormData: any, knowhowDetai
                     tags: {
                         connect: tagConnect,
                     },
-                    // cloudinaryData:{
-                    //     connect:{
-                    //         id:result.id
-                    //     }
-                    // }
                 },
                 include: {
                     tags: true,
@@ -240,8 +248,8 @@ export async function createKnowHowWithDetailInfo(genFormData: any, knowhowDetai
                     data: {
                         videoIds: knowhowDetailInfo.videoIds,
                         thumbnailType: knowhowDetailInfo.thumbnailType as ThumbnailType,
-                        imgFileNames: knowhowDetailInfo.imgFileNames,
-                        pdfFileNames: knowhowDetailInfo.pdfFileNames,
+                        // imgFileNames: knowhowDetailInfo.imgFileNames,
+                        // pdfFileNames: knowhowDetailInfo.pdfFileNames,
                         detailText: knowhowDetailInfo.detailText,
                         knowhow: {
                             connect: {
@@ -315,7 +323,7 @@ export async function createKnowhow(formData: FormData) {
                 data: {
                     title: formData.get('title') as string,
                     description: formData.get('description') as string,
-                    thumbnailFilename: formData.get('thumbNailImage') as string,
+                    // thumbnailFilename: formData.get('thumbNailImage') as string,
                     knowHowTypeId: formData.get('knowHowTypeId') as string,
                     categoryId: formData.get('categoryId') as string,
                     authorId: formData.get('authorId') as string,
@@ -416,9 +424,11 @@ export async function getKnowhow(id: string) {
                         knowhowDetailOnCloudinaries: {
                             include: {
                                 cloudinaryData: true,
+                                knowhowDetailInfo: true,
                             }
-                        }
-                    }
+                        },
+
+                    },
                 },
                 children: true,
 
