@@ -18,7 +18,7 @@ const getMembershipStatus = (membershipRequestStatus: any) => {
 };
 
 export const getMembershipApprovalStatus = (user: any, knowhowId: string) => {
-    if (user !== undefined && user.membershipRequestedBys.length > 0) {
+    if (user !== undefined && user.membershipRequestedBys?.length > 0) {
         const currentRequest = user.membershipRequestedBys.find((s: any) => s.knowhowId === knowhowId) as MembershipRequest;
         if (currentRequest) {
             return getMembershipStatus(currentRequest.membershipRequestStatus);

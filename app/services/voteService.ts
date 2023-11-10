@@ -1,20 +1,20 @@
-'use server'
-import prisma from '@/prisma/prisma'
-import { Knowhow, ThumbsStatus, User, Vote } from '@prisma/client'
+'use server';
+import prisma from '@/prisma/prisma';
+import { Knowhow, ThumbsStatus, User, Vote } from '@prisma/client';
 import exp from 'constants';
 import { disconnect } from 'process';
-import { VoteData } from '../components/knowHowItem';
+import { VoteData } from '../components/knowhowItem';
 
 export async function getKnowHows() {
     return await prisma.knowhow.findMany({
         include: {
             votes: true,
         }
-    })
+    });
 }
 export async function createtVoteAndUpdateKnowHow(knowhow: Knowhow, voter: User, voteInput: VoteData) {
     // console.log('voter:', JSON.stringify(voter,null,2))
-    if(voter === undefined || voteInput ===null){
+    if (voter === undefined || voteInput === null) {
         // console.log('undefined')
         return;
     }
@@ -23,9 +23,9 @@ export async function createtVoteAndUpdateKnowHow(knowhow: Knowhow, voter: User,
             knowHowId: knowhow?.id,
             voterId: voter?.id
         }
-    })
+    });
     // console.log('vote retreived from db:', JSON.stringify(vote,null,2))
-    
+
     if (vote !== null) {
         //update vote
         if (vote.thumbsStatus !== voteInput.thumbsStatus || vote.forked !== voteInput.forked) {
@@ -34,8 +34,8 @@ export async function createtVoteAndUpdateKnowHow(knowhow: Knowhow, voter: User,
                     where: {
                         id: vote.id,
                     },
-                })
-                console.log('vote deleted')
+                });
+                console.log('vote deleted');
             }
             else {
                 const result = await prisma.vote.update({
@@ -46,10 +46,10 @@ export async function createtVoteAndUpdateKnowHow(knowhow: Knowhow, voter: User,
                         thumbsStatus: voteInput.thumbsStatus,
                         forked: voteInput.forked,
                     }
-                })
-                console.log("vote updated", JSON.stringify(result, null,2))
+                });
+                console.log("vote updated", JSON.stringify(result, null, 2));
             }
-        } 
+        }
     }
     else if (vote === null) {
         //create vote
@@ -69,8 +69,8 @@ export async function createtVoteAndUpdateKnowHow(knowhow: Knowhow, voter: User,
                         }
                     }
                 },
-            })
-            console.log('vote created', JSON.stringify(vote,null,2));
+            });
+            console.log('vote created', JSON.stringify(vote, null, 2));
         }
     }
 }
@@ -83,11 +83,11 @@ export async function getVote(knowhow: Knowhow, voter: User) {
                 voterId: voter.id,
                 knowHowId: knowhow.id,
             }
-        })
+        });
         // console.log('get votes : ', JSON.stringify(vote, null, 2))
     } catch (error) {
-        console.log('error : ', error)
-        return ({ error })
+        console.log('error : ', error);
+        return ({ error });
     }
 }
 // const formDataObj = Object.fromEntries(voteInput.entries());

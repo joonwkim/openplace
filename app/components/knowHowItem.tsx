@@ -6,8 +6,7 @@ import { useSession } from "next-auth/react";
 import { updateKnowHowAction } from "../actions/knowhowAction";
 import GeneralFooter from "./controls/generalFooter";
 import { useState } from "react";
-import Image from 'next/image';
-import { getImgSecureUrl, getThumbnailSecureUrl } from "../services/cloudinaryService";
+import { getThumbnailSecureUrl } from "../services/cloudinaryService";
 
 type KnowHowProps = {
     knowhow: any,
@@ -15,7 +14,7 @@ type KnowHowProps = {
 
 export type VoteData = Omit<Vote, "id">;
 
-const KnowHowItem = (props: KnowHowProps) => {
+const KnowhowItem = (props: KnowHowProps) => {
     const { knowhow } = props;
     const { data: session } = useSession();
     const [thumbnailSecureUrl, setThumbnailSecureUrl] = useState(getThumbnailSecureUrl(knowhow) as string);
@@ -27,7 +26,7 @@ const KnowHowItem = (props: KnowHowProps) => {
             await updateKnowHowAction(knowhow);
             router.push(`/${props.knowhow?.id}`);
         } catch (error) {
-            alert(error);
+            alert('error on handle click on card' + error);
         }
     };
 
@@ -56,4 +55,4 @@ const KnowHowItem = (props: KnowHowProps) => {
         </>
     );
 };
-export default KnowHowItem;
+export default KnowhowItem;

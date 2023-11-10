@@ -78,7 +78,7 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
         setFile(Object.assign(files[0], { preview: URL.createObjectURL(files[0]) }));
         try {
 
-            // public애 img file를 저장하는 경우(무료 cloudinary저장후 display 속도 문제가 있을 경우에 이용)
+            // public에 img file를 저장하는 경우(무료 cloudinary저장후 display 속도 문제가 있을 경우에 이용)
             const data = new FormData();
             // console.log('file on Drop:', files[0].size);
             data.set('file', files[0]);
@@ -125,7 +125,7 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
             const td = await getFormdata(file, 'openplace');
             setThumbNailFormData(td);
         } catch (error) {
-            console.log(error);
+            console.log('handleSubmit in regiGeneral error: ', error);
         }
     };
 

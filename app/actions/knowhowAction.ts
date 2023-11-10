@@ -3,21 +3,9 @@ import { revalidatePath } from "next/cache";
 import { addKnowhowViewCount, createChildKnowHowWithDetailInfo, createKnowHowWithDetailInfo, createKnowhow, updateKnowHowWithDetailInfo, updateKnowhow } from "../services/knowhowService";
 import { } from "../services/tagService";
 import { Knowhow, KnowhowDetailInfo } from "@prisma/client";
-import { getAssetResources, uploadFile, uploadImage } from "./cloudinary";
-import { createCloudinaryData, getCloudinaryAndSave, getCloudinaryData } from "../services/cloudinaryService";
-import { CloudiaryInfo } from "../lib/convert";
-import { log } from "console";
+import { consoleLogFormDatas } from "../lib/formdata";
 
-
-
-// process to be changed
-// get images from cloudinary and save them to cloudinarydata table as initial data
-// check if image is already uploaded by filename and folder from cloudinarydata table
-// if is already uploaded, get secure_url from cloudinaryData
-// upload images to cloudinary first then create cloudinary data 
-// 
-
-export async function createChildKnowHowWithDetailAction(parentKnowhowId: string, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, imgFormData: any[], pdfFormData: any[]) {
+export async function createChildKnowHowWithDetailAction(parentKnowhowId: string, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], imgFormData: any[], pdfFormData: any[]) {
   // console.log('parentKnow in createChildKnowHowWithDetailAction', parentKnowhowId);
   const { otherFormData, thumbNailFormData } = genFormData;
   try {
@@ -25,27 +13,28 @@ export async function createChildKnowHowWithDetailAction(parentKnowhowId: string
     revalidatePath('/');
 
   } catch (error) {
-    console.log(error);
+    console.log('createChildKnowHowWithDetailAction error: ', error);
   }
   revalidatePath('/');
 }
-export async function updateKnowHowWithDetailAction(knowhow: Knowhow, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, imgFormData: any[], pdfFormData: any[]) {
-
+export async function updateKnowHowWithDetailAction(knowhow: Knowhow, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], imgFormData: any[], cloudinaryDataIdsToDelete: string[], pdfFormData: any[]) {
   try {
-
-    await updateKnowHowWithDetailInfo(knowhow, genFormData, knowhowDetailInfo, imgFormData, pdfFormData);
+    // console.log('ytData in updateKnowHowWithDetailAction: ', ytData);
+    await updateKnowHowWithDetailInfo(knowhow, genFormData, knowhowDetailInfo, ytData, imgFormData, cloudinaryDataIdsToDelete, pdfFormData);
     revalidatePath('/');
   } catch (error) {
-    console.log(error);
+    console.log('updateKnowHowWithDetailAction error:', error);
   }
   revalidatePath('/');
 }
-export async function createKnowHowWithDetailAction(genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, imgFormData: any[], pdfFormData: any[]) {
+export async function createKnowHowWithDetailAction(genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], imgFormData: any[], pdfFormData: any[]) {
   try {
-    await createKnowHowWithDetailInfo(genFormData, knowhowDetailInfo, imgFormData, pdfFormData);
+    // consoleLogFormDatas('img form datas', imgFormData);
+
+    await createKnowHowWithDetailInfo(genFormData, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
     revalidatePath('/');
   } catch (error) {
-    console.log(error);
+    console.log('createKnowHowWithDetailAction error:', error);
   }
   revalidatePath('/');
 }

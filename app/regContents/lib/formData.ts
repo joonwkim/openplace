@@ -1,6 +1,7 @@
 import { getSignature } from "@/app/actions/cloudinary";
 
-export const getFormdata = async (file: any, foldername:string) => {
+export const getFormdata = async (file: any, foldername: string) => {
+
     const { timestamp, signature } = await getSignature(foldername);
     const formData = new FormData();
     formData.append('file', file);

@@ -52,7 +52,7 @@ export async function uploadImage(formData: FormData) {
     console.log('upload result:', ci);
     return ci;
   } catch (error) {
-    console.log(error);
+    console.log('uploadImage error:', error);
   }
 }
 
@@ -88,7 +88,7 @@ export async function uploadFile(formData: FormData) {
     }
 
   } catch (error) {
-    console.log(error);
+    console.log('uploadFile error:', error);
   }
 }
 
@@ -110,7 +110,7 @@ export const getImgUrlByFilename = async (foldername: string, filename: string) 
       return result.resources[0].secure_url;
     }
   } catch (error) {
-    console.log(error);
+    console.log('getImgUrlByFilename error: ', error);
   }
 
 };
@@ -141,11 +141,9 @@ export async function saveToDatabase({ public_id, version, signature }: { public
 
   if (expectedSignature === signature) {
     // safe to write to database
-    console.log({ public_id });
+    console.log('saveToDatabase in cloudinary: ', { public_id });
   }
 }
-
-
 
 export async function getAssetResources() {
   try {
@@ -172,7 +170,7 @@ export async function getAssetResources() {
     });
     return cloudinaryInfoArray;
   } catch (error) {
-    console.log(error);
+    console.log('getAssetResources in cloudinary error:', error);
   }
 }
 
@@ -182,7 +180,7 @@ export async function getAssetDetail(publicId: string) {
     const result = cloudinary.api.resource(publicId);
     return result;
   } catch (error) {
-    console.log(error);
+    console.log('getAssetDetail error: ', error);
   }
 
 }

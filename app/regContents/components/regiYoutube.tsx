@@ -1,15 +1,15 @@
 'use client';
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import Image from 'next/image';
 import styles from '../page.module.css';
-import { YoutubeInfo, getYoutubeData } from '../../lib/convert';
+import { getYoutubeData } from '../../lib/convert';
 import { Alert } from 'react-bootstrap';
-import { getYoutubeDataAction } from '@/app/actions/youtubeAction';
+import { YouTubeData } from '@prisma/client';
 
 type YTProps = {
   showYtInput: boolean,
   setRegDataToSave: (data: any) => void,
-  initialYtData: YoutubeInfo[],
+  initialYtData: YouTubeData[],
   editMode: boolean | undefined,
 };
 
@@ -20,27 +20,22 @@ type CanHandleSubmit = {
 export const RegiYoutube = forwardRef<CanHandleSubmit, YTProps>((props: YTProps, ref) => {
 
   const { showYtInput, setRegDataToSave, initialYtData, editMode } = props;
-
   const [embedUrl, setEmbedUrl] = useState('');
   const [url, setUrl] = useState<string>('');
-  const [ytdata, setYtData] = useState<YoutubeInfo[]>(initialYtData);
+  const [ytData, setYtData] = useState<YouTubeData[]>(initialYtData);
+  if (initialYtData === null || undefined) {
+    setYtData([]);
+  }
   const dragItem = useRef<any>(null);
   const dragOverItem = useRef<any>(null);
-
   useImperativeHandle(
     ref,
     () => ({
       handleSubmit() {
-        const yd = getYtData();
-        setRegDataToSave(yd);
+        setRegDataToSave({ ytData });
       }
     }),
   );
-
-  const getYtData = () => {
-    const ytd: string[] = ytdata.map(s => s.videoId);
-    return ytd;
-  };
 
   const handleInputChange = async (e: any) => {
     try {
@@ -48,23 +43,27 @@ export const RegiYoutube = forwardRef<CanHandleSubmit, YTProps>((props: YTProps,
       if (url === ' ') {
         return;
       }
-      // alert(url)
-      const yd = await getYoutubeData(url) as YoutubeInfo;
+      const yd = await getYoutubeData(url) as YouTubeData;
       if (yd) {
-        setYtData([...ytdata, yd]);
+        if (ytData === null || ytData === undefined) {
+          setYtData([]);
+        }
+        console.log('youtube added');
+        setYtData(prev => [...prev, yd]);
       }
     } catch (error) {
-      console.log('handle input changed error');
+      console.log('handle input changed on regiYoutube error');
     }
   };
 
   const handleSort = () => {
-    let _ytdata = [...ytdata];
+    let _ytdata = [...ytData];
     const draggedItemContent = _ytdata.splice(dragItem.current, 1)[0];
     _ytdata.splice(dragOverItem.current, 0, draggedItemContent);
     dragItem.current = null;
     dragOverItem.current = null;
     setYtData(_ytdata);
+    // setYtInfo(_ytdata);
   };
 
   const handleHide = () => {
@@ -76,7 +75,7 @@ export const RegiYoutube = forwardRef<CanHandleSubmit, YTProps>((props: YTProps,
   };
 
   const handleRemove = (indexToDelete: number) => {
-    setYtData(ytdata.filter((file, i) => i !== indexToDelete));
+    setYtData(ytData.filter((file, i) => i !== indexToDelete));
   };
 
   return (
@@ -88,7 +87,7 @@ export const RegiYoutube = forwardRef<CanHandleSubmit, YTProps>((props: YTProps,
         placeholder="유튜브를 끌어오세요"
         onChange={handleInputChange}
       />)}
-
+      <div> {editMode ? (<>edit mode</>) : (<>not edit mode</>)}</div>
       <div>
         {embedUrl ?
           <div>
@@ -96,14 +95,13 @@ export const RegiYoutube = forwardRef<CanHandleSubmit, YTProps>((props: YTProps,
             <iframe src={embedUrl} width={854} height={480} title="YouTube video player" allowFullScreen></iframe>
           </div>
           : <div></div>}
-
       </div>
       <div className='row row-cols-1 row-cols-md-3 row-cols-sm-2 mt-0 g-3'>
-        {ytdata.map((item, index) => (
+        {ytData?.map((item, index) => (
           <div key={index} className={styles.listItem} draggable
             onDragStart={(e) => (dragItem.current = index)} onDragEnter={(e) => (dragOverItem.current = index)} onDragEnd={handleSort} onDragOver={(e) => e.preventDefault()}          >
             <Alert variant="white" onClose={() => handleRemove(index)} dismissible>
-              <Image src={item.thumbnails?.medium.url} width={item.thumbnails?.medium.width} height={item.thumbnails?.medium.height} alt={item.videoId} onClick={(e) => handleImageClick(item.embedUrl)} />
+              <Image src={item.thumbnailUrl} width={item.thumbnailWidth} height={item.thumbnailHeight} alt={item.watchUrl} onClick={(e) => handleImageClick(item.embedUrl)} />
             </Alert>
           </div>
         ))}

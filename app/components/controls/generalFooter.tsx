@@ -7,7 +7,7 @@ import { getDaysFromToday, getHoursFromToday, getMinsFromToday } from '@/lib/dat
 import { Knowhow, MembershipRequest, MembershipRequestStatus, ThumbsStatus, User, Vote } from '@prisma/client';
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import style from '@/app/page.module.css';
-import { VoteData } from '../knowHowItem';
+import { VoteData } from '../knowhowItem';
 import { createVoteActionAndUpdateKnowHow } from '@/app/actions/voteAction';
 import { getMembershipApprovalStatus } from '@/app/lib/membership';
 

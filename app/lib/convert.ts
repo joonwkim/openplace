@@ -1,3 +1,4 @@
+import { ThumbnailType, YouTubeData } from "@prisma/client";
 
 export const getVideoId = (watchUrl: string) => {
   const regExp = /v=([a-zA-Z0-9_-]+)/;
@@ -12,7 +13,22 @@ export const getWatchUrl = (videoId: string) => {
   return `https://www.youtube.com/watch?v=${videoId}`;
 };
 
+
+
 export const getYoutubeData = async (watchUrl: string) => {
+  const thumbnails = await getThumbnails(watchUrl) as Thumbnails;
+
+  let ytdata = {
+    watchUrl: watchUrl,
+    embedUrl: convertToEmbed(watchUrl) as string,
+    thumbnailType: ThumbnailType.MEDIUM,
+    thumbnailUrl: thumbnails?.medium.url,
+    thumbnailWidth: thumbnails?.medium.width,
+    thumbnailHeight: thumbnails?.medium.height,
+  };
+  return ytdata;
+};
+export const getYoutubeInfoData = async (watchUrl: string) => {
   let YoutubeInfo: YoutubeInfo = {
     videoId: getVideoId(watchUrl) as string,
     embedUrl: convertToEmbed(watchUrl) as string,

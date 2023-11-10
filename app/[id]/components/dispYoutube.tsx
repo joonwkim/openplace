@@ -2,20 +2,18 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import styles from '../../page.module.css';
-import { YoutubeInfo, } from '../../lib/convert';
 import { Alert } from 'react-bootstrap';
-import { getYoutubeDataAction } from '@/app/actions/youtubeAction';
-import { getYtInfos } from '@/app/lib/arrayLib';
+import { YouTubeData } from '@prisma/client';
 
 type YTProps = {
   thumbnailType: string,
-  ytInfos: YoutubeInfo[],
+  initialYtData: YouTubeData[],
 };
 
 export const DispYoutube = (props: YTProps) => {
-  const { ytInfos } = props;
+  const { initialYtData } = props;
   const [embedUrl, setEmbedUrl] = useState('');
-  const [ytdata, setYtData] = useState<YoutubeInfo[]>(ytInfos);
+  const [ytdata, setYtData] = useState<YouTubeData[]>(initialYtData);
 
   const handleHide = () => {
     setEmbedUrl('');
@@ -37,8 +35,8 @@ export const DispYoutube = (props: YTProps) => {
         <div className='row row-cols-1 row-cols-md-3 row-cols-sm-2 mt-0 g-2'>
           {ytdata.map((item, index) => (
             <div key={index} className={styles.listItem} >
-              {item.thumbnails !== undefined ? (<> <Alert variant="white">
-                <Image src={item.thumbnails?.medium.url} width={item.thumbnails?.medium.width} height={item.thumbnails?.medium.height} alt={item.videoId} onClick={(e) => handleImageClick(item.embedUrl)} />
+              {item.thumbnailUrl !== undefined ? (<> <Alert variant="white">
+                <Image src={item.thumbnailUrl} width={item.thumbnailWidth} height={item.thumbnailHeight} alt={item.watchUrl} onClick={(e) => handleImageClick(item.embedUrl)} />
               </Alert></>) : (<> <h6>대표 이미지가 등록되지 않았습니다.</h6></>)}
             </div>
           ))}

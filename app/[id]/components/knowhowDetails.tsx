@@ -10,8 +10,8 @@ import { useSession, } from 'next-auth/react';
 import { createMembershipRequestAction } from '@/app/actions/membershipRequestAction';
 import { getMembershipApprovalStatus } from '@/app/lib/membership';
 import { useRouter } from 'next/navigation';
-import KnowHowItem from '@/app/components/knowHowItem';
-import { getImgUrls, getPdfUrls, getYtInfos } from '@/app/lib/arrayLib';
+import KnowHowItem from '@/app/components/knowhowItem';
+import { getCloudinaryImgData, getImgUrls, getPdfUrls, getYtInfos } from '@/app/lib/arrayLib';
 import { getThumbnailSecureUrl } from '@/app/services/cloudinaryService';
 
 type RegProps = {
@@ -24,11 +24,9 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     const [showDetailContents, setShowDetailContents] = useState(false);
     const [showChildrenContents, setShowChildrenContents] = useState(true);
     const [membershipRequestBtnText, setMembershipRequestBtnText] = useState('');
-
-    const imgUrls = getImgUrls(knowhow);
-    const pdfUrls = getPdfUrls(knowhow);
+    // const pdfUrls = getPdfUrls(knowhow);
     const thumbnailSecureUrl = getThumbnailSecureUrl(knowhow) as string;
-    const ytInfos = getYtInfos(knowhow?.knowhowDetailInfo?.videoIds);
+    const imgCloudinaryData = getCloudinaryImgData(knowhow);
 
     const isLoggedIn = useCallback(() => {
         return session?.user;
@@ -39,7 +37,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
 
     useEffect(() => {
         const fetch = () => {
-            const membershipStatus = getMembershipApprovalStatus(session?.user, knowhow.id);
+            const membershipStatus = getMembershipApprovalStatus(session?.user, knowhow?.id);
             if (membershipStatus) {
                 if (membershipStatus === '그룹승인') {
                     setMembershipRequestBtnText('그룹 컨텐츠 등록');
@@ -116,12 +114,12 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     const showKnowhowContents = () => {
         if (knowhow?.children.length === 0 || showDetailContents) {
             return (<div>
-                <DispYoutube ytInfos={ytInfos} thumbnailType="medium" />
-                {imgUrls?.length > 0 && (
-                    <DispImages imgUrls={imgUrls} />
+                <DispYoutube thumbnailType="medium" initialYtData={knowhow?.knowhowDetailInfo?.youtubeDatas} />
+                {imgCloudinaryData?.length > 0 && (
+                    <DispImages imgCloudinaryData={imgCloudinaryData} />
                 )}
-
-                <DispPdfFiles pdfUrls={pdfUrls} pdfFileNames={knowhow?.knowhowDetailInfo?.pdfFileNames} />
+                {/* <DispPdfFiles pdfUrls={pdfUrls} /> */}
+                {/* <DispPdfFiles pdfUrls={pdfUrls} pdfFileNames={knowhow?.knowhowDetailInfo?.pdfFileNames} /> */}
                 <DispText detailText={knowhow?.knowhowDetailInfo?.detailText} />
             </div>);
         }

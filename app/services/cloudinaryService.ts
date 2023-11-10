@@ -2,6 +2,7 @@ import { KnowhowDetailOnCloudinary } from "@prisma/client";
 import { CloudiaryInfo } from "../lib/convert";
 import { getAssetResources, uploadImage } from "../actions/cloudinary";
 import prisma from '@/prisma/prisma';
+import { consoleLogFormData } from "../lib/formdata";
 
 export const getCloudinaryData = async (foldername: string, filename: string, format: string) => {
     const res = await prisma?.cloudinaryData.findFirst({
@@ -57,14 +58,15 @@ export const getImgSecureUrls = async (cloudinaryData: KnowhowDetailOnCloudinary
     return null;
 };
 
-export const uploadImagesToCloudinaryAndCreateCloudinaryData = async (thumbNailFormData: any) => {
+export const uploadImagesToCloudinaryAndCreateCloudinaryData = async (formData: any) => {
     try {
-        const file = thumbNailFormData.get('file');
+        consoleLogFormData('upload ImagesToCloudinaryAndCreateCloudinaryData', formData);
+        const file = formData.get('file');
         if (file !== "undefined") {
             const filename = file.name.split('.');
             const res = await getCloudinaryData('openplace', filename[0], filename[1]);
             if (!res) {
-                const ci = await uploadImage(thumbNailFormData);
+                const ci = await uploadImage(formData);
                 if (ci) {
                     const uploaded = await createCloudinaryData(ci);
                     return uploaded;
@@ -74,6 +76,7 @@ export const uploadImagesToCloudinaryAndCreateCloudinaryData = async (thumbNailF
                 return res;
             }
         }
+
     } catch (error) {
         console.log('uploadImagesToCloudinaryAndCreateCloudinaryData error:', error);
         throw error;
@@ -97,3 +100,4 @@ export const getImgSecureUrl = async (id: string) => {
         return cd.secure_url;
     }
 };
+

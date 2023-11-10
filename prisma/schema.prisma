@@ -150,12 +150,8 @@ model Knowhow {
 model KnowhowDetailInfo {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  videoIds      String[]
-  thumbnailType ThumbnailType?
-
-  //to be removed later(replaced by KnowhowDetailOnCloudinary)
-  // imgFileNames String[]
-  // pdfFileNames String[]
+  // videoIds      String[]
+  thumbnailType ThumbnailType
 
   detailText String?
 
@@ -163,6 +159,30 @@ model KnowhowDetailInfo {
   knowHowId String  @unique @db.ObjectId
 
   knowhowDetailOnCloudinaries KnowhowDetailOnCloudinary[]
+
+  youtubeDatas   YouTubeData[] @relation(fields: [youtubeDataIds], references: [id])
+  youtubeDataIds String[]      @db.ObjectId
+}
+
+model YouTubeData {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  watchUrl        String
+  embedUrl        String
+  thumbnailType   ThumbnailType
+  thumbnailUrl    String
+  thumbnailWidth  Int           @default(320)
+  thumbnailHeight Int           @default(180)
+
+  knowhowDetailInfos   KnowhowDetailInfo[] @relation(fields: [knowhowDetailInfoIds], references: [id])
+  knowhowDetailInfoIds String[]            @db.ObjectId
+}
+
+enum ThumbnailType {
+  DEFAULT
+  MEDIUM
+  HIGH
+  STANDARD
+  MAXRES
 }
 
 model CloudinaryData {
@@ -196,14 +216,6 @@ enum MembershipRequestStatus {
   APPROVED
   REJECTED
   PENDING
-}
-
-enum ThumbnailType {
-  DEFAULT
-  MEDIUM
-  height
-  STANDARD
-  MAXRES
 }
 
 model Tag {

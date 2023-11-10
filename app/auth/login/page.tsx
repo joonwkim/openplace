@@ -1,22 +1,22 @@
-'use client'
-import type { Metadata } from 'next'
-import Link from "next/link"
-import { useState, useEffect, } from 'react'
-import { Form, FloatingLabel, Stack } from 'react-bootstrap'
+'use client';
+import type { Metadata } from 'next';
+import Link from "next/link";
+import { useState, useEffect, } from 'react';
+import { Form, FloatingLabel, Stack } from 'react-bootstrap';
 import { useRouter } from 'next/navigation';
 import { object, string, ZodType } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import styles from '@/app/auth/page.module.css'
+import styles from '@/app/auth/page.module.css';
 // import Image from 'next/image'
 // import getGoogleUrl from '../../utils/getGoogleUrl'
-import { NextRequest } from 'next/server'
+import { NextRequest } from 'next/server';
 // import { loginAction } from '@/app/actions/userAction'
-import { signIn } from 'next-auth/react'
+import { signIn } from 'next-auth/react';
 // import { useSearchParams } from 'next/navigation'
-import { SessionForm } from '../types'
-import { loginAction } from '@/app/actions/userAction'
-import FormContainer from '@/components/controls/formContainer'
+import { SessionForm } from '../types';
+import { loginAction } from '@/app/actions/userAction';
+import FormContainer from '@/components/controls/formContainer';
 
 const sessionSchema: ZodType<SessionForm> = object({
   email: string({
@@ -31,37 +31,36 @@ export default function LoginPage(req: NextRequest) {
 
   useEffect(() => {
     try {
-      reset({ 'email': '', password: '' })
-  
+      reset({ 'email': '', password: '' });
+
     } catch (error: any) {
-      console.log('error:', error)
+      console.log('LoginPage error:', error);
     }
-  
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ ])
+  }, []);
   const { register, formState: { errors }, handleSubmit, reset } = useForm<SessionForm>({ resolver: zodResolver(sessionSchema), });
-  const [loginError, setLoginError] = useState<string[]>()
+  const [loginError, setLoginError] = useState<string[]>();
 
   const googleLogin = () => {
-    signIn('google', { callbackUrl:'/' })
-  }
+    signIn('google', { callbackUrl: '/' });
+  };
 
   async function onSubmit(values: SessionForm): Promise<void> {
     try {
-      var result = await loginAction(values)
-      if(result ==='user not registered')
-      {
-        alert('회원 가입하시거나 SNS계정으로 로그인 하세요.')
-        return
+      var result = await loginAction(values);
+      if (result === 'user not registered') {
+        alert('회원 가입하시거나 SNS계정으로 로그인 하세요.');
+        return;
       }
-      if(result ==="password do not match"){
-        alert('비밀번호가 일치하지 않습니다.')
-        return
+      if (result === "password do not match") {
+        alert('비밀번호가 일치하지 않습니다.');
+        return;
       }
-      const rslt = await signIn('credentials', {email:values.email, password: values.password, callbackUrl:'/'})      
-      reset({ 'email': '' })
+      const rslt = await signIn('credentials', { email: values.email, password: values.password, callbackUrl: '/' });
+      reset({ 'email': '' });
     } catch (error: any) {
-      alert('관리자에게 문의 하세요:' + JSON.stringify(error))
+      alert('관리자에게 문의 하세요:' + JSON.stringify(error));
     }
   }
 
@@ -111,7 +110,7 @@ export default function LoginPage(req: NextRequest) {
               loginError.map((msg, index) => {
                 return (
                   <p key={index} className={styles.registerError}>{msg}</p>
-                )
+                );
               })
             )}
           </div>
@@ -162,5 +161,5 @@ export default function LoginPage(req: NextRequest) {
       </FormContainer>
     </>
 
-  )
+  );
 }
