@@ -1,12 +1,10 @@
 'use server';
 import { revalidatePath } from "next/cache";
 import { addKnowhowViewCount, createKnowhow, updateGeneralKnowhow, updateKnowhow, updateKnowhowToSetParent } from "../services/knowhowService";
-import { } from "../services/tagService";
 import { Knowhow, KnowhowDetailInfo } from "@prisma/client";
 import { createAndUpdateKnowhowDetailInfo, updateKnowhowDetailInfo, } from "../services/knowhowDetailInfoService";
 
 export async function createChildKnowHowWithDetailAction(parentKnowhowId: string, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], imgFormData: any[], pdfFormData: any[]) {
-  const { otherFormData, thumbNailFormData } = genFormData;
   try {
 
     const knowhow = await createKnowhow(genFormData) as Knowhow;
@@ -27,12 +25,12 @@ export async function createChildKnowHowWithDetailAction(parentKnowhowId: string
 
 export async function createKnowhowWithDetailInfoAction(genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], imgFormData: any[], pdfFormData: any[]) {
   try {
-
     const knowhow = await createKnowhow(genFormData) as Knowhow;
     if (!knowhow) {
       return;
     }
     await createAndUpdateKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
+
     revalidatePath('/');
   } catch (error) {
     console.log('createKnowhowWithDetailInfoAction error:', error);
@@ -43,51 +41,10 @@ export async function createKnowhowWithDetailInfoAction(genFormData: any, knowho
 export async function updateKnowHowWithDetailInfoAction(knowhow: Knowhow, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], cdIds: string[], imgFormData: any[], pdfFormData: any[]) {
   try {
 
-    // console.log('knowhow', JSON.stringify(knowhow, null, 2));
-    // console.log('cdIds:', cdIds);
-
-    // const updatedKnowhow = await updateGeneralKnowhow(knowhow, genFormData);
-    // console.log(updatedKnowhow);
-    // consoleLogFormDatas('imgFormData:', imgFormData);
     await updateKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytData, cdIds, imgFormData, pdfFormData);
 
     await updateGeneralKnowhow(knowhow, genFormData);
 
-    // let ytDataIds: string[] = [];
-    // if (ytData.length > 0) {
-    //   ytDataIds = await getYtDataIds(ytData);
-    // }
-
-
-    // let imgcloudinaryDataIds: string[] = [];
-    // if (imgFormData.length > 0) {
-    //   imgcloudinaryDataIds = await getAndUpdateCloudinaryDataIds(imgFormData, knowhow.id);
-
-    //   console.log('imgcloudinaryDataIds:', imgcloudinaryDataIds);
-    // }
-
-
-    // let pdfcloudinaryDataIds: string[] = [];
-    // if (pdfFormData.length > 0) {
-    //   pdfcloudinaryDataIds = await getAndUpdateCloudinaryDataIds(pdfFormData, knowhow.id);
-
-    //   console.log('pdfcloudinaryDataIds:', imgcloudinaryDataIds);
-    // }
-
-    // if (genFormData !== null && genFormData !== undefined) {
-    //   await updateGeneralKnowhow(knowhow, genFormData);
-    // }
-
-    // if (knowhowDetailInfo !== null) {
-    //   await updateKnowHowDetailInfo(knowhow?.id, knowhowDetailInfo, ytDataIds);
-    // }
-
-    // const merged = [...imgcloudinaryDataIds, ...pdfcloudinaryDataIds, ...cdIds];
-    // const uniqueCdIds = [...new Set(merged)];
-    // console.log('uniqueCdIds', uniqueCdIds);
-    // await updateCdIdsOfKnowHowDetailInfo(knowhow?.id, uniqueCdIds);
-
-    // await updateKnowHowWithDetailInfo(knowhow, genFormData, knowhowDetailInfo, ytData, imgFormData, cloudinaryDataIdsToDelete, pdfFormData);
     revalidatePath('/');
   } catch (error) {
     console.log('updateKnowHowWithDetailAction error:', error);

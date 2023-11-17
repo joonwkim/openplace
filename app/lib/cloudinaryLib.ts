@@ -1,13 +1,13 @@
 import { CloudinaryData } from "@prisma/client";
 
-export function getCloudinaryFile(cloudinaryData: CloudinaryData[]) {
+export function getCloudinaryFile(thumbnailCloudinaryData: CloudinaryData[]) {
     let fs: CloudinaryFile[] = [];
-    cloudinaryData?.forEach((s: any) => {
+    thumbnailCloudinaryData?.forEach((s: any) => {
         let f = new CloudinaryFile([], '');
-        f.preview = s.cloudinaryData?.secure_url;
-        f.filename = s.cloudinaryData?.filename;
-        f.path = s.cloudinaryData?.path;
-        f.cloudinaryDataId = s.cloudinaryData?.id;
+        f.preview = s.thumbnailCloudinaryData?.secure_url;
+        f.filename = s.thumbnailCloudinaryData?.filename;
+        f.path = s.thumbnailCloudinaryData?.path;
+        f.cloudinaryDataId = s.thumbnailCloudinaryData?.id;
         fs.push(f);
     });
     return fs;

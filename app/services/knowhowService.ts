@@ -108,7 +108,7 @@ export async function updateGeneralKnowhow(knowhowSelected: Knowhow, genFormData
         include: {
             tags: true,
             knowhowDetailInfo: true,
-            cloudinaryData: true,
+            thumbnailCloudinaryData: true,
         }
     });
 
@@ -124,7 +124,7 @@ export async function updateGeneralKnowhow(knowhowSelected: Knowhow, genFormData
             include: {
                 tags: true,
                 knowhowDetailInfo: true,
-                cloudinaryData: true,
+                thumbnailCloudinaryData: true,
             }
         });
     }
@@ -190,7 +190,7 @@ export async function updateKnowHowWithDetailInfo(knowhowSelected: Knowhow, genF
                 include: {
                     tags: true,
                     knowhowDetailInfo: true,
-                    cloudinaryData: true,
+                    thumbnailCloudinaryData: true,
                 }
             });
             // console.log('knowhow updated:', knowhowUpdated);
@@ -207,7 +207,7 @@ export async function updateKnowHowWithDetailInfo(knowhowSelected: Knowhow, genF
                     include: {
                         tags: true,
                         knowhowDetailInfo: true,
-                        cloudinaryData: true,
+                        thumbnailCloudinaryData: true,
                     }
                 });
                 // console.log('knowhow updated:', khur);
@@ -354,7 +354,7 @@ export async function createKnowHowWithDetailInfo(genFormData: any, knowhowDetai
                 include: {
                     tags: true,
                     knowhowDetailInfo: true,
-                    cloudinaryData: true,
+                    thumbnailCloudinaryData: true,
                 }
             });
             console.log('knowhow created:', knowhow);
@@ -548,7 +548,7 @@ export async function getKnowhows() {
                 membershipRequest: true,
                 author: true,
                 children: true,
-                cloudinaryData: true,
+                thumbnailCloudinaryData: true,
             }
         });
         // console.log('getKnowHows', JSON.stringify(knowHows, null, 2));
@@ -574,12 +574,12 @@ export async function getKnowhow(id: string) {
                 votes: true,
                 KnowhowType: true,
                 category: true,
-                cloudinaryData: true,
+                thumbnailCloudinaryData: true,
                 knowhowDetailInfo: {
                     include: {
                         // knowhowDetailOnCloudinaries: {
                         //     include: {
-                        //         cloudinaryData: true,
+                        //         thumbnailCloudinaryData: true,
                         //         knowhowDetailInfo: true,
                         //     }
                         // },

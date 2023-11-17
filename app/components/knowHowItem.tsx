@@ -35,8 +35,11 @@ const KnowhowItem = (props: KnowHowProps) => {
             <div key={knowhow?.id} className='col-sm btn'>
                 <Card className='card shadow-lg p-1 bg-body rounded h-100' >
                     {thumbnailSecureUrl ? (<>
-                        <Card.Img onClick={(e) => handleClickOnCard(e)} variant="top" src={thumbnailSecureUrl} sizes="100vw" height={250} style={{ objectFit: 'contain', }} /></>)
+                        <Card.Img onClick={(e) => handleClickOnCard(e)} variant="top" src={knowhow?.thumbnailCloudinaryData?.secure_url} sizes="100vw" height={250} style={{ objectFit: 'contain', }} /></>)
                         : (<> <Card.Img onClick={(e) => handleClickOnCard(e)} variant="top" src={`/images/${knowhow.thumbnailFilename}`} sizes="100vw" height={250} style={{ objectFit: 'contain', }} /></>)}
+                    {/* {thumbnailSecureUrl ? (<>
+                        <Card.Img onClick={(e) => handleClickOnCard(e)} variant="top" src={thumbnailSecureUrl} sizes="100vw" height={250} style={{ objectFit: 'contain', }} /></>)
+                        : (<> <Card.Img onClick={(e) => handleClickOnCard(e)} variant="top" src={`/images/${knowhow.thumbnailFilename}`} sizes="100vw" height={250} style={{ objectFit: 'contain', }} /></>)} */}
                     <Card.Body onClick={handleClickOnCard} >
                         <Card.Title className='text-center fw-bold'>{knowhow?.title}</Card.Title>
                         <div className='text-center card-text'>

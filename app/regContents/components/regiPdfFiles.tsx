@@ -21,6 +21,7 @@ export const RegiPdfFiles = forwardRef<any, FileProps>((props: FileProps, ref) =
     const [fileRejections, setFileRejections] = useState<any[]>([]);
     const [pdfFormdata, setPdfFormData] = useState<any[]>([]);
     const [cdIds, setCdIds] = useState<string[]>([]);
+    const [embedUrl, setEmbedUrl] = useState('');
 
     useImperativeHandle(
         ref,
@@ -42,13 +43,13 @@ export const RegiPdfFiles = forwardRef<any, FileProps>((props: FileProps, ref) =
 
         if (acceptedFiles.length === 1) {
             if (!files?.some(s => s.name === acceptedFiles[0].name)) {
-                setFiles(prev => [...prev, acceptedFiles[0]]);
+                setFiles(prev => [...prev, Object.assign(acceptedFiles[0], { secure_url: URL.createObjectURL(acceptedFiles[0]) })]);
             }
         }
         else {
             acceptedFiles.forEach(file => {
                 if (files?.length === 0 || !files?.some(s => s.name === file.name)) {
-                    setFiles(prev => [...prev, file]);
+                    setFiles(prev => [...prev, Object.assign(file, { secure_url: URL.createObjectURL(file) })]);
                 }
             });
         }
@@ -79,8 +80,19 @@ export const RegiPdfFiles = forwardRef<any, FileProps>((props: FileProps, ref) =
         setFiles(cfs);
     };
 
+    const handleClick = (pdf: CloudinaryData) => {
+        alert(pdf?.secure_url);
+        if (pdf?.secure_url) {
+            setEmbedUrl(pdf?.secure_url);
+        }
+    };
+
+    const handleHide = () => {
+        setEmbedUrl('');
+    };
+
     const acceptedFileItems = files?.map((file: any, index: number) => (
-        <li className='list-group-item' key={index}>
+        <li className='list-group-item' key={index} onClick={() => handleClick(file)}>
             <div className='row'>
                 <div className='col-4 mt-1'>{file.path}</div>
                 <div className='col-1'><span className='btn btn-light' onClick={() => handleRemove(index)}>X</span></div>
@@ -99,6 +111,12 @@ export const RegiPdfFiles = forwardRef<any, FileProps>((props: FileProps, ref) =
             {showFileInput && (<div className={`border border-primary ${styles.inputDropNoBg}`}>
                 <FileUploader loaderMessage='파일을 끌어다 놓거나 선택하세요 ' dropMessage='가져다가 여기 놓으세요' options={options} />
             </div>)}
+            {embedUrl &&
+                <div>
+                    <div className='fs-7'><button className='btn btn-primary-outline' type="button" onClick={handleHide}>PDF 숨기기</button></div>
+                    <iframe src={embedUrl} width={854} height={480} title="Pdf" allowFullScreen></iframe>
+                </div>}
+
             <aside>
                 {acceptedFileItems?.length > 0 && (<>
                     <ul className="list-group mb-3" >{acceptedFileItems}</ul>

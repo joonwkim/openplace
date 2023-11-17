@@ -141,8 +141,8 @@ model Knowhow {
 
   children Knowhow[] @relation("KnowhowParentChildren")
 
-  cloudinaryData   CloudinaryData? @relation(fields: [cloudinaryDataId], references: [id])
-  cloudinaryDataId String?         @db.ObjectId
+  thumbnailCloudinaryData CloudinaryData? @relation(fields: [cloudinaryDataId], references: [id])
+  cloudinaryDataId        String?         @db.ObjectId
 
   @@unique([title, authorId])
 }
@@ -215,7 +215,7 @@ model CloudinaryData {
 //   knowhowDetailInfo   KnowhowDetailInfo? @relation(fields: [knowhowDetailInfoId], references: [id])
 //   knowhowDetailInfoId String?            @db.ObjectId
 
-//   cloudinaryData   CloudinaryData? @relation(fields: [cloudinaryDataId], references: [id])
+//   thumbnailCloudinaryData   CloudinaryData? @relation(fields: [cloudinaryDataId], references: [id])
 //   cloudinaryDataId String?         @db.ObjectId
 // }
 

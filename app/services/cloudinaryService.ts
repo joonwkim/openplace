@@ -5,6 +5,15 @@ import prisma from '@/prisma/prisma';
 import { consoleLogFormDatas } from "../lib/formdata";
 import { addCdIdToKnowHowDetailInfo } from "./knowhowDetailInfoService";
 
+export const deleteCloudinaryData = async (fileType: string) => {
+    const pdfs = await prisma.cloudinaryData.deleteMany({
+        where: {
+            format: fileType,
+        }
+    });
+    console.log('pdfs: ', pdfs);
+    return pdfs;
+};
 export const getCloudinaryDataByPath = async (path: string, foldername: string) => {
     try {
         const res = await prisma?.cloudinaryData.findFirst({
@@ -292,7 +301,7 @@ export const uploadImagesToCloudinaryAndCreateCloudinaryData = async (formData: 
 
 export const getThumbnailSecureUrl = (knowhow: any) => {
     if (!knowhow) return;
-    const secure_url = knowhow.cloudinaryData?.secure_url;
+    const secure_url = knowhow.thumbnailCloudinaryData?.secure_url;
     return secure_url;;
 };
 

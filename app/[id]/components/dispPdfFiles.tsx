@@ -1,6 +1,7 @@
 'use client';
 
 import { CloudinaryData } from "@prisma/client";
+import { JsonWebTokenError } from "jsonwebtoken";
 import { useState } from "react";
 
 type PDFProps = {
@@ -16,7 +17,10 @@ export const DispPdfFiles = (props: PDFProps) => {
     // console.log('pdfs:', pdfs);
 
     const handleClick = (pdf: CloudinaryData) => {
-        alert(pdf?.path);
+        alert(pdf?.secure_url);
+        if (pdf?.secure_url) {
+            setEmbedUrl(pdf?.secure_url);
+        }
     };
 
     const acceptedFileItems = pdfs?.map((pdf: any, index: number) => (
@@ -24,11 +28,22 @@ export const DispPdfFiles = (props: PDFProps) => {
             {pdf?.path} - {pdf?.bytes} bytes
         </li>
     ));
+
+    const handleHide = () => {
+        setEmbedUrl('');
+    };
+
+
     return (
         <>
             {pdfs?.length > 0 && (<>
                 <h3 className='mt-3'>PDF 파일 </h3>
             </>)}
+            {embedUrl &&
+                <div>
+                    <div className='fs-7'><button className='btn btn-primary-outline' type="button" onClick={handleHide}>PDF 숨기기</button></div>
+                    <iframe src={embedUrl} width={854} height={480} title="Pdf" allowFullScreen></iframe>
+                </div>}
 
             <aside>
                 {acceptedFileItems?.length > 0 && (

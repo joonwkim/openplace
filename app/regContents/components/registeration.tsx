@@ -90,19 +90,19 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
         regGenRef.current?.handleSubmit();
     };
     const handleMouseLeaveOnYtFile = () => {
-        alert('handleMouseLeaveOnYtFile');
+        // alert('handleMouseLeaveOnYtFile');
         ytRef.current?.handleSubmit();
     };
     const handleMouseLeaveOnImgFile = () => {
-        alert('handleMouseLeaveOnImgFile');
+        // alert('handleMouseLeaveOnImgFile');
         imgRef.current?.handleSubmit();
     };
     const handleMouseLeaveOnPdfFile = () => {
-        alert('handleMouseLeaveOnPdfFile');
+        // alert('handleMouseLeaveOnPdfFile');
         pdfFileRef.current?.handleSubmit();
     };
     const handleMouseLeaveOnText = () => {
-        alert('handleMouseLeaveOnText');
+        // alert('handleMouseLeaveOnText');
         textRef.current?.handleSubmit();
     };
     const getFormGenData = (data: any) => {
@@ -111,6 +111,7 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
     const getYtData = (data: any) => {
         const { ytData, ytDataIdsToDelete } = data;
         setYtData(ytData);
+        console.log('ytData: ', ytData);
     };
     const getImgFormData = (data: any) => {
         setImgCdIds([]);
@@ -140,7 +141,7 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
                 <button className='btn btn-secondary' onClick={handleCancelBtnClick} type="submit">취소</button>
             </div>
             <div onMouseLeave={handleMouseLeaveGenInfo}>
-                <RegiGeneral ref={regGenRef} setRegDataToSave={getFormGenData} categories={categories} knowHowTypes={knowHowTypes} tags={tags} knowhow={knowhow} editMode={editMode} thumbnailCloudinaryData={knowhow?.cloudinaryData} />
+                <RegiGeneral ref={regGenRef} setRegDataToSave={getFormGenData} categories={categories} knowHowTypes={knowHowTypes} tags={tags} knowhow={knowhow} editMode={editMode} thumbnailCloudinaryData={knowhow?.thumbnailCloudinaryData} />
             </div>
             <div className='mt-3'>
                 <button type="button" className="btn btn-success me-3" onClick={() => { regGenRef.current?.handleSubmit(); setShowDetail(!showDetail); setShowYoutube(true); setShowImg(false); setShowFile(false); setShowTextEditor(false); }}>

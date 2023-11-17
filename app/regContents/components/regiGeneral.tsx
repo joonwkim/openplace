@@ -207,7 +207,7 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
                         <div className='col-5 p-3'>
                             <Image
                                 alt={file.name}
-                                src={file.preview}
+                                src={file.secure_url}
                                 quality={100}
                                 fill
                                 sizes="100vw"
