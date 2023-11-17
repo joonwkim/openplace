@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverActions: true,
-  },
+  // experimental: {
+  //   serverActions: true,
+  // },
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -16,7 +16,7 @@ const nextConfig = {
         pathname: '/vi/**',
       },
     ],
-    domains: ['img.youtube.com', 'res.cloudinary.com','assets.vercel.com',],
+    domains: ['img.youtube.com', 'res.cloudinary.com', 'assets.vercel.com',],
   },
   // images: {
   //       formats: ['image/avif', 'image/webp'],

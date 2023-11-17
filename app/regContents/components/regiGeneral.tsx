@@ -3,7 +3,7 @@ import Image from 'next/image';
 import React, { useCallback, useEffect, forwardRef, useState, useImperativeHandle, useRef } from 'react';
 import { Col, Form, Row, Badge } from 'react-bootstrap';
 import styles from '@/app/regContents/page.module.css';
-import { Category, Knowhow, KnowhowType, Tag } from '@prisma/client';
+import { Category, CloudinaryData, Knowhow, KnowhowType, Tag } from '@prisma/client';
 import { DropzoneOptions } from 'react-dropzone';
 import { useSession, } from 'next-auth/react';
 import { createTagAction } from '@/app/actions/tagAction';
@@ -12,6 +12,7 @@ import ImgUploader from '@/components/controls/imgUploader';
 import { getFormdata } from '../lib/formData';
 import { EditMode } from '@/app/lib/convert';
 import { getThumbnailSecureUrl } from '@/app/services/cloudinaryService';
+import { consoleLogFormData } from '@/app/lib/formdata';
 
 type RegProps = {
     categories: Category[],
@@ -20,16 +21,17 @@ type RegProps = {
     setRegDataToSave: (data: any) => void,
     knowhow: any | undefined,
     editMode: boolean | undefined,
+    thumbnailCloudinaryData: CloudinaryData;
 };
 
 export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
 
-    const { categories, knowHowTypes, tags, setRegDataToSave, knowhow, editMode } = props;
+    const { categories, knowHowTypes, tags, setRegDataToSave, knowhow, editMode, thumbnailCloudinaryData } = props;
     const [otherFormData, setOtherFormData] = useState<any>(null);
     const [thumbNailFormData, setThumbNailFormData] = useState<any>(null);
     const { data: session } = useSession();
     const [validated, setValidated] = useState(false);
-    const [file, setFile] = useState<any>();
+    const [file, setFile] = useState<any>(thumbnailCloudinaryData);
     const [imgSrc, setImgSrc] = useState('');
     const [tagText, setTagText] = useState('');
     const [selectedTag, setTagSelected] = useState<Tag | null>(null);
@@ -75,27 +77,33 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
     }, [selectedTag, tagText]);
 
     const onDrop = useCallback(async (files: File[]) => {
-        setFile(Object.assign(files[0], { preview: URL.createObjectURL(files[0]) }));
-        try {
+        setFile(Object.assign(files[0], { secure_url: URL.createObjectURL(files[0]) }));
 
-            // public에 img file를 저장하는 경우(무료 cloudinary저장후 display 속도 문제가 있을 경우에 이용)
-            const data = new FormData();
-            // console.log('file on Drop:', files[0].size);
-            data.set('file', files[0]);
-            const res = await fetch('/api/upload', {
-                method: 'POST',
-                body: data
-            });
-            const imgUrl = `/images/${files[0].name}`;
-            setImgSrc(imgUrl);
-            if (!res.ok) throw new Error(await res.text());
+    }, []);
 
-        } catch (error) {
-            //파일 사이즈 제약을 지정하였을 경우
-            alert('1024 * 1000 이내 파일을 올릴 수 있습니다.');
-            router.push('/regContents');
-        }
-    }, [router]);
+    //! local public folder에 Image를 저장하는 경우 사용함
+    // const onDrop = useCallback(async (files: File[]) => {
+    //     setFile(Object.assign(files[0], { preview: URL.createObjectURL(files[0]) }));
+    //     try {
+
+    //         // public에 img file를 저장하는 경우(무료 cloudinary저장후 display 속도 문제가 있을 경우에 이용)
+    //         const data = new FormData();
+    //         // console.log('file on Drop:', files[0].size);
+    //         data.set('file', files[0]);
+    //         const res = await fetch('/api/upload', {
+    //             method: 'POST',
+    //             body: data
+    //         });
+    //         const imgUrl = `/images/${files[0].name}`;
+    //         setImgSrc(imgUrl);
+    //         if (!res.ok) throw new Error(await res.text());
+
+    //     } catch (error) {
+    //         //파일 사이즈 제약을 지정하였을 경우
+    //         alert('1024 * 1000 이내 파일을 올릴 수 있습니다.');
+    //         router.push('/regContents');
+    //     }
+    // }, [router]);
 
     const options: DropzoneOptions = {
         accept: { 'image/*': [] }, maxSize: 1024 * 1000, maxFiles: 1, onDrop
@@ -123,6 +131,8 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
             setOtherFormData(formData);
 
             const td = await getFormdata(file, 'openplace');
+            td.append('path', file.path);
+
             setThumbNailFormData(td);
         } catch (error) {
             console.log('handleSubmit in regiGeneral error: ', error);

@@ -87,7 +87,6 @@ export const RegiYoutube = forwardRef<CanHandleSubmit, YTProps>((props: YTProps,
         placeholder="유튜브를 끌어오세요"
         onChange={handleInputChange}
       />)}
-      <div> {editMode ? (<>edit mode</>) : (<>not edit mode</>)}</div>
       <div>
         {embedUrl ?
           <div>

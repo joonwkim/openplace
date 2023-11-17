@@ -4,11 +4,12 @@ import { Category, Knowhow, KnowhowDetailInfo, KnowhowType, Tag, ThumbnailType }
 import { RegiGeneral } from './regiGeneral';
 import { RegiYoutube } from './regiYoutube';
 import { RegiImages } from './regiImages';
-import { createChildKnowHowWithDetailAction, createKnowHowWithDetailAction, updateKnowHowWithDetailAction } from '@/app/actions/knowhowAction';
+import { createChildKnowHowWithDetailAction, createKnowhowWithDetailInfoAction, updateKnowHowWithDetailInfoAction } from '@/app/actions/knowhowAction';
 import { RegiText } from './regiText';
 import { RegiPdfFiles } from './regiPdfFiles';
 import { useRouter } from 'next/navigation';
-import { getCloudinaryImgData, getPdfUrls, } from '@/app/lib/arrayLib';
+import { getCloudinaryImgData, getCloudinaryPdfData, } from '@/app/lib/arrayLib';
+import { consoleLogFormDatas } from '@/app/lib/formdata';
 
 type RegProps = {
     categories: Category[],
@@ -26,14 +27,12 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
     const [genFormData, setGenFormData] = useState<any>();
     const [ytData, setYtData] = useState<any[]>(knowhow?.knowhowDetailInfo?.youtubeDatas);
     const [imgFormData, setImgFormData] = useState<any[]>([]);
-    const [cloudinaryDataIdsToDelete, setCloudinaryDataIdsToDelete] = useState<string[]>([]);
     const [pdfFormData, setPdfFormData] = useState<any[]>([]);
-    // const [pdfFilenames, setPdfFilenames] = useState<string[]>([]);
     const [text, setText] = useState('');
     const regGenRef = useRef<any>(null);
     const ytRef = useRef<any>(null);
     const imgRef = useRef<any>(null);
-    const fileRef = useRef<any>(null);
+    const pdfFileRef = useRef<any>(null);
     const textRef = useRef<any>(null);
     const [showYoutube, setShowYoutube] = useState(false);
     const [showImg, setShowImg] = useState(false);
@@ -41,8 +40,10 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
     const [showTextEditor, setShowTextEditor] = useState(false);
     const [parentId, setParentId] = useState('');
     const [knowhowSelected, setKnowhowSelected] = useState<Knowhow | undefined>();
-
     const imgCloudinaryData = getCloudinaryImgData(knowhow);
+    const [imgCdIds, setImgCdIds] = useState<string[]>(imgCloudinaryData ? imgCloudinaryData.map((s: any) => s.id) : []);
+    const pdfCloudinaryData = getCloudinaryPdfData(knowhow);
+    const [pdfCdIds, setPdfCdIds] = useState<string[]>(pdfCloudinaryData ? pdfCloudinaryData.map((s: any) => s.id) : []);
 
     useEffect(() => {
         if (parentKnowhowId) {
@@ -58,17 +59,24 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
         const knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId"> = {
             thumbnailType: ThumbnailType.MEDIUM,
             detailText: text,
-            youtubeDataIds: []
+            youtubeDataIds: [],
+            cloudinaryDataIds: []
         };
+
         if (knowhowSelected) {
-            await updateKnowHowWithDetailAction(knowhowSelected, genFormData, knowhowDetailInfo, ytData, imgFormData, cloudinaryDataIdsToDelete, pdfFormData);
+
+            let uniqueCdIds = [...imgCdIds, ...pdfCdIds];
+            console.log('uniqueCdIds', uniqueCdIds);
+            consoleLogFormDatas('imgFormData', imgFormData);
+            consoleLogFormDatas('pdfFormData', pdfFormData);
+            await updateKnowHowWithDetailInfoAction(knowhowSelected, genFormData, knowhowDetailInfo, ytData, uniqueCdIds, imgFormData, pdfFormData);
         }
         else {
             if (parentId) {
                 await createChildKnowHowWithDetailAction(parentId, genFormData, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
                 router.push(`/regContents/?knowhowId=${parentId}`);
             } else {
-                await createKnowHowWithDetailAction(genFormData, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
+                await createKnowhowWithDetailInfoAction(genFormData, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
             }
         }
         router.push('/');
@@ -76,19 +84,25 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
     const handleCancelBtnClick = () => {
         router.push('/');
     };
+
     const handleMouseLeaveGenInfo = () => {
+        // alert('handleMouseLeaveGenInfo');
         regGenRef.current?.handleSubmit();
     };
     const handleMouseLeaveOnYtFile = () => {
+        alert('handleMouseLeaveOnYtFile');
         ytRef.current?.handleSubmit();
     };
     const handleMouseLeaveOnImgFile = () => {
+        alert('handleMouseLeaveOnImgFile');
         imgRef.current?.handleSubmit();
     };
     const handleMouseLeaveOnPdfFile = () => {
-        fileRef.current?.handleSubmit();
+        alert('handleMouseLeaveOnPdfFile');
+        pdfFileRef.current?.handleSubmit();
     };
     const handleMouseLeaveOnText = () => {
+        alert('handleMouseLeaveOnText');
         textRef.current?.handleSubmit();
     };
     const getFormGenData = (data: any) => {
@@ -96,19 +110,24 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
     };
     const getYtData = (data: any) => {
         const { ytData, ytDataIdsToDelete } = data;
-        console.log(' getytData in registraion: ', ytData);
         setYtData(ytData);
     };
     const getImgFormData = (data: any) => {
-        const { imgFormdata, cloudinaryDataIdsToDelete } = data;
-        console.log('img form data on registration', imgFormData);
+        setImgCdIds([]);
+        const { cdIds, imgFormdata } = data;
+        consoleLogFormDatas('image formdata in registration:', imgFormData);
         setImgFormData(imgFormdata);
-        setCloudinaryDataIdsToDelete(cloudinaryDataIdsToDelete);
+        setImgCdIds(cdIds);
+        console.log('img cdIds: ', imgCdIds);
+
     };
     const getPdfFiles = (data: any) => {
-        const { pdfFilenames, pdfFormdata } = data;
-        // setPdfFilenames(pdfFilenames);
+        setPdfCdIds([]);
+        const { cdIds, pdfFormdata } = data;
         setPdfFormData(pdfFormdata);
+        consoleLogFormDatas('pdf formdata in registration:', pdfFormdata);
+        setPdfCdIds(cdIds);
+        console.log('pdf cdIds: ', pdfCdIds);
     };
     const getTextData = (textData: any) => {
         setText(textData);
@@ -121,7 +140,7 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
                 <button className='btn btn-secondary' onClick={handleCancelBtnClick} type="submit">취소</button>
             </div>
             <div onMouseLeave={handleMouseLeaveGenInfo}>
-                <RegiGeneral ref={regGenRef} setRegDataToSave={getFormGenData} categories={categories} knowHowTypes={knowHowTypes} tags={tags} knowhow={knowhow} editMode={editMode} />
+                <RegiGeneral ref={regGenRef} setRegDataToSave={getFormGenData} categories={categories} knowHowTypes={knowHowTypes} tags={tags} knowhow={knowhow} editMode={editMode} thumbnailCloudinaryData={knowhow?.cloudinaryData} />
             </div>
             <div className='mt-3'>
                 <button type="button" className="btn btn-success me-3" onClick={() => { regGenRef.current?.handleSubmit(); setShowDetail(!showDetail); setShowYoutube(true); setShowImg(false); setShowFile(false); setShowTextEditor(false); }}>
@@ -141,7 +160,7 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
                     </div>
                     <div className='mt-3' onMouseLeave={handleMouseLeaveOnPdfFile}>
                         <p onClick={() => { setShowFile(!showFile); setShowImg(false); setShowYoutube(false); setShowTextEditor(false); }}><span className='btn btn-light'>{editMode ? (<>PDF 파일 변경하기</>) : (<>PDF 파일 등록하기</>)}</span></p>
-                        <RegiPdfFiles ref={fileRef} setRegDataToSave={getPdfFiles} showFileInput={showFile} />
+                        <RegiPdfFiles ref={pdfFileRef} setRegDataToSave={getPdfFiles} showFileInput={showFile} pdfCloudinaryData={pdfCloudinaryData} editMode={editMode} />
                     </div>
                     <div className='mt-3' onMouseLeave={handleMouseLeaveOnText}>
                         <p onClick={() => { setShowTextEditor(!showTextEditor); setShowFile(false); setShowImg(false); setShowYoutube(false); }}><span className='btn btn-light'>{editMode ? (<>텍스트와 이미지 변경하기</>) : (<>텍스트와 이미지 등록하기</>)}</span></p>

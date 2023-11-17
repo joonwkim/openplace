@@ -1,6 +1,6 @@
 'use client';
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
-import { Knowhow } from '@prisma/client';
+import { CloudinaryData, Knowhow } from '@prisma/client';
 import { DispYoutube } from './dispYoutube';
 import { DispImages } from './dispImages';
 import { DispText } from './dispText';
@@ -11,7 +11,7 @@ import { createMembershipRequestAction } from '@/app/actions/membershipRequestAc
 import { getMembershipApprovalStatus } from '@/app/lib/membership';
 import { useRouter } from 'next/navigation';
 import KnowHowItem from '@/app/components/knowhowItem';
-import { getCloudinaryImgData, getImgUrls, getPdfUrls, getYtInfos } from '@/app/lib/arrayLib';
+import { getCloudinaryImgData, getCloudinaryPdfData, getPdfUrls, } from '@/app/lib/arrayLib';
 import { getThumbnailSecureUrl } from '@/app/services/cloudinaryService';
 
 type RegProps = {
@@ -24,9 +24,11 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     const [showDetailContents, setShowDetailContents] = useState(false);
     const [showChildrenContents, setShowChildrenContents] = useState(true);
     const [membershipRequestBtnText, setMembershipRequestBtnText] = useState('');
-    // const pdfUrls = getPdfUrls(knowhow);
     const thumbnailSecureUrl = getThumbnailSecureUrl(knowhow) as string;
-    const imgCloudinaryData = getCloudinaryImgData(knowhow);
+    const imgCloudinaryDatas = getCloudinaryImgData(knowhow);
+    // console.log('imgCloudinaryDatas:', imgCloudinaryDatas);
+    const pdfCloudinaryDatas = getCloudinaryPdfData(knowhow);
+    // console.log('pdfCloudinaryDatas:', pdfCloudinaryDatas);
 
     const isLoggedIn = useCallback(() => {
         return session?.user;
@@ -115,11 +117,12 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
         if (knowhow?.children.length === 0 || showDetailContents) {
             return (<div>
                 <DispYoutube thumbnailType="medium" initialYtData={knowhow?.knowhowDetailInfo?.youtubeDatas} />
-                {imgCloudinaryData?.length > 0 && (
-                    <DispImages imgCloudinaryData={imgCloudinaryData} />
+                {imgCloudinaryDatas?.length > 0 && (
+                    <DispImages initialImgs={imgCloudinaryDatas} />
                 )}
-                {/* <DispPdfFiles pdfUrls={pdfUrls} /> */}
-                {/* <DispPdfFiles pdfUrls={pdfUrls} pdfFileNames={knowhow?.knowhowDetailInfo?.pdfFileNames} /> */}
+                {pdfCloudinaryDatas?.length > 0 && (
+                    <DispPdfFiles initialPdfs={pdfCloudinaryDatas} />
+                )}
                 <DispText detailText={knowhow?.knowhowDetailInfo?.detailText} />
             </div>);
         }
@@ -154,7 +157,6 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
                 </div>
             </>
             )}
-
         </>
     );
 };

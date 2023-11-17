@@ -38,7 +38,7 @@ export async function isPasswordValid(email: string, password: string): Promise<
 
 export async function createUser(input: any) {
     try {
-        
+
         const user = await prisma.user.create({ data: input });
         return { user };
     }
@@ -49,6 +49,7 @@ export async function createUser(input: any) {
 
 export async function getUserByEmail(emailInput: string) {
     try {
+        // const user = await prisma.user.findUnique({
         const user = await prisma.user.findUnique({
             where: {
                 email: emailInput,

@@ -5,6 +5,8 @@ export const getFormdata = async (file: any, foldername: string) => {
     const { timestamp, signature } = await getSignature(foldername);
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('path', file.path ? file.path : 'notfound');
+    // formData.append('cdId', file.id);
     formData.append('api_key', process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY as string);
     formData.append('signature', signature);
     formData.append('timestamp', timestamp.toString());

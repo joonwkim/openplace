@@ -229,3 +229,6 @@ git push -f origin main
 git gc --aggressive --prune=all
 
 
+//vercel command cli
+npm install -g vercel
+

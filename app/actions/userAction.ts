@@ -34,6 +34,7 @@ export async function createUserAction(input: any) {
 export async function loginAction(input: any) {
     try {
         var user: any = await getUserByEmail(input.email);
+        // console.log('user: ', user);
         if (!user) return 'user not registered';
         const result = await bcrypt.compare(input.password, user.password).catch((e) => false);
         if (!result) {
@@ -45,7 +46,7 @@ export async function loginAction(input: any) {
                 "UserInfo": {
                     "name": user.name,
                     "email": user.email,
-                    "roles": user.roles,
+                    "roles": user.roles ? user.roles : [],
                     "image": user.image,
                 }
             },
@@ -61,6 +62,7 @@ export async function loginAction(input: any) {
         const ass_tok = cookies().get('ass_tok');
         return user;
     } catch (error: any) {
+        console.log('loginAction error: ', error);
         const errorMessage = error.response.data.message;
         throw new Error(errorMessage);
     }

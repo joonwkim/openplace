@@ -1,10 +1,22 @@
 import { getYoutubeDataAction } from "../actions/youtubeAction";
 import { YoutubeInfo } from "./convert";
 
+
 export const getCloudinaryImgData = (knowhow: any) => {
-    const imgCloudinaryData = knowhow?.knowhowDetailInfo?.knowhowDetailOnCloudinaries?.filter((s: any) => s.cloudinaryData.format !== 'pdf');
-    // console.log('imgCloudinaryData', imgCloudinaryData);
+    let imgCloudinaryData = knowhow?.knowhowDetailInfo?.cloudinaryDatas?.filter((s: any) => s.format !== 'pdf');
+    // console.log('imgCloudinaryData getCloudinaryImgData: ', imgCloudinaryData);
+    if (imgCloudinaryData === null || imgCloudinaryData === undefined) {
+        imgCloudinaryData = [];
+    }
     return imgCloudinaryData;
+};
+export const getCloudinaryPdfData = (knowhow: any) => {
+    let pdfCloudinaryData = knowhow?.knowhowDetailInfo?.cloudinaryDatas?.filter((s: any) => s.format === 'pdf');
+    // console.log('pdfCloudinaryData getCloudinaryPdfData: ', getCloudinaryPdfData);
+    if (pdfCloudinaryData === null || pdfCloudinaryData === undefined) {
+        pdfCloudinaryData = [];
+    }
+    return pdfCloudinaryData;
 };
 export const getImgUrls = (knowhow: any) => {
     const imgUrls = knowhow?.knowhowDetailInfo?.knowhowDetailOnCloudinaries?.map((s: any) => {
@@ -12,14 +24,12 @@ export const getImgUrls = (knowhow: any) => {
             return s.cloudinaryData.secure_url;
         };
     }).flatMap((f: any) => f ? [f] : []);
-
-    // console.log('imgUrls', imgUrls);
     return imgUrls;
 };
 
 export const getPdfUrls = (knowhow: any) => {
     const pdfUrls = knowhow?.knowhowDetailInfo?.knowhowDetailOnCloudinaries?.map((s: any) => {
-        if (s.cloudinaryData.format === 'pdf') {
+        if (s.cloudinaryData?.format === 'pdf') {
             return s.cloudinaryData.secure_url;
         };
     }).flatMap((f: any) => f ? [f] : []);

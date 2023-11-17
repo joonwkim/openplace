@@ -1,33 +1,41 @@
 'use client';
 
-type FileProps = {
-    pdfUrls: string[];
-    // pdfFileNames: string[];
+import { CloudinaryData } from "@prisma/client";
+import { useState } from "react";
+
+type PDFProps = {
+    initialPdfs: CloudinaryData[],
 };
 
-export const DispPdfFiles = (props: FileProps) => {
+export const DispPdfFiles = (props: PDFProps) => {
 
-    const { pdfUrls, } = props;
+    const { initialPdfs } = props;
+    const [embedUrl, setEmbedUrl] = useState('');
+    const [pdfs, setPdfs] = useState<CloudinaryData[]>(initialPdfs);
 
-    // const acceptedFileItems = pdfFileNames.map((file: any) => (
-    //     <li className='list-group-item' key={file.path}>
-    //         {/* {file.path} - {file.size} bytes */}
-    //     </li>
-    // ));
+    // console.log('pdfs:', pdfs);
+
+    const handleClick = (pdf: CloudinaryData) => {
+        alert(pdf?.path);
+    };
+
+    const acceptedFileItems = pdfs?.map((pdf: any, index: number) => (
+        <li className='list-group-item' key={index} onClick={() => handleClick(pdf)}>
+            {pdf?.path} - {pdf?.bytes} bytes
+        </li>
+    ));
     return (
         <>
-            {/* <h4>To be modified later</h4> */}
-            {/* {pdfFileNames.length > 0 && (<>
+            {pdfs?.length > 0 && (<>
                 <h3 className='mt-3'>PDF 파일 </h3>
-                {pdfFileNames && (JSON.stringify(pdfFileNames))}
             </>)}
 
             <aside>
-                {acceptedFileItems.length > 0 && (
+                {acceptedFileItems?.length > 0 && (
                     <>
                         <ul className="list-group mb-3" >{acceptedFileItems}</ul>
                     </>)}
-            </aside> */}
+            </aside>
         </>
     );
 };

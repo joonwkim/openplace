@@ -153,6 +153,7 @@ export interface CloudiaryInfo {
   asset_id: string,
   public_id: string,
   filename: string,
+  path: string,
   format: string,
   // resource_type: string,
   bytes: number,

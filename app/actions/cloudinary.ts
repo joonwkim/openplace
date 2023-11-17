@@ -31,7 +31,7 @@ const imgExists = async (filename: string) => {
   return result;
 };
 
-export async function uploadImage(formData: FormData) {
+export async function uploadToCloudinary(formData: FormData) {
   try {
 
     const endpoint = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL as string;
@@ -39,20 +39,25 @@ export async function uploadImage(formData: FormData) {
       method: 'POST',
       body: formData
     }).then(res => res.json());
+
+    console.log('upload result to cloudinary:', data);
+
     const ci: CloudiaryInfo = {
       asset_id: data.asset_id,
       public_id: data.public_id,
-      filename: data.public_id.split('_')[0],
+      filename: data.path,
+      // filename: data.public_id.split('_')[0],
+      path: data.path,
       format: data.format,
       bytes: data.bytes,
       folder: data.folder,
       secure_url: data.secure_url,
       thumbnail_url: data.thumbnail_url,
     };
-    console.log('upload result:', ci);
+    // console.log('uploadToCloudinary result: ', ci);
     return ci;
   } catch (error) {
-    console.log('uploadImage error:', error);
+    console.log('uploadToCloudinary error:', error);
   }
 }
 
@@ -74,13 +79,14 @@ export async function uploadFile(formData: FormData) {
         asset_id: data.asset_id,
         public_id: data.public_id,
         filename: data.public_id.split('_')[0],
+        path: data.path,
         format: data.format,
         bytes: data.bytes,
         folder: data.folder,
         secure_url: data.secure_url,
         thumbnail_url: data.thumbnail_url,
       };
-      console.log('upload result:', ci);
+      // console.log('uploadToCloudinary result: ', ci);
       return ci;
     } else {
       console.log('resources:', result[1]);
@@ -159,6 +165,7 @@ export async function getAssetResources() {
         asset_id: s.asset_id,
         public_id: s.public_id,
         filename: s.public_id.split('_')[0],
+        path: s.path,
         format: s.format,
         bytes: s.bytes,
         folder: s.folder,
