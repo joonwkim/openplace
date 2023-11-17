@@ -3,14 +3,9 @@ import { revalidatePath } from "next/cache";
 import { addKnowhowViewCount, createKnowhow, updateGeneralKnowhow, updateKnowhow, updateKnowhowToSetParent } from "../services/knowhowService";
 import { } from "../services/tagService";
 import { Knowhow, KnowhowDetailInfo } from "@prisma/client";
-import { consoleLogFormDatas } from "../lib/formdata";
-import { getYtDataIds, } from "../services/youtubeService";
-import { createAndUpdateKnowhowDetailInfo, updateCdIdsOfKnowHowDetailInfo, updateKnowHowDetailInfo, updateKnowhowDetailInfo, } from "../services/knowhowDetailInfoService";
-import { getYoutubeData } from "../lib/convert";
-import { getAndUpdateCloudinaryDataIds } from "../services/cloudinaryService";
+import { createAndUpdateKnowhowDetailInfo, updateKnowhowDetailInfo, } from "../services/knowhowDetailInfoService";
 
 export async function createChildKnowHowWithDetailAction(parentKnowhowId: string, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], imgFormData: any[], pdfFormData: any[]) {
-  // console.log('parentKnow in createChildKnowHowWithDetailAction', parentKnowhowId);
   const { otherFormData, thumbNailFormData } = genFormData;
   try {
 
@@ -22,20 +17,6 @@ export async function createChildKnowHowWithDetailAction(parentKnowhowId: string
 
     await createAndUpdateKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
 
-    // let ytDataIds: string[] = [];
-    // if (ytData.length > 0) {
-    //   ytDataIds = await getYtDataIds(ytData);
-    //   // console.log('ytDataIds:', ytDataIds);
-    // }
-
-    // const khdi = await createKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytDataIds);
-
-    // if (khdi) {
-    //   await updateKnowhowCloudinaryDataIds(imgFormData, knowhow.id);
-    //   await updateKnowhowCloudinaryDataIds(pdfFormData, knowhow.id);
-    // }
-
-    // await createChildKnowHowWithDetailInfo(parentKnowhowId, otherFormData, knowhowDetailInfo);
     revalidatePath('/');
 
   } catch (error) {
@@ -46,28 +27,12 @@ export async function createChildKnowHowWithDetailAction(parentKnowhowId: string
 
 export async function createKnowhowWithDetailInfoAction(genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], imgFormData: any[], pdfFormData: any[]) {
   try {
-    // consoleLogFormDatas('img form datas', imgFormData);
 
     const knowhow = await createKnowhow(genFormData) as Knowhow;
     if (!knowhow) {
       return;
     }
-
     await createAndUpdateKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
-    // let ytDataIds: string[] = [];
-    // if (ytData.length > 0) {
-    //   ytDataIds = await getYtDataIds(ytData);
-    //   // console.log('ytDataIds:', ytDataIds);
-    // }
-
-    // const khdi = await createKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytDataIds);
-
-    // if (khdi) {
-    //   await updateKnowhowCloudinaryDataIds(imgFormData, knowhow.id);
-    //   await updateKnowhowCloudinaryDataIds(pdfFormData, knowhow.id);
-    // }
-
-    // await createKnowHowWithDetailInfo(genFormData, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
     revalidatePath('/');
   } catch (error) {
     console.log('createKnowhowWithDetailInfoAction error:', error);

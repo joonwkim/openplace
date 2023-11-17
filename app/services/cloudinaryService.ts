@@ -2,7 +2,7 @@ import { CloudinaryData } from "@prisma/client";
 import { CloudiaryInfo } from "../lib/convert";
 import { getAssetResources, uploadToCloudinary } from "../actions/cloudinary";
 import prisma from '@/prisma/prisma';
-import { consoleLogFormData, consoleLogFormDatas } from "../lib/formdata";
+import { consoleLogFormDatas } from "../lib/formdata";
 import { addCdIdToKnowHowDetailInfo } from "./knowhowDetailInfoService";
 
 export const getCloudinaryDataByPath = async (path: string, foldername: string) => {

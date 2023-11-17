@@ -10,9 +10,7 @@ import { createTagAction } from '@/app/actions/tagAction';
 import { useRouter } from 'next/navigation';
 import ImgUploader from '@/components/controls/imgUploader';
 import { getFormdata } from '../lib/formData';
-import { EditMode } from '@/app/lib/convert';
 import { getThumbnailSecureUrl } from '@/app/services/cloudinaryService';
-import { consoleLogFormData } from '@/app/lib/formdata';
 
 type RegProps = {
     categories: Category[],

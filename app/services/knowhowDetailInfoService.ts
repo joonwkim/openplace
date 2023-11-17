@@ -98,9 +98,6 @@ export async function updateKnowHowDetailInfo(knowhowId: string, knowhowDetailIn
 export async function updateKnowhowDetailInfo(knowhow: Knowhow, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], cdIds: string[], imgFormData: any[], pdfFormData: any[]) {
 
     try {
-        console.log('cdIds: ', cdIds);
-        // console.log('knowhowDetailInfo:', knowhowDetailInfo);
-        // console.log('ytData:', ytData);
         consoleLogFormDatas('imgFormData:', imgFormData);
         consoleLogFormDatas('pdfFormData:', pdfFormData);
 
@@ -139,26 +136,8 @@ export async function updateKnowhowDetailInfo(knowhow: Knowhow, knowhowDetailInf
             });
             await getAndAddCloudinaryDataIds(imgFormData, knowhow.id);
 
-            // let imgcloudinaryDataIds: string[] = [];
-            // if (imgFormData.length > 0) {
-            //     imgcloudinaryDataIds = await getAndUpdateCloudinaryDataIds(imgFormData, knowhow.id);
-            //     console.log('imgcloudinaryDataIds:', imgcloudinaryDataIds);
-            // }
-
             await getAndAddCloudinaryDataIds(pdfFormData, knowhow.id);
 
-            // let pdfcloudinaryDataIds: string[] = [];
-            // if (pdfFormData.length > 0) {
-            //     pdfcloudinaryDataIds = await getAndUpdateCloudinaryDataIds(pdfFormData, knowhow.id);
-
-            //     console.log('pdfcloudinaryDataIds:', imgcloudinaryDataIds);
-            // }
-
-            // console.log('khdiUpdateted:', JSON.stringify(khdiUpdateted, null, 2));
-            // if (khdiUpdateted) {
-            //     await getAndUpdateCloudinaryDataIds(imgFormData, knowhow.id);
-            //     await getAndUpdateCloudinaryDataIds(pdfFormData, knowhow.id);
-            // }
         }
         else {
             console.log('knowhow detail info not found:');
@@ -193,7 +172,6 @@ export async function createKnowhowDetailInfo(knowhow: Knowhow, knowhowDetailInf
                     youtubeDataIds: ytDataIds,
                 }
             });
-            // console.log('knowhowDetailInfo created: ', knowhowDetail);
             return update;
         }
         return knowhowDetail;
@@ -207,7 +185,6 @@ export async function createAndUpdateKnowhowDetailInfo(knowhow: Knowhow, knowhow
     let ytDataIds: string[] = [];
     if (ytData.length > 0) {
         ytDataIds = await getYtDataIds(ytData);
-        // console.log('ytDataIds:', ytDataIds);
     }
 
     const khdi = await createKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytDataIds);

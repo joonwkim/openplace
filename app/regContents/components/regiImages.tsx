@@ -7,7 +7,6 @@ import ImgUploader from '@/components/controls/imgUploader';
 import Alert from 'react-bootstrap/Alert';
 import { getFormdata } from '../lib/formData';
 import { CloudinaryData } from '@prisma/client';
-import { consoleLogFormData, consoleLogFormDatas } from '@/app/lib/formdata';
 
 type RegProps = {
     showImg: boolean;
