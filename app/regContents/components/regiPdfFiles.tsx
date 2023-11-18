@@ -1,9 +1,10 @@
 'use client';
-import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState, useEffect } from 'react';
 import styles from '@/app/regContents/page.module.css';
 import { DropzoneOptions, } from 'react-dropzone';
 import FileUploader from '@/components/controls/fileUploader';
 import { getFormdata } from '../lib/formData';
+
 
 type FileProps = {
     showFileInput: boolean;
@@ -17,6 +18,12 @@ export const RegiPdfFiles = forwardRef<any, FileProps>((props: FileProps, ref) =
     const [fileRejections, setFileRejections] = useState<any[]>([]);
     const [pdfFormdata, setPdfFormData] = useState<any[]>([]);
 
+    const [currentPdf, setCurrentPdf] = useState(null);
+    const viewerRef = useRef(null);
+    const containerRef = useRef(null);
+
+    
+
     useImperativeHandle(
         ref,
         () => ({
@@ -28,7 +35,29 @@ export const RegiPdfFiles = forwardRef<any, FileProps>((props: FileProps, ref) =
         }),
     );
 
+
+    useEffect(() => {
+        const container = containerRef.current;
+        let PSPDFKit: any;
+    
+        (async function () {
+          PSPDFKit = await import("pspdfkit");
+          await PSPDFKit.load({
+            container,
+            document: "/document.pdf",
+            baseUrl: `${window.location.protocol}//${window.location.host}/`,
+          });
+        })();
+    
+        return () => PSPDFKit && PSPDFKit.unload(container);
+      }, []);
+
+
     const onDrop = useCallback((acceptedFiles: any[], fileRejections: any[]) => {
+        if (acceptedFiles.length > 0) {
+            setCurrentPdf(acceptedFiles[0]);
+        }
+        
         if (acceptedFiles.length === 1) {
             if (!files.some(s => s.name === acceptedFiles[0].name)) {
                 setFiles(prev => [...prev, acceptedFiles[0]]);
@@ -90,6 +119,7 @@ export const RegiPdfFiles = forwardRef<any, FileProps>((props: FileProps, ref) =
                     <ul className="list-group">{fileRejectionItems}</ul>
                 </>)}
             </aside>
+            <div ref={containerRef} style={{ width: "500px", height: "500px", marginLeft: "50px" }} />
         </>
     );
 });

@@ -1,5 +1,5 @@
 'use client';
-import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useState, useRef, FunctionComponent, CSSProperties } from 'react';
 import { Knowhow } from '@prisma/client';
 import { DispYoutube } from './dispYoutube';
 import { DispImages } from './dispImages';
@@ -14,6 +14,7 @@ import KnowHowItem from '@/app/components/knowHowItem';
 import { Session } from 'inspector';
 import { getImgUrls, getPdfUrls } from '@/app/lib/arrayLib';
 import { getThumbnailSecureUrl } from '@/app/services/cloudinaryService';
+import './scroll.css';
 
 type RegProps = {
     knowhow: any | Knowhow,
@@ -36,6 +37,22 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     const isAuthorLoggedIn = useCallback(() => {
         return session?.user.id === knowhow?.author.id;
     }, [knowhow?.author.id, session?.user.id]);
+
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+    const scrollContent = (direction: 'left' | 'right') => {
+        const container = scrollContainerRef.current;
+        const scrollAmount = direction === 'left' ? -200 : 200; // 스크롤할 양을 조정
+        if (container) {
+            container.scrollLeft += scrollAmount;
+        }
+    };
+
+
+    const buttonStyle: CSSProperties = {
+        flex: '0 0 auto', // 버튼이 스크롤 가능한 컨테이너 내에서 자신의 크기를 유지
+    };
+
 
     useEffect(() => {
         const fetch = () => {
@@ -133,6 +150,31 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
 
     return (
         <>
+            <div className='scroll-wrapper'>
+            <button
+                className='scroll-button left'
+                onClick={() => scrollContent('left')}
+            >
+                &lt;
+            </button>
+            <div className='scroll-container' ref={scrollContainerRef}>
+                <button className='me-3 btn btn-primary' type="submit" onClick={handleMembershipRequest} >{membershipRequestBtnText}</button>
+                <button className='me-3 btn btn-primary' type="submit" onClick={handleShowDetailContens}>{getContentsBtnText()}</button>
+                <button className='me-3 btn btn-primary' type="submit" onClick={handleShowChildrenContens}>{getChildrenContentsBtnText()}</button>
+                <button className='me-3 btn btn-primary' type="submit" >모임안내</button>
+                <button className='me-3 btn btn-primary' type="submit">메시지보내기</button>
+                <button className='me-3 btn btn-primary' type="submit">채 팅</button>
+                <button className='me-3 btn btn-primary' type="submit">화상회의</button>
+                <button className='me-3 btn btn-primary' type="submit">공지사항</button>
+                <button className='me-3 btn btn-primary' type="submit">게시판</button>
+            </div>
+            <button
+                className='scroll-button right'
+                onClick={() => scrollContent('right')}
+            >
+                &gt;
+            </button>
+        </div>
             <div className='mt-3'>
                 {isAuthorLoggedIn() && (<button className='me-3 btn btn-primary' type="submit" onClick={handleEditContents}>컨텐츠 수정</button>)}
                 <button className='me-3 btn btn-primary' type="submit" onClick={handleMembershipRequest} >{membershipRequestBtnText}</button>
@@ -156,7 +198,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
                 </div>
             </>
             )}
-
+            
         </>
     );
 };
