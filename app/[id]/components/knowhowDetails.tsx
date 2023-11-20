@@ -12,7 +12,7 @@ import { getMembershipApprovalStatus } from '@/app/lib/membership';
 import { useRouter } from 'next/navigation';
 import KnowHowItem from '@/app/components/knowhowItem';
 import { getCloudinaryImgData, getCloudinaryPdfData, getPdfUrls, } from '@/app/lib/arrayLib';
-import { getThumbnailSecureUrl } from '@/app/services/cloudinaryService';
+// import { getThumbnailSecureUrl } from '@/app/services/cloudinaryService';
 
 type RegProps = {
     knowhow: any | Knowhow,
@@ -24,7 +24,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     const [showDetailContents, setShowDetailContents] = useState(false);
     const [showChildrenContents, setShowChildrenContents] = useState(true);
     const [membershipRequestBtnText, setMembershipRequestBtnText] = useState('');
-    const thumbnailSecureUrl = getThumbnailSecureUrl(knowhow) as string;
+    // const thumbnailSecureUrl = getThumbnailSecureUrl(knowhow) as string;
     const imgCloudinaryDatas = getCloudinaryImgData(knowhow);
     // console.log('imgCloudinaryDatas:', imgCloudinaryDatas);
     const pdfCloudinaryDatas = getCloudinaryPdfData(knowhow);
@@ -146,7 +146,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
                 <button className='me-3 btn btn-primary' type="submit">공지사항</button>
                 <button className='me-3 btn btn-primary' type="submit">게시판</button>
             </div>
-            <DispGeneral knowhow={knowhow} session={session} thumbnailSecureUrl={thumbnailSecureUrl} />
+            <DispGeneral knowhow={knowhow} session={session} thumbnailSecureUrl={knowhow.thumbnailCloudinaryData?.secure_url} />
             {showKnowhowContents()}
             {showChildrenContents && knowhow?.children.length > 0 && (<>
                 <h4 className='mt-3'>그룹멤버</h4>

@@ -299,11 +299,11 @@ export const uploadImagesToCloudinaryAndCreateCloudinaryData = async (formData: 
     }
 };
 
-export const getThumbnailSecureUrl = (knowhow: any) => {
-    if (!knowhow) return;
-    const secure_url = knowhow.thumbnailCloudinaryData?.secure_url;
-    return secure_url;;
-};
+// export const getThumbnailSecureUrl = (knowhow: any) => {
+//     if (!knowhow) return;
+//     const secure_url = knowhow.thumbnailCloudinaryData?.secure_url;
+//     return secure_url;;
+// };
 
 export const getImgSecureUrl = async (id: string) => {
     const cd = await prisma.cloudinaryData.findFirst({

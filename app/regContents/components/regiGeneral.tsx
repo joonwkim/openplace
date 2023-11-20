@@ -10,7 +10,7 @@ import { createTagAction } from '@/app/actions/tagAction';
 import { useRouter } from 'next/navigation';
 import ImgUploader from '@/components/controls/imgUploader';
 import { getFormdata } from '../lib/formData';
-import { getThumbnailSecureUrl } from '@/app/services/cloudinaryService';
+// import { getThumbnailSecureUrl } from '@/app/services/cloudinaryService';
 
 type RegProps = {
     categories: Category[],
@@ -33,7 +33,8 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
     const [imgSrc, setImgSrc] = useState('');
     const [tagText, setTagText] = useState('');
     const [selectedTag, setTagSelected] = useState<Tag | null>(null);
-    const [thumbnailSecureUrl, setThumbnailSecureUrl] = useState(getThumbnailSecureUrl(knowhow) as string);
+    const [thumbnailSecureUrl, setThumbnailSecureUrl] = useState(knowhow?.thumbnailCloudinaryData?.secure_url as string);
+    // const [thumbnailSecureUrl, setThumbnailSecureUrl] = useState(getThumbnailSecureUrl(knowhow) as string);
     const [initialCategoryId, setInitialCategoryId] = useState(knowhow?.categoryId);
     const [initialKnowhowTypeId, setInitialKnowhowTypeId] = useState(knowhow?.knowHowTypeId);
 
