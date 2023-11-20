@@ -34,8 +34,9 @@ const RequestStatusPage = (props: MemberRequestAndProcesses) => {
 
     const handleSave = async () => {
         await updatemembershipRequestAction(statusChanged);
-        alert('그룹 가입요청이 저장 되었습니다.');
+        alert('그룹 가입요청 처리 내용이 저장 되었습니다.');
         setStatusChanged([]);
+        window.location.reload();
         router.push('/notification');
     };
 
