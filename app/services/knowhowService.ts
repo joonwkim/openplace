@@ -588,8 +588,12 @@ export async function getKnowhow(id: string) {
 
                     },
                 },
-                children: true,
-
+                children: {
+                    include: {
+                        thumbnailCloudinaryData: true,
+                        author: true,
+                    }
+                },
             }
         });
         return knowhow;
