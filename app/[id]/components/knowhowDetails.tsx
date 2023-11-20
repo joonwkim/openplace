@@ -12,6 +12,7 @@ import { getMembershipApprovalStatus } from '@/app/lib/membership';
 import { useRouter } from 'next/navigation';
 import KnowHowItem from '@/app/components/knowhowItem';
 import { getCloudinaryImgData, getCloudinaryPdfData, getPdfUrls, } from '@/app/lib/arrayLib';
+import GroupMemberList from './groupMemberList';
 // import { getThumbnailSecureUrl } from '@/app/services/cloudinaryService';
 
 type RegProps = {
@@ -127,13 +128,12 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
             </div>);
         }
     };
-
     const handleEditContents = () => {
         router.push(`/regContents/?knowhowId=${knowhow.id}&editMode=true`);
     };
-
     return (
         <>
+            {/* {JSON.stringify(knowhow.MembershipRequest, null, 2)} */}
             <div className='mt-3'>
                 {isAuthorLoggedIn() && (<button className='me-3 btn btn-primary' type="submit" onClick={handleEditContents}>컨텐츠 수정</button>)}
                 <button className='me-3 btn btn-primary' type="submit" onClick={handleMembershipRequest} >{membershipRequestBtnText}</button>
@@ -150,6 +150,9 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
             {showKnowhowContents()}
             {showChildrenContents && knowhow?.children.length > 0 && (<>
                 <h4 className='mt-3'>그룹멤버</h4>
+                <div>
+                    <GroupMemberList membershipRequest={knowhow?.membershipRequest} groupId={knowhow?.id} />
+                </div>
                 <div className="row row-cols-1 row-cols-md-3 row-cols-sm-2 mt-0 g-4">
                     {knowhow.children?.map((child: any) => (
                         <KnowHowItem key={child.id} knowhow={child} />

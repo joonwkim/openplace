@@ -575,6 +575,12 @@ export async function getKnowhow(id: string) {
                 KnowhowType: true,
                 category: true,
                 thumbnailCloudinaryData: true,
+                membershipRequest: {
+                    include: {
+                        membershipRequestedBy: true,
+                        membershipProcessedBy: true,
+                    }
+                },
                 knowhowDetailInfo: {
                     include: {
                         // knowhowDetailOnCloudinaries: {
