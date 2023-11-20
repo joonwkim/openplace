@@ -81,7 +81,7 @@ export const RegiPdfFiles = forwardRef<any, FileProps>((props: FileProps, ref) =
     };
 
     const handleClick = (pdf: CloudinaryData) => {
-        alert(pdf?.secure_url);
+        // alert(pdf?.secure_url);
         if (pdf?.secure_url) {
             setEmbedUrl(pdf?.secure_url);
         }

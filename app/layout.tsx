@@ -1,18 +1,15 @@
-'use client'
-import './globals.css'
-import { Inter } from 'next/font/google'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import Providers from '../components/Providers'
-import Header from '@/components/header'
-import Footer from '@/components/footer'
-import { ToastContainer } from 'react-toastify'
-
-const inter = Inter({ subsets: ['latin'] })
+'use client';
+import './globals.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Providers from '../components/Providers';
+import Header from '@/components/header';
+import Footer from '@/components/footer';
+import { ToastContainer } from 'react-toastify';
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
@@ -28,5 +25,5 @@ export default function RootLayout({
       </body>
 
     </html>
-  )
+  );
 }

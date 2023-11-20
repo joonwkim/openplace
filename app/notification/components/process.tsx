@@ -1,5 +1,5 @@
 'use client';
-import { getDateToLocale } from '@/app/lib/convert';
+import { getDate, } from '@/app/lib/convert';
 import { MembershipRequest, MembershipRequestStatus } from '@prisma/client';
 import React, { useState } from 'react';
 
@@ -13,27 +13,17 @@ interface StatusChanged {
 
 const ProcessStatusPage = (props: MembershipRequestAndProcesses) => {
     const { membershipRequestedBys } = props;
-    const [statusChanged, setStatusChanged] = useState<StatusChanged[]>([]);
-    const requestStatus = (mr: MembershipRequest) => {
-        const st = mr.membershipRequestStatus;
-        type statusValue = [MembershipRequestStatus, string];
-        let statusValues: statusValue[] = [
-            [MembershipRequestStatus.REQUESTED, "가입요청"],
-            [MembershipRequestStatus.APPROVED, "승인"],
-            [MembershipRequestStatus.PENDING, "보류"],
-            [MembershipRequestStatus.REJECTED, "거절"],
-        ];
 
-        return statusValues;
-
+    const getStatusConverted = (status: any) => {
+        if (status === MembershipRequestStatus.REQUESTED) return "가입요청";
+        if (status === MembershipRequestStatus.APPROVED) return "승인";
+        if (status === MembershipRequestStatus.PENDING) return "보류";
+        if (status === MembershipRequestStatus.REJECTED) return "거절";
     };
 
     return (
         <>
             <section className='py-3'>
-                <div className='d-flex justify-content-between'>
-                    <h4 className='mb-3'>그룹 참여요청 처리 현황</h4>
-                </div>
                 <table className="table table-fixed table-hover table-sm">
                     <thead>
                         <tr>
@@ -44,12 +34,12 @@ const ProcessStatusPage = (props: MembershipRequestAndProcesses) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {membershipRequestedBys.map((mr: any, index: number) => (
+                        {membershipRequestedBys?.length > 0 && membershipRequestedBys.map((mr: any, index: number) => (
                             <tr key={index}>
                                 <td>{mr.knowhow.title}</td>
                                 <td>{mr.membershipProcessedBy.name}</td>
-                                <td>{mr.processAt && getDateToLocale(mr.processedAt as Date)}</td>
-                                <td className='text-center'>{mr.membershipRequestStatus}</td>
+                                <td>{getDate(mr.processedAt as Date)}</td>
+                                <td className='text-center'>{getStatusConverted(mr.membershipRequestStatus)}</td>
                             </tr>
                         ))}
                     </tbody>

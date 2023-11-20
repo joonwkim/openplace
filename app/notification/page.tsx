@@ -1,6 +1,6 @@
 'use client';
 import { useSession } from 'next-auth/react';
-import React, { useEffect } from 'react';
+import React from 'react';
 import RequestStatusPage from './components/request';
 import ProcessStatusPage from './components/process';
 

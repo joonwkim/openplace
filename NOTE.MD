@@ -142,8 +142,21 @@ pnpm add  @ckeditor/ckeditor5-react @ckeditor/ckeditor5-build-classic
 
 
 //vercel
+//vercel command cli
+npm install -g vercel
 vercel deploy
 vercel --prod
+
+// deploy error
++ vercel
++ ~~~~~~
+    + CategoryInfo          : 보안 오류: (:) [], PSSecurityException
+
+//PowerShell에 관리자 권한으로 열어 하기 명령 수행
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine
+
+
+
 
 //in case of prisma modify package.json like this
  "db:push": "prisma db push",
@@ -229,6 +242,5 @@ git push -f origin main
 git gc --aggressive --prune=all
 
 
-//vercel command cli
-npm install -g vercel
+
 

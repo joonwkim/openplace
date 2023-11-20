@@ -1,8 +1,10 @@
 'use server';
-import { MembershipRequest, MembershipRequestStatus } from "@prisma/client";
+import { MembershipRequestStatus } from "@prisma/client";
+import { StatusChanged } from "../notification/components/request";
 
 export async function createMembershipRequest(authorizerId: string, requesterId: string, knowhowId: string) {
     try {
+
         if (!requesterId || !knowhowId) return;
         const ex = await prisma?.membershipRequest.findFirst({
             where: {
@@ -44,23 +46,29 @@ export async function getMembershipRequests(membershipProcessedById: string) {
     return res;
 }
 
-export async function updateMembershipRequest({ membershipRequestProcess, status }: { membershipRequestProcess: MembershipRequest, status: MembershipRequestStatus; }) {
-    if (membershipRequestProcess === null) return;
+export async function updateMembershipRequest(statusChanged: any[]) {
+    if (statusChanged === null || statusChanged.length === 0) return;
     try {
-        const res = await prisma?.membershipRequest.update({
-            where: {
-                id: membershipRequestProcess.id,
-            },
-            data: {
-                membershipRequestStatus: status,
-                processedAt: new Date()
-            }
-        });
-        // console.log('updated:', res);
-        return res;
-    } catch (error) {
 
+        statusChanged.forEach(async (s: any) => {
+            // console.log('statusChanged: ', s);
+            const res = await prisma?.membershipRequest.update({
+                where: {
+                    id: s.id,
+                },
+                data: {
+                    membershipRequestStatus: s.value,
+                    processedAt: new Date()
+                }
+            });
+            // console.log('status changed:', res);
+        });
+
+    } catch (error) {
+        console.log('updateMembershipRequest error: ', error);
+        throw error;
     }
     return '';
 }
+
 

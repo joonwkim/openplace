@@ -165,14 +165,10 @@ export interface CloudiaryInfo {
   thumbnail_url: string;
 }
 
-export function getDateToLocale(date: Date) {
-  let options: any = {
-    year: '2-digit',
-    month: '2-digit',
-    day: '2-digit'
-  };
-  options.timeZone = 'UTC';
-  options.timeZoneName = 'short';
+export const getDate = (date: any) => {
+  return new Intl.DateTimeFormat('ko-KR', {
+    dateStyle: "short",
+    timeStyle: "short"
+  }).format(new Date(date));
 
-  return date.toLocaleString('ko-KR', options);
-}
+};
