@@ -1,6 +1,6 @@
 'use client';
-import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
-import { CloudinaryData, Knowhow } from '@prisma/client';
+import React, { CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
+import { Knowhow } from '@prisma/client';
 import { DispYoutube } from './dispYoutube';
 import { DispImages } from './dispImages';
 import { DispText } from './dispText';
@@ -11,9 +11,9 @@ import { createMembershipRequestAction } from '@/app/actions/membershipRequestAc
 import { getMembershipApprovalStatus } from '@/app/lib/membership';
 import { useRouter } from 'next/navigation';
 import KnowHowItem from '@/app/components/knowhowItem';
-import { getCloudinaryImgData, getCloudinaryPdfData, getPdfUrls, } from '@/app/lib/arrayLib';
+import { getCloudinaryImgData, getCloudinaryPdfData, } from '@/app/lib/arrayLib';
 import GroupMemberList from './groupMemberList';
-// import { getThumbnailSecureUrl } from '@/app/services/cloudinaryService';
+import './scroll.css';
 
 type RegProps = {
     knowhow: any | Knowhow,
@@ -25,11 +25,9 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     const [showDetailContents, setShowDetailContents] = useState(false);
     const [showChildrenContents, setShowChildrenContents] = useState(true);
     const [membershipRequestBtnText, setMembershipRequestBtnText] = useState('');
-    // const thumbnailSecureUrl = getThumbnailSecureUrl(knowhow) as string;
     const imgCloudinaryDatas = getCloudinaryImgData(knowhow);
-    // console.log('imgCloudinaryDatas:', imgCloudinaryDatas);
     const pdfCloudinaryDatas = getCloudinaryPdfData(knowhow);
-    // console.log('pdfCloudinaryDatas:', pdfCloudinaryDatas);
+    const [left, setLeft] = useState<number>(0);
 
     const isLoggedIn = useCallback(() => {
         return session?.user;
@@ -37,6 +35,22 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     const isAuthorLoggedIn = useCallback(() => {
         return session?.user.id === knowhow?.author.id;
     }, [knowhow?.author.id, session?.user.id]);
+
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+    const scrollContent = (direction: 'left' | 'right') => {
+        const container = scrollContainerRef.current;
+        const scrollAmount = direction === 'left' ? -200 : 200; // 스크롤할 양을 조정
+        if (container) {
+            container.scrollLeft += scrollAmount;
+            setLeft(container.scrollLeft);
+        }
+    };
+
+
+    const buttonStyle: CSSProperties = {
+        flex: '0 0 auto', // 버튼이 스크롤 가능한 컨테이너 내에서 자신의 크기를 유지
+    };
 
     useEffect(() => {
         const fetch = () => {
@@ -133,18 +147,30 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     };
     return (
         <>
-            {/* {JSON.stringify(knowhow.MembershipRequest, null, 2)} */}
-            <div className='mt-3'>
-                {isAuthorLoggedIn() && (<button className='me-3 btn btn-primary' type="submit" onClick={handleEditContents}>컨텐츠 수정</button>)}
-                <button className='me-3 btn btn-primary' type="submit" onClick={handleMembershipRequest} >{membershipRequestBtnText}</button>
-                <button className='me-3 btn btn-primary' type="submit" onClick={handleShowDetailContens}>{getContentsBtnText()}</button>
-                <button className='me-3 btn btn-primary' type="submit" onClick={handleShowChildrenContens}>{getChildrenContentsBtnText()}</button>
-                <button className='me-3 btn btn-primary' type="submit" >모임안내</button>
-                <button className='me-3 btn btn-primary' type="submit">메시지보내기</button>
-                <button className='me-3 btn btn-primary' type="submit">채 팅</button>
-                <button className='me-3 btn btn-primary' type="submit">화상회의</button>
-                <button className='me-3 btn btn-primary' type="submit">공지사항</button>
-                <button className='me-3 btn btn-primary' type="submit">게시판</button>
+            <div className='scroll-wrapper mt-3'>
+                {left > 100 && <button type='button' className='btn btn-outline-light border rounded-circle scroll-button left' onClick={() => scrollContent('left')} title='Move Left'>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" className="bi bi-chevron-left" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+                    </svg>
+                </button>}
+
+                <div className='scroll-container' ref={scrollContainerRef}>
+                    {isAuthorLoggedIn() && (<button className='me-3 btn btn-primary' type="submit" onClick={handleEditContents}>컨텐츠 수정</button>)}
+                    <button className='me-3 btn btn-primary' type="submit" onClick={handleMembershipRequest} >{membershipRequestBtnText}</button>
+                    <button className='me-3 btn btn-primary' type="submit" onClick={handleShowDetailContens}>{getContentsBtnText()}</button>
+                    <button className='me-3 btn btn-primary' type="submit" onClick={handleShowChildrenContens}>{getChildrenContentsBtnText()}</button>
+                    <button className='me-3 btn btn-primary' type="submit" >모임안내</button>
+                    <button className='me-3 btn btn-primary' type="submit">메시지보내기</button>
+                    <button className='me-3 btn btn-primary' type="submit">채 팅</button>
+                    <button className='me-3 btn btn-primary' type="submit">화상회의</button>
+                    <button className='me-3 btn btn-primary' type="submit">공지사항</button>
+                    <button className='me-3 btn btn-primary' type="submit">게시판</button>
+                </div>
+                <button type='button' className='ms-3 btn btn-outline-light border rounded-circle scroll-button right' onClick={() => scrollContent('right')} title='Move Right'>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="grey" className="bi bi-chevron-right" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+                    </svg>
+                </button>
             </div>
             <DispGeneral knowhow={knowhow} session={session} thumbnailSecureUrl={knowhow.thumbnailCloudinaryData?.secure_url} />
             {showKnowhowContents()}

@@ -1,0 +1,45 @@
+.scroll-wrapper {
+    position: relative;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.scroll-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    /* scrollbar-width: none; */
+    white-space: nowrap;
+}
+
+.scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+.scroll-button {
+    display: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    background-color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+@media (max-width: 1200px) {
+    .scroll-button {
+        display: block;
+    }
+}
+
+.scroll-button.left {
+    left: 0;
+}
+
+.scroll-button.right {
+    right: 0;
+}
+
+/* .button {} */
