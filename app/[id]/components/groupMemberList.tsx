@@ -11,11 +11,7 @@ const GroupMemberList = (props: MemberProps) => {
     const { groupId, membershipRequest } = props;
     return (
         <>
-            {/* {JSON.stringify(membershipRequest, null, 2)} */}
             <section className='pt-3'>
-                {/* <div className='d-flex justify-content-between'>
-                    <h4 className='mb-3'>그룹  현황</h4>
-                </div> */}
                 <table className="table table-fixed table-hover table-sm">
                     <thead>
                         <tr>
