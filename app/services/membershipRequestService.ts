@@ -49,9 +49,7 @@ export async function getMembershipRequests(membershipProcessedById: string) {
 export async function updateMembershipRequest(statusChanged: any[]) {
     if (statusChanged === null || statusChanged.length === 0) return;
     try {
-
         statusChanged.forEach(async (s: any) => {
-            // console.log('statusChanged: ', s);
             const res = await prisma?.membershipRequest.update({
                 where: {
                     id: s.id,
@@ -61,14 +59,10 @@ export async function updateMembershipRequest(statusChanged: any[]) {
                     processedAt: new Date()
                 }
             });
-            // console.log('status changed:', res);
         });
-
     } catch (error) {
         console.log('updateMembershipRequest error: ', error);
         throw error;
     }
     return '';
 }
-
-

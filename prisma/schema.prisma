@@ -98,7 +98,7 @@ model MembershipRequest {
   membershipRequestedBy   User   @relation("membershipRequestedBys", fields: [membershipRequestedById], references: [id])
   membershipRequestedById String @db.ObjectId
 
-  processedAt DateTime?
+  processedAt DateTime @updatedAt
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -109,7 +109,6 @@ model Knowhow {
 
   title       String
   description String
-  // thumbnailFilename String?
 
   viewCount       Int     @default(0)
   thumbsUpCount   Int     @default(0)
@@ -150,15 +149,12 @@ model Knowhow {
 model KnowhowDetailInfo {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  // videoIds      String[]
   thumbnailType ThumbnailType
 
   detailText String?
 
   knowhow   Knowhow @relation(fields: [knowHowId], references: [id])
   knowHowId String  @unique @db.ObjectId
-
-  // knowhowDetailOnCloudinaries KnowhowDetailOnCloudinary[]
 
   youtubeDatas   YouTubeData[] @relation(fields: [youtubeDataIds], references: [id])
   youtubeDataIds String[]      @db.ObjectId
@@ -201,23 +197,12 @@ model CloudinaryData {
   path          String
 
   knowhow Knowhow[]
-  // knowhowDetailOnCloudinaries KnowhowDetailOnCloudinary[]
 
   knowhowDetailInfos   KnowhowDetailInfo[] @relation(fields: [knowhowDetailInfoIds], references: [id])
   knowhowDetailInfoIds String[]            @db.ObjectId
 
   @@unique([folder, path])
 }
-
-// model KnowhowDetailOnCloudinary {
-//   id String @id @default(auto()) @map("_id") @db.ObjectId
-
-//   knowhowDetailInfo   KnowhowDetailInfo? @relation(fields: [knowhowDetailInfoId], references: [id])
-//   knowhowDetailInfoId String?            @db.ObjectId
-
-//   thumbnailCloudinaryData   CloudinaryData? @relation(fields: [cloudinaryDataId], references: [id])
-//   cloudinaryDataId String?         @db.ObjectId
-// }
 
 enum MembershipRequestStatus {
   NONE

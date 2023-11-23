@@ -27,9 +27,7 @@ const RequestStatusPage = (props: MemberRequestAndProcesses) => {
             [MembershipRequestStatus.PENDING, "보류"],
             [MembershipRequestStatus.REJECTED, "거절"],
         ];
-
         return statusValues;
-
     };
 
     const handleSave = async () => {
