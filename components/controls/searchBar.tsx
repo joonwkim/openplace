@@ -7,6 +7,8 @@ type SearchBarProps = {
     handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void
     handleCancelBtnClick: (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void
     onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void
+    onKeyUp?: (event: React.KeyboardEvent<HTMLInputElement>) => void
+
 }
 
 import { useState } from "react"
@@ -24,7 +26,9 @@ const SearchBar = (props: SearchBarProps) => {
                 placeholder={props.placeholder} aria-label="Username"
                 aria-describedby="basic-addon1" value={props.value}
                 onChange={(e) => props.handleChange(e)}
-                onKeyDown={props.onKeyDown} />
+                onKeyDown={props.onKeyDown}
+                onKeyUp={props.onKeyUp}
+            />
             {props.value ? (<span className={`input-group-text border-0 bg-white ${styles.closeIcon} `} onClick={props.handleCancelBtnClick} id="basic-addon3">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                     className="bi bi-search"

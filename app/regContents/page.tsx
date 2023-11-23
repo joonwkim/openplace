@@ -11,11 +11,9 @@ const RegContentPage = async ({ searchParams }: { searchParams: { searchBy: stri
   if (editMode) {
     knowhow = await getKnowhow(knowhowId) as Knowhow;
   }
-
   const categories = await getCategories() as Array<Category>;
   const knowHowTypes = await getKnowHowTypes() as Array<KnowhowType>;
   const tags = await getTagsStartsWith(searchBy) as Array<Tag>;
-
   const Registeration = dynamic(() => import('./components/registeration'), {
     ssr: false,
   });

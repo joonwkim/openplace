@@ -533,26 +533,74 @@ export async function updateKnowhow(knowhow: Knowhow) {
 
 }
 
-export async function getKnowhows() {
+export async function getKnowhows(searchBy: string | undefined | null) {
     try {
-        // console.log('getKnowHows');
-        const knowHows = await prisma.knowhow.findMany({
-            where: {
-                parent: null,
-            },
-            include: {
-                // tags: true,
-                // author: true,
-                votes: true,
-                knowhowDetailInfo: true,
-                membershipRequest: true,
-                author: true,
-                children: true,
-                thumbnailCloudinaryData: true,
+        let knowhows: Array<Knowhow> = []
+        if (searchBy === null) {
+            console.log('searchBy', searchBy);
+            knowhows = await prisma.knowhow.findMany({
+                where: {
+                    parent: null,
+                },
+                include: {
+                    // tags: true,
+                    // author: true,
+                    votes: true,
+                    knowhowDetailInfo: true,
+                    membershipRequest: true,
+                    author: true,
+                    children: true,
+                    thumbnailCloudinaryData: true,
+                }
+            });
+        } else if (searchBy === "놀기" || searchBy === "배우기" || searchBy === "만들기") {
+            const category = await prisma.category.findFirst({
+                where: {
+                    name: searchBy
+                }
+            })
+            if (category) {
+                knowhows = await prisma.knowhow.findMany({
+                    where: {
+                        parent: null,
+                        categoryId: category.id
+                    },
+                    include: {
+                        // tags: true,
+                        // author: true,
+                        votes: true,
+                        knowhowDetailInfo: true,
+                        membershipRequest: true,
+                        author: true,
+                        children: true,
+                        thumbnailCloudinaryData: true,
+                    }
+                });
             }
-        });
-        // console.log('getKnowHows', JSON.stringify(knowHows, null, 2));
-        return knowHows;
+        }
+        else {
+            knowhows = await prisma.knowhow.findMany({
+                where: {
+                    parent: null,
+                    title: {
+                        contains: searchBy
+                    }
+                },
+                include: {
+                    // tags: true,
+                    // author: true,
+                    votes: true,
+                    knowhowDetailInfo: true,
+                    membershipRequest: true,
+                    author: true,
+                    children: true,
+                    thumbnailCloudinaryData: true,
+                }
+            });
+        }
+
+        // console.log('getKnowhows', JSON.stringify(knowhows, null, 2));
+        return knowhows;
     }
     catch (error) {
         console.log(error);

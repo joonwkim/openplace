@@ -10,7 +10,6 @@ import { createTagAction } from '@/app/actions/tagAction';
 import { useRouter } from 'next/navigation';
 import ImgUploader from '@/components/controls/imgUploader';
 import { getFormdata } from '../lib/formData';
-// import { getThumbnailSecureUrl } from '@/app/services/cloudinaryService';
 
 type RegProps = {
     categories: Category[],
@@ -34,7 +33,6 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
     const [tagText, setTagText] = useState('');
     const [selectedTag, setTagSelected] = useState<Tag | null>(null);
     const [thumbnailSecureUrl, setThumbnailSecureUrl] = useState(knowhow?.thumbnailCloudinaryData?.secure_url as string);
-    // const [thumbnailSecureUrl, setThumbnailSecureUrl] = useState(getThumbnailSecureUrl(knowhow) as string);
     const [initialCategoryId, setInitialCategoryId] = useState(knowhow?.categoryId);
     const [initialKnowhowTypeId, setInitialKnowhowTypeId] = useState(knowhow?.knowHowTypeId);
 
@@ -181,7 +179,6 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
     });
 
     const getKnowhowTypeSelected = (knowhowTypeId: string) => {
-        // alert(initialKnowhowTypeId);
         if (knowhowTypeId === initialKnowhowTypeId) {
             return true;
         }
@@ -251,10 +248,8 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
                                     <option value="">경험유형(필수)</option>
                                     {knowHowTypes.map(knowhowType => (
                                         <>
-
                                             <option key={knowhowType.id} selected={getKnowhowTypeSelected(knowhowType.id)} value={knowhowType.id}>{knowhowType.name}</option>
                                         </>
-
                                     ))}
                                 </Form.Select>
                                 <Form.Control.Feedback type="invalid">

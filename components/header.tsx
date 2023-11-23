@@ -1,12 +1,10 @@
 'use client';
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import { FaSignInAlt, FaSignOutAlt, FaUser } from "react-icons/fa";
-import { NextRequest } from 'next/server';
 import Image from 'next/image';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, } from 'next/navigation';
 import { useSession, signIn, signOut } from 'next-auth/react';
-import { useEffect, useState } from 'react';
-import path from 'path';
+import { useState } from 'react';
 import SearchBar from './controls/searchBar';
 
 interface Props {
@@ -19,27 +17,23 @@ const Header = () => {
   const isLogin = false;
 
   const [search, setSearch] = useState('');
-  // const [notificationCount, setNotificationCount] = useState(0);
-  // const router = useRouter();
+  const router = useRouter();
 
-  // const pathName = usePathname();
-
-  // useEffect(() => {
-  //   alert(JSON.stringify(session?.user.notificationCount, null, 2));
-
-
-  // }, [session?.user]);
-
-  const onClick = (e: any) => {
+  const handleSignIn = (e: any) => {
     e.preventDefault();
     signIn();
   };
-  const onCancelBtnClicked = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+  const handleCancelBtnClicked = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     setSearch('');
   };
-  const handleRegistContent = () => {
-    // alert('등록 하기');
+
+  const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    if (e.key === 'Enter' || e.key === ' ') {
+      router.push(`/?searchText=${search}`);
+    }
   };
+
   return (
     <Navbar bg="dark" variant='dark' expand="lg" collapseOnSelect>
       <Container>
@@ -49,26 +43,21 @@ const Header = () => {
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-
           <Nav className="ms-auto">
-            <Nav.Link href="/play">놀기</Nav.Link>
-            <Nav.Link href="/study">배우기</Nav.Link>
-            <Nav.Link href="/make">만들기</Nav.Link>
+            <Nav.Link href="/?category=놀기">놀기</Nav.Link>
+            <Nav.Link href="/?category=배우기">배우기</Nav.Link>
+            <Nav.Link href="/?category=만들기">만들기</Nav.Link>
           </Nav>
           <Nav className="ms-2 me-2">
-            <SearchBar value={search} placeholder='Search...'
-              handleChange={(e) => setSearch(e.target.value)}
-              handleCancelBtnClick={onCancelBtnClicked} />
+            <SearchBar value={search} placeholder='Search...' handleChange={(e) => setSearch(e.target.value)} onKeyUp={handleKeyUp}
+              handleCancelBtnClick={handleCancelBtnClicked} />
           </Nav>
           <Nav className="ms-2 me-2">
-
             <Nav.Link href="/email">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" className="bi bi-envelope" viewBox="0 0 16 16">
                 <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z" />
               </svg>
             </Nav.Link>
-
-
             <Nav.Link href="/notification">
               {session?.user.notificationCount > 0 ? (<button type="button" className="btn position-relative">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" className="bi bi-bell" viewBox="0 0 16 16">
@@ -86,8 +75,6 @@ const Header = () => {
             <Nav.Link href="/regContents"> <button className="btn btn-outline-danger ms-2" type="submit" title='notification'>
               등록하기
             </button></Nav.Link>
-
-
           </Nav>
 
           {session && session.user ? (
@@ -111,7 +98,7 @@ const Header = () => {
             </Nav>
           ) : (
             <Nav className="ms-auto">
-              <Nav.Link href="/auth/login" onClick={(e) => onClick(e)}><FaSignInAlt />로그인</Nav.Link>
+                <Nav.Link href="/auth/login" onClick={(e) => handleSignIn(e)}><FaSignInAlt />로그인</Nav.Link>
               <Nav.Link href="/auth/register"> <FaUser />회원가입</Nav.Link>
             </Nav>
           )
