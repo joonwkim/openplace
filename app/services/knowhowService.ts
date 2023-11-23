@@ -8,6 +8,7 @@ import { getThumbnailCloudinaryDataId, uploadImagesToCloudinaryAndCreateCloudina
 // import { consoleLogFormData } from '../lib/formdata';
 import { consoleLogFormData, consoleLogFormDatas } from '../lib/formdata';
 import { CloudinaryFile } from '../lib/cloudinaryLib';
+import { serialize } from 'v8';
 
 export async function getKnowHowTypes() {
     try {
@@ -532,27 +533,31 @@ export async function updateKnowhow(knowhow: Knowhow) {
     }
 
 }
+async function getRootKnowhow() {
+    const knowhows = await prisma.knowhow.findMany({
+        where: {
+            parent: null,
+        },
+        include: {
+            // tags: true,
+            // author: true,
+            votes: true,
+            knowhowDetailInfo: true,
+            membershipRequest: true,
+            author: true,
+            children: true,
+            thumbnailCloudinaryData: true,
+        }
+    });
+    return knowhows;
+}
 
 export async function getKnowhows(searchBy: string | undefined | null) {
     try {
         let knowhows: Array<Knowhow> = []
-        if (searchBy === null) {
+        if (searchBy === null || searchBy === undefined) {
             console.log('searchBy', searchBy);
-            knowhows = await prisma.knowhow.findMany({
-                where: {
-                    parent: null,
-                },
-                include: {
-                    // tags: true,
-                    // author: true,
-                    votes: true,
-                    knowhowDetailInfo: true,
-                    membershipRequest: true,
-                    author: true,
-                    children: true,
-                    thumbnailCloudinaryData: true,
-                }
-            });
+            knowhows = await getRootKnowhow();
         } else if (searchBy === "놀기" || searchBy === "배우기" || searchBy === "만들기") {
             const category = await prisma.category.findFirst({
                 where: {
@@ -583,7 +588,8 @@ export async function getKnowhows(searchBy: string | undefined | null) {
                 where: {
                     parent: null,
                     title: {
-                        contains: searchBy
+                        contains: searchBy?.trim(),
+                        mode: 'default',
                     }
                 },
                 include: {
@@ -599,7 +605,7 @@ export async function getKnowhows(searchBy: string | undefined | null) {
             });
         }
 
-        // console.log('getKnowhows', JSON.stringify(knowhows, null, 2));
+        // console.log('knowhows', JSON.stringify(knowhows, null, 2));
         return knowhows;
     }
     catch (error) {

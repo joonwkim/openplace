@@ -28,6 +28,7 @@ const SearchBar = (props: SearchBarProps) => {
                 onChange={(e) => props.handleChange(e)}
                 onKeyDown={props.onKeyDown}
                 onKeyUp={props.onKeyUp}
+                spellCheck="false"
             />
             {props.value ? (<span className={`input-group-text border-0 bg-white ${styles.closeIcon} `} onClick={props.handleCancelBtnClick} id="basic-addon3">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
