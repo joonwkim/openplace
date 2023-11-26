@@ -89,8 +89,9 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     }, [isAuthorLoggedIn, isLoggedIn, knowhow?.author.id, knowhow?.id, session?.user]);
 
     const handleMeetButtonClicked = ()=> {
-        window.open("vmeet",`https://s3.ap-northeast-2.amazonaws.com/depot.opensrcdesign.com/build/index.html?room=${knowhow.id}&auth=${session?.user.id}`);
+        window.open(`https://s3.ap-northeast-2.amazonaws.com/depot.opensrcdesign.com/build/index.html?room=${knowhow.id}&auth=${session?.user.id}`, "vmeet");
     };
+    
     const handleMembershipRequest = async () => {
         if (membershipRequestBtnText === '멤버 참여신청') {
             if (isLoggedIn()) {
