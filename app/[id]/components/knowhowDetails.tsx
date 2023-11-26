@@ -36,7 +36,15 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     const isAuthorLoggedIn = useCallback(() => {
         return session?.user.id === knowhow?.author.id;
     }, [knowhow?.author.id, session?.user.id]);
-
+    const isMember = useCallback(() => {
+        const ids = knowhow.membershipRequest.filter((mem:{ membershipRequestedBy: any, membershipRequestStatus: string }) => mem.membershipRequestStatus==="APPROVED")
+        .map((mem:{ membershipRequestedBy: any}) => mem.membershipRequestedBy.id)
+        let isMember: boolean = ids.includes(session?.user.id);
+        return isMember;
+        // return knowhow.membershipRequest
+        // .fialter((membership: { membersipRequestStatus:string, id: any; }) => membership.membersipRequestStatus=="APPROVED")
+        // .includes(session?.user.id);
+    }, [session?.user, knowhow?.children]);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     const scrollContent = (direction: 'left' | 'right') => {
@@ -80,7 +88,9 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
         fetch();
     }, [isAuthorLoggedIn, isLoggedIn, knowhow?.author.id, knowhow?.id, session?.user]);
 
-
+    const handleMeetButtonClicked = ()=> {
+        window.open("vmeet",`https://localhost:3001/?room=${knowhow.id}&auth=${session?.user.id}`);
+    };
     const handleMembershipRequest = async () => {
         if (membershipRequestBtnText === '멤버 참여신청') {
             if (isLoggedIn()) {
@@ -153,6 +163,9 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
         }
         else { return 'false' }
     }
+
+
+    console.log(knowhow)
     return (
         <>
             <div className='scroll-wrapper mt-3'>
@@ -170,7 +183,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
                     <button className='me-3 btn btn-primary' type="submit" >모임안내</button>
                     <button className='me-3 btn btn-primary' type="submit">메시지보내기</button>
                     <button className='me-3 btn btn-primary' type="submit">채 팅</button>
-                    <button className='me-3 btn btn-primary' type="submit">화상회의</button>
+                    {isMember() && (<button className='me-3 btn btn-primary' type="submit"onClick={handleMeetButtonClicked}>화상회의</button>)}
                     <button className='me-3 btn btn-primary' type="submit">공지사항</button>
                     <button className='me-3 btn btn-primary' type="submit">게시판</button>
                 </div>
