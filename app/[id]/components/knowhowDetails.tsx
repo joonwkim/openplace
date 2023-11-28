@@ -153,6 +153,11 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
         }
         else { return 'false' }
     }
+
+    const handleMeetButtonClicked = () => {
+        window.open(`https://s3.ap-northeast-2.amazonaws.com/depot.opensrcdesign.com/build/index.html?room=${knowhow.id}&auth=${session?.user.id}`, "vmeet");
+    };
+
     return (
         <>
             <div className='scroll-wrapper mt-3'>
@@ -170,7 +175,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
                     <button className='me-3 btn btn-primary' type="submit" >모임안내</button>
                     <button className='me-3 btn btn-primary' type="submit">메시지보내기</button>
                     <button className='me-3 btn btn-primary' type="submit">채 팅</button>
-                    <button className='me-3 btn btn-primary' type="submit">화상회의</button>
+                    <button className='me-3 btn btn-primary' type="submit" onClick={handleMeetButtonClicked}>화상회의</button>
                     <button className='me-3 btn btn-primary' type="submit">공지사항</button>
                     <button className='me-3 btn btn-primary' type="submit">게시판</button>
                 </div>

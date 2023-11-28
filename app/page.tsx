@@ -1,15 +1,26 @@
-import { Knowhow, } from '@prisma/client';
-import { getKnowhows } from './services/knowhowService';
+import { Knowhow, User, } from '@prisma/client';
+import { getKnowhows, getKnowhowsBy, } from './services/knowhowService';
+import { getUserById } from './services/userService'
 import KnowhowItem from './components/knowhowItem';
+import ProfileChange from './components/profileChange';
 
 
-const PlaceHomePage = async ({ searchParams }: { searchParams: { searchText: string, category: string; }; }) => {
+const PlaceHomePage = async ({ searchParams }: { searchParams: { searchText: string, category: string; myhome: string; id: string }; }) => {
 
   let knowhows: Knowhow[] = [];
+  let user: User;
   if (searchParams.searchText) {
     knowhows = (await getKnowhows(searchParams.searchText) as Array<Knowhow>);
   } else if (searchParams.category) {
     knowhows = (await getKnowhows(searchParams.category) as Array<Knowhow>);
+  } else if (searchParams.myhome) {
+    if (searchParams.myhome === "profile") {
+      user = await getUserById(searchParams.id) as User;
+      knowhows = (await getKnowhows(null) as Array<Knowhow>);
+      console.log(user)
+    } else {
+      knowhows = (await getKnowhowsBy(searchParams.myhome, searchParams.id) as Array<Knowhow>);
+    }
   }
   else {
     knowhows = (await getKnowhows(null) as Array<Knowhow>);
@@ -22,6 +33,8 @@ const PlaceHomePage = async ({ searchParams }: { searchParams: { searchText: str
           <KnowhowItem key={knowhow.id} knowhow={knowhow} />
         ))}
       </div>) : (<div className='mt-3 text-center'><h2>{`등록된 ${searchParams.category ? (searchParams.category) : (searchParams.searchText)} 데이터가 없습니다.`}</h2></div>)}
+
+      {/* <ProfileChange /> */}
 
     </>
   );

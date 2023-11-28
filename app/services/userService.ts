@@ -84,6 +84,18 @@ export async function getUserByEmail(emailInput: string) {
     }
 }
 
+export async function getUserById(id: string) {
+    const user = await prisma.user.findFirst({
+        where: {
+            id: id,
+        },
+        include: {
+            profile: true,
+        }
+    })
+    console.log('user:', user)
+    return user;
+}
 export async function updateUser(email: string, input: any) {
     try {
         const updateUser = await prisma.user.update({

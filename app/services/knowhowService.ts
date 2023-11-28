@@ -552,7 +552,18 @@ async function getRootKnowhow() {
     return knowhows;
 }
 
-export async function getKnowhows(searchBy: string | undefined | null) {
+export async function getKnowhowsBy(myhome: string | undefined | null, id: string | undefined | null) {
+    let knowhows: Array<Knowhow> = []
+    if (myhome === "registered") {
+        console.log(myhome, id)
+
+    }
+    if (myhome === "paticipated") {
+        console.log(myhome, id)
+    }
+    return knowhows;
+}
+export async function getKnowhows(searchBy: string | undefined | null,) {
     try {
         let knowhows: Array<Knowhow> = []
         if (searchBy === null || searchBy === undefined) {

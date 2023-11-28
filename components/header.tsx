@@ -1,11 +1,13 @@
 'use client';
-import { Container, Nav, Navbar } from 'react-bootstrap';
+import { Container, Nav, NavDropdown, Navbar, Overlay, Popover, Tooltip } from 'react-bootstrap';
 import { FaSignInAlt, FaSignOutAlt, FaUser } from "react-icons/fa";
 import Image from 'next/image';
 import { useRouter, } from 'next/navigation';
 import { useSession, signIn, signOut } from 'next-auth/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import SearchBar from './controls/searchBar';
+import { readFile } from 'fs/promises';
+import ProfileChange from '@/app/components/profileChange';
 
 interface Props {
 
@@ -17,7 +19,10 @@ const Header = () => {
   const isLogin = false;
 
   const [search, setSearch] = useState('');
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [overlayTarget, setOverlayTarget] = useState(null);
   const router = useRouter();
+  const ref = useRef(null);
 
   const handleSignIn = (e: any) => {
     e.preventDefault();
@@ -35,7 +40,24 @@ const Header = () => {
     }
   };
 
-  return (
+  const handleEditProfile = () => {
+    router.push(`/?myhome=profile&id=${session?.user.id}`);
+  }
+  const handleShowMyKnowhow = () => {
+    router.push(`/?myhome=registered&id=${session?.user.id}`);
+  }
+  const handleShowKnowhowsPaticipate = () => {
+    router.push(`/?myhome=paticipated&id=${session?.user.id}`);
+  }
+
+  const handleClick = (event: any) => {
+    setShowOverlay(!showOverlay);
+    setOverlayTarget(event.target);
+  };
+  const handleSaveProfile = () => {
+    console.log('handleSaveProfile')
+  }
+  return (<>
     <Navbar bg="dark" variant='dark' expand="lg" collapseOnSelect>
       <Container>
         <Navbar.Brand href="/">
@@ -80,22 +102,61 @@ const Header = () => {
 
           {session && session.user ? (
             <Nav className="ms-auto" title={session?.user.name}>
-              {session.user.image ? (<Nav.Link href="/" >
-                <Image id="userpicture" style={{ borderRadius: '50%' }}
-                  unoptimized
-                  src={session.user.image}
-                  alt={session.user.email}
-                  width="30"
-                  height="30"
-                />
-              </Nav.Link>) :
-                (<Nav.Link href="/" > {session.user.name}</Nav.Link>)
+
+              {session.user.image ? (
+
+                <Nav.Link ref={ref} onClick={handleClick}>
+                  <Image id="userpicture" style={{ borderRadius: '50%' }}
+                    unoptimized
+                    src={session.user.image}
+                    alt={session.user.email}
+                    width="30"
+                    height="30"
+                  />
+                  <Overlay
+                    show={showOverlay}
+                    target={ref}
+                    placement="left"
+                    container={ref}
+                    containerPadding={20}
+                  >
+                    <Popover id="popover-contained">
+                      <Popover.Header className='bg-dark text-center' as="h3">마이 홈</Popover.Header>
+                      <Popover.Body>
+                        <div className="text-center" data-bs-toggle="modal" data-bs-target="#staticBackdrop">내 정보 수정</div>
+                        <div className='text-center' onClick={handleShowMyKnowhow}>내가 등록한 컨텐츠 보기</div>
+                        <div className='text-center' onClick={handleShowKnowhowsPaticipate}>내가 참여중인 컨텐츠 보기</div>
+                      </Popover.Body>
+                    </Popover>
+                  </Overlay>
+                </Nav.Link>
+
+              ) :
+                (<Nav.Link href="/" > {session.user.name}
+                  <Overlay
+                    show={showOverlay}
+                    target={ref}
+                    placement="left"
+                    container={ref}
+                    containerPadding={20}
+                  >
+                    <Popover id="popover-contained">
+                      <Popover.Header className='bg-dark text-center' as="h3">마이 홈</Popover.Header>
+                      <Popover.Body>
+                        <div className="text-center" data-bs-toggle="modal" data-bs-target="#staticBackdrop">내 정보 수정</div>
+                        <div className='text-center' onClick={handleShowMyKnowhow}>내가 등록한 컨텐츠 보기</div>
+                        <div className='text-center' onClick={handleShowKnowhowsPaticipate}>내가 참여중인 컨텐츠 보기</div>
+                      </Popover.Body>
+                    </Popover>
+                  </Overlay>
+                </Nav.Link>)
               }
 
               <Nav.Link href="/" onClick={(e) => {
                 e.preventDefault();
                 signOut();
               }}>  <FaSignOutAlt /> Logout</Nav.Link>
+
             </Nav>
           ) : (
             <Nav className="ms-auto">
@@ -107,6 +168,26 @@ const Header = () => {
         </Navbar.Collapse>
       </Container>
     </Navbar>
+
+    <div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div className="modal-dialog">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title" id="staticBackdropLabel">프로필 변경</h5>
+            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div className="modal-body">
+            여기에 필요한 내용을 넣을 것
+          </div>
+          <div className="modal-footer">
+            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+            <button type="button" className="btn btn-primary" onClick={handleSaveProfile} data-bs-dismiss="modal">저장</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </>
+
   );
 };
 

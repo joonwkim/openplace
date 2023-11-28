@@ -2,7 +2,7 @@
 import bcrypt from "bcrypt";
 import { revalidatePath } from "next/cache";
 import { cookies } from 'next/headers';
-import { createUser, getUserByEmail, updateUser } from "../services/userService";
+import { createUser, getUserByEmail, getUserById, updateUser } from "../services/userService";
 const jwt = require('jsonwebtoken');
 
 
@@ -12,6 +12,11 @@ async function hashPassword(password: string) {
     const salt = await bcrypt.genSalt(sf);
     const hash = await bcrypt.hashSync(password, salt);
     return hash;
+}
+
+export async function getUserByIdAction(id: string) {
+    await getUserById(id);
+    revalidatePath('/');
 }
 
 export async function createUserAction(input: any) {
