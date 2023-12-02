@@ -17,6 +17,8 @@ import { signIn } from 'next-auth/react'
 import { SessionForm } from '../types'
 import { loginAction } from '@/app/actions/userAction'
 import FormContainer from '@/components/controls/formContainer'
+import { Button } from 'react-bootstrap';
+import FindPasswordModal from '@/app/auth/login/FindPasswordModal';
 
 const sessionSchema: ZodType<SessionForm> = object({
   email: string({
@@ -41,6 +43,10 @@ export default function LoginPage(req: NextRequest) {
     }, [ ])
   const { register, formState: { errors }, handleSubmit, reset } = useForm<SessionForm>({ resolver: zodResolver(sessionSchema), });
   const [loginError, setLoginError] = useState<string[]>()
+
+  const [showFindPassword, setShowFindPassword] = useState(false);
+  const handleShowFindPassword = () => setShowFindPassword(true);
+  const handleCloseFindPassword = () => setShowFindPassword(false);
 
   const googleLogin = () => {
     signIn('google', { callbackUrl:'/' })
@@ -132,10 +138,14 @@ export default function LoginPage(req: NextRequest) {
               |
             </div>
             <div className={styles.loginRegist}>
-              <Link href='/auth/findpassword'>
+              <Button variant="link" onClick={handleShowFindPassword}>
                 비밀번호 찾기
-              </Link>
+              </Button>
             </div>
+            <FindPasswordModal
+              show={showFindPassword}
+              handleClose={handleCloseFindPassword}
+            />
           </Stack>
 
           <div className="row">
