@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { Card, CardFooter } from 'react-bootstrap';
+import { Card, } from 'react-bootstrap';
 import GeneralFooter from '../../components/controls/generalFooter';
 
 type GenProps = {
@@ -35,9 +35,9 @@ const DispGeneral = (props: GenProps) => {
                         </div>
                     </div>
                 </Card.Body>
-                <CardFooter className='text-center'>
+                <Card.Footer className='text-center'>
                     <GeneralFooter knowhow={knowhow} session={session} />
-                </CardFooter>
+                </Card.Footer>
             </div>
 
         </div>
