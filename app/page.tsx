@@ -28,7 +28,7 @@ const PlaceHomePage = async ({ searchParams }: { searchParams: { searchText: str
 
   return (
     <>
-      {knowhows.length > 0 ? (<div className="row row-cols-1 row-cols-md-3 row-cols-sm-2 mt-0 g-4">
+      {knowhows?.length > 0 ? (<div className="row row-cols-1 row-cols-md-3 row-cols-sm-2 mt-0 g-4">
         {knowhows?.map(knowhow => (
           <KnowhowItem key={knowhow.id} knowhow={knowhow} />
         ))}

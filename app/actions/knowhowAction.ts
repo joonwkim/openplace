@@ -1,4 +1,4 @@
-'use server';
+'use server'
 import { revalidatePath } from "next/cache";
 import { addKnowhowViewCount, createKnowhow, updateGeneralKnowhow, updateKnowhow, updateKnowhowToSetParent } from "../services/knowhowService";
 import { Knowhow, KnowhowDetailInfo } from "@prisma/client";
