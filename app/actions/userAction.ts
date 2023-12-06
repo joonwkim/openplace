@@ -69,7 +69,7 @@ export async function loginAction(input: any) {
     } catch (error: any) {
         console.log('loginAction error: ', error);
         const errorMessage = error.response.data.message;
-        throw new Error(errorMessage);
+        throw new Error('loginAction error:' + errorMessage);
     }
 }
 export async function updateUserAction(id: string, input: any) {

@@ -567,7 +567,7 @@ export async function getKnowhows(searchBy: string | undefined | null,) {
     try {
         let knowhows: Array<Knowhow> = []
         if (searchBy === null || searchBy === undefined) {
-            console.log('searchBy', searchBy);
+            // console.log('searchBy', searchBy);
             knowhows = await getRootKnowhow();
         } else if (searchBy === "놀기" || searchBy === "배우기" || searchBy === "만들기") {
             const category = await prisma.category.findFirst({
@@ -621,7 +621,7 @@ export async function getKnowhows(searchBy: string | undefined | null,) {
     }
     catch (error) {
         console.log(error);
-        // return error
+        throw new Error('getKnowhows error:');
     }
 
 }
@@ -671,10 +671,8 @@ export async function getKnowhow(id: string) {
     }
     catch (error) {
         console.log('getKnowhow', error);
-        throw error;
-        // return error
+        throw new Error('getKnowhow error:');
     }
-
 }
 
 export async function addKnowhowViewCount(id: string, count: number) {

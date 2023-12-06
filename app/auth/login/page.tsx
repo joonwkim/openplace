@@ -35,6 +35,7 @@ export default function LoginPage(req: NextRequest) {
 
     } catch (error: any) {
       console.log('LoginPage error:', error);
+      throw new Error('LoginPage error:');
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -9,15 +9,15 @@ const PlaceHomePage = async ({ searchParams }: { searchParams: { searchText: str
 
   let knowhows: Knowhow[] = [];
   let user: User;
-  if (searchParams.searchText) {
+  if (searchParams?.searchText) {
     knowhows = (await getKnowhows(searchParams.searchText) as Array<Knowhow>);
-  } else if (searchParams.category) {
+  } else if (searchParams?.category) {
     knowhows = (await getKnowhows(searchParams.category) as Array<Knowhow>);
-  } else if (searchParams.myhome) {
+  } else if (searchParams?.myhome) {
     if (searchParams.myhome === "profile") {
       user = await getUserById(searchParams.id) as User;
       knowhows = (await getKnowhows(null) as Array<Knowhow>);
-      console.log(user)
+      // console.log(user)
     } else {
       knowhows = (await getKnowhowsBy(searchParams.myhome, searchParams.id) as Array<Knowhow>);
     }
@@ -26,6 +26,7 @@ const PlaceHomePage = async ({ searchParams }: { searchParams: { searchText: str
     knowhows = (await getKnowhows(null) as Array<Knowhow>);
   }
 
+  // console.log('knowhows:', knowhows)
   return (
     <>
       {knowhows?.length > 0 ? (<div className="row row-cols-1 row-cols-md-3 row-cols-sm-2 mt-0 g-4">
@@ -33,9 +34,6 @@ const PlaceHomePage = async ({ searchParams }: { searchParams: { searchText: str
           <KnowhowItem key={knowhow.id} knowhow={knowhow} />
         ))}
       </div>) : (<div className='mt-3 text-center'><h2>{`등록된 ${searchParams.category ? (searchParams.category) : (searchParams.searchText)} 데이터가 없습니다.`}</h2></div>)}
-
-      {/* <ProfileChange /> */}
-
     </>
   );
 };

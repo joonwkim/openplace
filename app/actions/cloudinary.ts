@@ -40,7 +40,7 @@ export async function uploadToCloudinary(formData: FormData) {
       body: formData
     }).then(res => res.json());
 
-    console.log('upload result to cloudinary:', data);
+    // console.log('upload result to cloudinary:', data);
 
     const ci: CloudiaryInfo = {
       asset_id: data.asset_id,
@@ -58,6 +58,7 @@ export async function uploadToCloudinary(formData: FormData) {
     return ci;
   } catch (error) {
     console.log('uploadToCloudinary error:', error);
+    throw new Error('upload to cloudinary error');
   }
 }
 
@@ -95,6 +96,7 @@ export async function uploadFile(formData: FormData) {
 
   } catch (error) {
     console.log('uploadFile error:', error);
+    throw new Error('uploadFile error:');
   }
 }
 
@@ -117,6 +119,7 @@ export const getImgUrlByFilename = async (foldername: string, filename: string) 
     }
   } catch (error) {
     console.log('getImgUrlByFilename error: ', error);
+    throw new Error('getThumbnailImgUrlByFilename error:');
   }
 
 };
@@ -148,6 +151,8 @@ export async function saveToDatabase({ public_id, version, signature }: { public
   if (expectedSignature === signature) {
     // safe to write to database
     console.log('saveToDatabase in cloudinary: ', { public_id });
+    throw new Error('saveToDatabase error:');
+
   }
 }
 
@@ -178,6 +183,7 @@ export async function getAssetResources() {
     return cloudinaryInfoArray;
   } catch (error) {
     console.log('getAssetResources in cloudinary error:', error);
+    throw new Error('getAssetResources error:');
   }
 }
 
@@ -188,6 +194,7 @@ export async function getAssetDetail(publicId: string) {
     return result;
   } catch (error) {
     console.log('getAssetDetail error: ', error);
+    throw new Error('getAssetDetail error:');
   }
 
 }

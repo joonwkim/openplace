@@ -19,6 +19,7 @@ export async function createChildKnowHowWithDetailAction(parentKnowhowId: string
 
   } catch (error) {
     console.log('createChildKnowHowWithDetailAction error: ', error);
+    throw new Error('createChildKnowHowWithDetailAction error:');    
   }
   revalidatePath('/');
 }
@@ -34,6 +35,7 @@ export async function createKnowhowWithDetailInfoAction(genFormData: any, knowho
     revalidatePath('/');
   } catch (error) {
     console.log('createKnowhowWithDetailInfoAction error:', error);
+    throw new Error('createKnowhowWithDetailInfoAction error:');
   }
   revalidatePath('/');
 }
@@ -48,6 +50,7 @@ export async function updateKnowHowWithDetailInfoAction(knowhow: Knowhow, genFor
     revalidatePath('/');
   } catch (error) {
     console.log('updateKnowHowWithDetailAction error:', error);
+    throw new Error('updateKnowHowWithDetailInfoAction error:');
   }
   revalidatePath('/');
 }
