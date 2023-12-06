@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import path from 'path';
 import SearchBar from './controls/searchBar';
 import { Modal, Button } from 'react-bootstrap';
-import './ModalStyles.css';
+// import './ModalStyles.css';
 import styled from 'styled-components';
 
 interface Props {
