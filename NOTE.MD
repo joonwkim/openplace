@@ -242,5 +242,6 @@ git push -f origin main
 git gc --aggressive --prune=all
 
 
-
+//send mail using node mailer
+npm install nodemailer
 

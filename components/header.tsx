@@ -1,13 +1,11 @@
 'use client';
-import { Container, Nav, NavDropdown, Navbar, Overlay, Popover, Tooltip } from 'react-bootstrap';
+import { Container, Nav, Navbar, Overlay, Popover } from 'react-bootstrap';
 import { FaSignInAlt, FaSignOutAlt, FaUser } from "react-icons/fa";
 import Image from 'next/image';
 import { useRouter, } from 'next/navigation';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useRef, useState } from 'react';
 import SearchBar from './controls/searchBar';
-import { readFile } from 'fs/promises';
-import ProfileChange from '@/app/components/profileChange';
 
 interface Props {
 
@@ -16,8 +14,6 @@ interface Props {
 const Header = () => {
 
   const { data: session } = useSession();
-  const isLogin = false;
-
   const [search, setSearch] = useState('');
   const [showOverlay, setShowOverlay] = useState(false);
   const [overlayTarget, setOverlayTarget] = useState(null);
@@ -50,7 +46,7 @@ const Header = () => {
     router.push(`/?myhome=paticipated&id=${session?.user.id}`);
   }
 
-  const handleClick = (event: any) => {
+  const handleMyHomeClick = (event: any) => {
     setShowOverlay(!showOverlay);
     setOverlayTarget(event.target);
   };
@@ -63,7 +59,6 @@ const Header = () => {
         <Navbar.Brand href="/">
           {'오픈플레이스홈'}
         </Navbar.Brand>
-
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
@@ -94,52 +89,26 @@ const Header = () => {
                 <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z" />
               </svg>)}
             </Nav.Link>
-
-            <Nav.Link href="/regContents"> <button className="btn btn-outline-danger ms-2" type="submit" title='notification'>
-              등록하기
-            </button></Nav.Link>
+            <Nav.Link href="/regContents"> <button className="btn btn-outline-danger ms-2" type="submit" title='notification'>등록하기</button></Nav.Link>
           </Nav>
 
           {session && session.user ? (
             <Nav className="ms-auto" title={session?.user.name}>
-
-              {session.user.image ? (
-
-                <Nav.Link ref={ref} onClick={handleClick}>
-                  <Image id="userpicture" style={{ borderRadius: '50%' }}
-                    unoptimized
-                    src={session.user.image}
-                    alt={session.user.email}
-                    width="30"
-                    height="30"
-                  />
-                  <Overlay
-                    show={showOverlay}
-                    target={ref}
-                    placement="left"
-                    container={ref}
-                    containerPadding={20}
-                  >
-                    <Popover id="popover-contained">
-                      <Popover.Header className='bg-dark text-center' as="h3">마이 홈</Popover.Header>
-                      <Popover.Body>
-                        <div className="text-center" data-bs-toggle="modal" data-bs-target="#staticBackdrop">내 정보 수정</div>
-                        <div className='text-center' onClick={handleShowMyKnowhow}>내가 등록한 컨텐츠 보기</div>
-                        <div className='text-center' onClick={handleShowKnowhowsPaticipate}>내가 참여중인 컨텐츠 보기</div>
-                      </Popover.Body>
-                    </Popover>
-                  </Overlay>
-                </Nav.Link>
-
-              ) :
-                (<Nav.Link href="/" > {session.user.name}
-                  <Overlay
-                    show={showOverlay}
-                    target={ref}
-                    placement="left"
-                    container={ref}
-                    containerPadding={20}
-                  >
+              {session.user.image ? (<Nav.Link ref={ref} onClick={handleMyHomeClick}>
+                <Image id="userpicture" style={{ borderRadius: '50%' }} unoptimized src={session.user.image} alt={session.user.email} width="30" height="30" />
+                <Overlay show={showOverlay} target={ref} placement="left" container={ref} containerPadding={20}>
+                  <Popover id="popover-contained">
+                    <Popover.Header className='bg-dark text-center' as="h3">마이 홈</Popover.Header>
+                    <Popover.Body>
+                      <div className="text-center" data-bs-toggle="modal" data-bs-target="#staticBackdrop">내 정보 수정</div>
+                      <div className='text-center' onClick={handleShowMyKnowhow}>내가 등록한 컨텐츠 보기</div>
+                      <div className='text-center' onClick={handleShowKnowhowsPaticipate}>내가 참여중인 컨텐츠 보기</div>
+                    </Popover.Body>
+                  </Popover>
+                </Overlay>
+              </Nav.Link>) :
+                (<Nav.Link ref={ref} onClick={handleMyHomeClick}> {session.user.name}
+                  <Overlay show={showOverlay} target={ref} placement="left" container={ref} containerPadding={20}                  >
                     <Popover id="popover-contained">
                       <Popover.Header className='bg-dark text-center' as="h3">마이 홈</Popover.Header>
                       <Popover.Body>
@@ -151,20 +120,12 @@ const Header = () => {
                   </Overlay>
                 </Nav.Link>)
               }
-
-              <Nav.Link href="/" onClick={(e) => {
-                e.preventDefault();
-                signOut();
-              }}>  <FaSignOutAlt /> Logout</Nav.Link>
-
+              <Nav.Link href="/" onClick={(e) => { e.preventDefault(); signOut(); }}>  <FaSignOutAlt /> Logout</Nav.Link>
             </Nav>
-          ) : (
-            <Nav className="ms-auto">
-                <Nav.Link href="/auth/login" onClick={(e) => handleSignIn(e)}><FaSignInAlt />로그인</Nav.Link>
-              <Nav.Link href="/auth/register"> <FaUser />회원가입</Nav.Link>
-            </Nav>
-          )
-          }
+          ) : (<Nav className="ms-auto">
+            <Nav.Link href="/auth/login" onClick={(e) => handleSignIn(e)}><FaSignInAlt />로그인</Nav.Link>
+            <Nav.Link href="/auth/register"> <FaUser />회원가입</Nav.Link>
+          </Nav>)}
         </Navbar.Collapse>
       </Container>
     </Navbar>

@@ -2,7 +2,6 @@ import { GoogleUser } from '@/app/auth/types';
 import prisma from '@/prisma/prisma';
 import { MembershipRequestStatus } from '@prisma/client';
 import bcrypt from "bcrypt";
-import exp from 'constants';
 
 export async function getUsers() {
     try {
@@ -49,8 +48,7 @@ export async function createUser(input: any) {
 
 export async function getUserByEmail(emailInput: string) {
     try {
-        // const user = await prisma.user.findUnique({
-        const user = await prisma.user.findUnique({
+        const user = await prisma.user.findFirst({
             where: {
                 email: emailInput,
             },
@@ -74,7 +72,6 @@ export async function getUserByEmail(emailInput: string) {
 
         if (user) {
             const requests = user.membershipProcessedBys.filter(s => s.membershipRequestStatus === MembershipRequestStatus.REQUESTED);
-            // console.log('memberRequestedTos', JSON.stringify(requests,null,2))
             user.notificationCount = requests.length;
         }
 
@@ -96,6 +93,23 @@ export async function getUserById(id: string) {
     console.log('user:', user)
     return user;
 }
+
+export async function updateUserPassword(email: string, password: any) {
+    try {
+        const updateUser = await prisma.user.update({
+            where: {
+                email: email,
+            },
+            data: {
+                password: password,
+            }
+        });
+    } catch (error) {
+        console.log('')
+        return ({ error });
+    }
+}
+
 export async function updateUser(email: string, input: any) {
     try {
         const updateUser = await prisma.user.update({
@@ -104,8 +118,8 @@ export async function updateUser(email: string, input: any) {
             },
             data: input
         });
-
     } catch (error) {
+        console.log('')
         return ({ error });
     }
 }

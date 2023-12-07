@@ -2,17 +2,10 @@
 import bcrypt from "bcrypt";
 import { revalidatePath } from "next/cache";
 import { cookies } from 'next/headers';
-import { createUser, getUserByEmail, getUserById, updateUser } from "../services/userService";
+import { createUser, getUserByEmail, getUserById, updateUser, updateUserPassword } from "../services/userService";
+import { generatePassword, hashPassword } from "../lib/password";
+import { sendMail } from "../lib/mailServer";
 const jwt = require('jsonwebtoken');
-
-
-async function hashPassword(password: string) {
-    const saltFactor = process.env.SALT_WORK_FACTOR || 10;
-    var sf: number = + saltFactor;
-    const salt = await bcrypt.genSalt(sf);
-    const hash = await bcrypt.hashSync(password, salt);
-    return hash;
-}
 
 export async function getUserByIdAction(id: string) {
     await getUserById(id);
@@ -36,6 +29,34 @@ export async function createUserAction(input: any) {
     }
 }
 
+export async function sendNewPasswordAction(email: string) {
+    console.log('email in sendNewPasswordAction:', email)
+    var user: any = await getUserByEmail(email);
+    if (user) {
+        const newPassword = generatePassword();
+        const passwordHashed = await hashPassword(newPassword);
+        const result = await updateUserPassword(email, passwordHashed);
+
+        sendMail(email, newPassword)
+        return true;
+    }
+    else {
+        return false
+    }
+}
+
+export async function findUserAction(email: any) {
+    try {
+        var user: any = await getUserByEmail(email);
+        if (!user) return 'user not registered';
+        if (user.googleLogin) return 'googleLoginUser'
+        return 'user';
+
+    } catch (error: any) {
+        console.log('findUserAction error: ', error);
+        return 'user not registered';
+    }
+}
 export async function loginAction(input: any) {
     try {
         var user: any = await getUserByEmail(input.email);
@@ -76,3 +97,5 @@ export async function updateUserAction(id: string, input: any) {
     await updateUser(id, input);
     revalidatePath('/');
 }
+
+

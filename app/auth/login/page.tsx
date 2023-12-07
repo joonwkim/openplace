@@ -1,21 +1,17 @@
 'use client';
 import type { Metadata } from 'next';
 import Link from "next/link";
-import { useState, useEffect, } from 'react';
+import { useState, useEffect, useRef, } from 'react';
 import { Form, FloatingLabel, Stack } from 'react-bootstrap';
 import { useRouter } from 'next/navigation';
 import { object, string, ZodType } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import styles from '@/app/auth/page.module.css';
-// import Image from 'next/image'
-// import getGoogleUrl from '../../utils/getGoogleUrl'
 import { NextRequest } from 'next/server';
-// import { loginAction } from '@/app/actions/userAction'
 import { signIn } from 'next-auth/react';
-// import { useSearchParams } from 'next/navigation'
 import { SessionForm } from '../types';
-import { loginAction } from '@/app/actions/userAction';
+import { findUserAction, loginAction, sendNewPasswordAction } from '@/app/actions/userAction';
 import FormContainer from '@/components/controls/formContainer';
 
 const sessionSchema: ZodType<SessionForm> = object({
@@ -28,6 +24,9 @@ const sessionSchema: ZodType<SessionForm> = object({
 });
 
 export default function LoginPage(req: NextRequest) {
+
+  const [email, setEmail] = useState('')
+  const [emailErrorMsg, setEmailErrorMsg] = useState('')
 
   useEffect(() => {
     try {
@@ -64,6 +63,33 @@ export default function LoginPage(req: NextRequest) {
       alert('관리자에게 문의 하세요:' + JSON.stringify(error));
     }
   }
+
+  const handleFindPassword = async () => {
+    if (emailErrorMsg.length === 0 && email.length > 5) {
+      var result = await findUserAction(email);
+      if (result === 'user not registered') {
+        alert('회원 가입하시거나 SNS계정으로 로그인 하세요.');
+      } else if (result === "googleLoginUser") {
+        alert('구글 SNS계정으로 로그인 하세요..');
+      }
+      else {
+        const result = await sendNewPasswordAction(email);
+        alert(`신규 비밀번호가 ${email}로 전송되었습니다. `);
+      }
+      setEmail('')
+    }
+  }
+  const handleEmailChanged = (e: any) => {
+    setEmail(e.target.value)
+    if (!e.target.value.includes('@')) {
+      setEmailErrorMsg(`* 이메일 주소에 '@'를 포함해 주세요.`)
+    }
+    else {
+      setEmailErrorMsg('')
+    }
+  }
+
+  const modalRef = useRef<HTMLDivElement>(null);
 
   return (
     <>
@@ -132,7 +158,7 @@ export default function LoginPage(req: NextRequest) {
               |
             </div>
             <div className={styles.loginRegist}>
-              <Link href='/auth/findpassword'>
+              <Link href='/' data-bs-toggle="modal" data-bs-target="#staticBackdropForFindPassword" >
                 비밀번호 찾기
               </Link>
             </div>
@@ -160,6 +186,34 @@ export default function LoginPage(req: NextRequest) {
           </div>
         </form>
       </FormContainer>
+      <div ref={modalRef} className="modal fade" id="staticBackdropForFindPassword" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropLabel" aria-hidden="true" >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title text-center" id="staticBackdropLabel">비밀번호 찾기</h5>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              <div className='text-center fs-6'>
+                비밀번호를 재발급 하고자는 아이디(메일)를 입력해 주세요.
+              </div>
+              <div className="input-group mb-3">
+                <input type="text" className="form-control text-center mt-3" value={email} aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" onChange={handleEmailChanged} />
+              </div>
+              <div>
+                {emailErrorMsg.length > 0 && <p className={styles.emailError}>{emailErrorMsg}</p>}
+              </div>
+
+            </div>
+            <div className="modal-footer">
+              {email && emailErrorMsg.length === 0 &&
+                <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={handleFindPassword}>비밀번호 발급 요청</button>
+              }
+
+            </div>
+          </div>
+        </div>
+      </div>
     </>
 
   );

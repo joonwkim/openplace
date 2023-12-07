@@ -1,4 +1,4 @@
-.authPage{
+.authPage {
   display: grid;
   height: 100%;
   margin: 0;
@@ -12,22 +12,26 @@
 .authPage>div {
   text-align: center
 }
-.registerError{
+.registerError {
   color: red;
   font-size: 6pt;
-  
 }
-.loginForm{
+
+.emailError {
+  color: red;
+  font-size: 8pt;
+}
+.loginForm {
   width: 22rem;
   border-color: gray;
   padding: 2rem;
 }
-.loginLabel{
+.loginLabel {
   font-size: 9pt;
   color: darkblue;
   margin-bottom: 1rem;
 }
-.loginRegist{
+.loginRegist {
   margin-left: 9pt;
   font-size: 9pt;
 }

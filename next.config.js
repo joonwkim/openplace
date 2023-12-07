@@ -4,9 +4,9 @@ const nextConfig = {
     locales: ['ko-KR'],
     defaultLocale: 'ko-KR',
   },
-  experimental: {
-    serverActions: true,
-  },
+  // experimental: {
+  //   serverActions: true,
+  // },
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -22,6 +22,26 @@ const nextConfig = {
     ],
     domains: ['img.youtube.com', 'res.cloudinary.com', 'assets.vercel.com',],
   },
+
+  //to fs resolve
+  // webpack5: true,
+  webpack: (config) => {
+    config.resolve.fallback = { fs: false };
+
+    return config;
+  },
+
+  // for webpack4
+  // webpack: (config, { isServer }) => {
+  //   // Fixes npm packages that depend on `fs` module
+  //   if (!isServer) {
+  //     config.node = {
+  //       fs: 'empty'
+  //     }
+  //   }
+
+  //   return config
+  // },
   // images: {
   //       formats: ['image/avif', 'image/webp'],
   //       remotePatterns: [
