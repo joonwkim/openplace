@@ -573,7 +573,32 @@ export async function getKnowhowsBy(registeredOrpaticipated: string | undefined 
 
         })
     }
-    if (registeredOrpaticipated === "paticipated") {
+    if (registeredOrpaticipated === "paticipated" && userId) {
+        const requestedBys = await prisma.membershipRequest.findMany({
+            where: {
+                membershipRequestedById: userId
+            },
+            include: {
+                knowhow: {
+                    include: {
+                        // tags: true,
+                        // author: true,
+                        votes: true,
+                        knowhowDetailInfo: true,
+                        membershipRequest: true,
+                        author: true,
+                        children: true,
+                        thumbnailCloudinaryData: true,
+                    }
+                }
+            }
+        })
+
+        requestedBys.forEach(s => {
+            knowhows.push(s.knowhow)
+        })
+
+        console.log('requestedBys:', JSON.stringify(requestedBys, null, 2))
 
     }
     console.log('knowhows: ', registeredOrpaticipated, JSON.stringify(knowhows, null, 2))
