@@ -17,11 +17,11 @@ export const getHashedPassword = async (password: string) => {
     return hash;
 }
 
-export const comparePasswords = async (existingPassword: string, passwordEntered: string) => {
-    let result = false;
-    const hashedPswd = await getHashedPassword(passwordEntered);
-    if (existingPassword === hashedPswd) {
-        result = true;
+export const verifyPassword = async (inputPassword: string, encriptedPassword: string) => {
+    const result = await bcrypt.compare(inputPassword, encriptedPassword).catch((e) => false);
+    if (!result) {
+        const errorMessage = 'password do not match';
+        return errorMessage;
     }
     return result;
 }

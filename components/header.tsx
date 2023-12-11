@@ -4,7 +4,7 @@ import { FaSignInAlt, FaSignOutAlt, FaUser } from "react-icons/fa";
 import Image from 'next/image';
 import { useRouter, } from 'next/navigation';
 import { useSession, signIn, signOut } from 'next-auth/react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SearchBar from './controls/searchBar';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,22 +13,21 @@ import { literal, object, string, TypeOf, ZodType } from "zod";
 import styles from './page.module.css';
 import { ProfileChange } from './controls/profileChange';
 import { updateProfileAction } from '@/app/actions/userAction';
-
 interface Props {
 
 }
 
-const registerSchema: ZodType<RegisterForm> = object({
-  name: string({ required_error: "이름을 입력하세요", }).min(3, "이름을 3글자 이상으로 입력하세요."),
-  password: string({ required_error: "비밀번호를 입력하세요", })
-    .min(6, "6글자 이상 비밀번호를 입력하세요."),
-  passwordConfirmation: string({ required_error: "비밀번호를 재입력하세요", }).min(6, "위와 동일한 비밀번호를 입력하세요."),
-  terms: literal(true, { errorMap: () => ({ message: "이용약관과 개인정보 처리방침을 확인하고 동의해야 합니다." }), }),
-  email: string({ required_error: "이메일을 입력하세요", }).email("이메일 형태에 맞게 입력하세요.")
-}).refine((data: any) => data.password === data.passwordConfirmation, {
-  message: "비밀번호가 일치하지 않습니다.",
-  path: ["passwordConfirmation"],
-});
+// const registerSchema: ZodType<RegisterForm> = object({
+//   name: string({ required_error: "이름을 입력하세요", }).min(3, "이름을 3글자 이상으로 입력하세요."),
+//   password: string({ required_error: "비밀번호를 입력하세요", })
+//     .min(6, "6글자 이상 비밀번호를 입력하세요."),
+//   passwordConfirmation: string({ required_error: "비밀번호를 재입력하세요", }).min(6, "위와 동일한 비밀번호를 입력하세요."),
+//   terms: literal(true, { errorMap: () => ({ message: "이용약관과 개인정보 처리방침을 확인하고 동의해야 합니다." }), }),
+//   email: string({ required_error: "이메일을 입력하세요", }).email("이메일 형태에 맞게 입력하세요.")
+// }).refine((data: any) => data.password === data.passwordConfirmation, {
+//   message: "비밀번호가 일치하지 않습니다.",
+//   path: ["passwordConfirmation"],
+// });
 
 const Header = () => {
 
@@ -36,11 +35,17 @@ const Header = () => {
   const [search, setSearch] = useState('');
   const [showOverlay, setShowOverlay] = useState(false);
   const [overlayTarget, setOverlayTarget] = useState(null);
+  const [allowChangeProfile, setAllowChangeProfile] = useState(false)
   const router = useRouter();
   const ref = useRef(null);
   const profileChangeRef = useRef<any>(null);
+  useEffect(() => {
+    if (!session?.user.googleLogin) {
+      setAllowChangeProfile(true);
+    }
+  }, [session?.user.googleLogin])
 
-  const { register, formState: { errors }, handleSubmit, reset } = useForm<RegisterForm>({ resolver: zodResolver(registerSchema), });
+  // const { register, formState: { errors }, handleSubmit, reset } = useForm<RegisterForm>({ resolver: zodResolver(registerSchema), });
 
   const handleSignIn = (e: any) => {
     e.preventDefault();
@@ -76,19 +81,16 @@ const Header = () => {
     console.log('handleSaveProfile')
     profileChangeRef.current.handleSubmit();
   }
-
   const saveProfileChanged = async (data: any) => {
-    // alert('saveProfileChanged clicked' + JSON.stringify(data, null, 2))
     const result = await updateProfileAction(session?.user, data)
-    alert(result)
-    if (result === "incorrectPasswordEntered") {
-      alert('입력된 이전 비밀번호가 일치하지 않습니다. 신규비밀번호를 발급받으세요.')
-    } else if (result === "userDoesnotExist") {
-      alert('구글을 통하여 프로필을 변경하세요.')
+    // alert(result)
+    if (result === "password do not match") {
+      alert('비밀번호가 일치하지 않습니다.')
     } else {
       alert('프로필이 변경되었습니다.')
-      router.push(`/`);
+
     }
+    router.push(`/`);
   }
 
   return (<>
@@ -138,7 +140,7 @@ const Header = () => {
                   <Popover id="popover-contained">
                     <Popover.Header className='bg-dark text-center' as="h3">마이 홈</Popover.Header>
                     <Popover.Body>
-                      <div className="text-center" data-bs-toggle="modal" data-bs-target="#staticBackdropForProfileChange">내 정보 수정</div>
+                      {allowChangeProfile && <div className="text-center" data-bs-toggle="modal" data-bs-target="#staticBackdropForProfileChange">내 정보 수정</div>}
                       <div className='text-center' onClick={handleShowMyKnowhow}>내가 등록한 컨텐츠 보기</div>
                       <div className='text-center' onClick={handleShowKnowhowsPaticipate}>내가 참여중인 컨텐츠 보기</div>
                     </Popover.Body>
@@ -150,7 +152,7 @@ const Header = () => {
                     <Popover id="popover-contained">
                       <Popover.Header className='bg-dark text-center' as="h3">마이 홈</Popover.Header>
                       <Popover.Body>
-                        <div className="text-center" data-bs-toggle="modal" data-bs-target="#staticBackdropForProfileChange">내 정보 수정</div>
+                        {allowChangeProfile && <div className="text-center" data-bs-toggle="modal" data-bs-target="#staticBackdropForProfileChange">내 정보 수정</div>}
                         <div className='text-center' onClick={handleShowMyKnowhow}>내가 등록한 컨텐츠 보기</div>
                         <div className='text-center' onClick={handleShowKnowhowsPaticipate}>내가 참여중인 컨텐츠 보기</div>
                       </Popover.Body>
@@ -180,7 +182,7 @@ const Header = () => {
           </div>
           <div className="modal-footer">
             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-            <button type="submit" form="profileChangeForm" className="btn btn-primary" onClick={handleSaveProfile} >저장</button>
+            <button type="submit" form="profileChangeForm" className="btn btn-primary" data-bs-dismiss="modal" onClick={handleSaveProfile} >저장</button>
             {/* <button type="button" form="profileChangeForm" className="btn btn-primary" onClick={handleSaveProfile} data-bs-dismiss="modal">저장</button> */}
           </div>
         </div>
@@ -192,3 +194,4 @@ const Header = () => {
 };
 
 export default Header;
+

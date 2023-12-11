@@ -3,8 +3,9 @@ import bcrypt from "bcrypt";
 import { revalidatePath } from "next/cache";
 import { cookies } from 'next/headers';
 import { createUser, getUserByEmail, getUserById, updateUser, updateUserNameAndPassword, updateUserPassword } from "../services/userService";
-import { comparePasswords, generateRandomPassword, getHashedPassword } from "../lib/password";
+import { generateRandomPassword, getHashedPassword, verifyPassword, } from "../lib/password";
 import { sendMail } from "../lib/mailServer";
+import { User } from "@prisma/client";
 const jwt = require('jsonwebtoken');
 
 export async function getUserByIdAction(id: string) {
@@ -13,20 +14,22 @@ export async function getUserByIdAction(id: string) {
 }
 
 export async function updateProfileAction(user: any, data: any) {
-    console.log('checkPasswordAction', user, data)
+    console.log('checkPasswordAction user and data entered:', user, data)
     if (!user || !user.email || !data) return;
-    const userExist = await getUserByEmail(user?.email);
-    if (!userExist) {
+    const userExist: User = await getUserByEmail(user?.email) as User;
+    if (!userExist || !userExist.password) {
         return 'userDoesnotExist'
     }
-    if (!(await comparePasswords(user.password, data.currentPassword))) {
-        return 'incorrectPasswordEntered'
+    const result = await verifyPassword(data.currentPassword, userExist.password)
+    if (result === 'password do not match') {
+        return result;
     }
-    const result = await updateUserNameAndPassword(user, data.newPassword);
+    else {
+        const result = await updateUserNameAndPassword(user, data.newPassword);
+        if (result)
+            return "profileChanged"
+    }
 
-    if (result)
-        return "profileChanged"
-    return 'test';
 }
 export async function createUserAction(input: any) {
     try {
@@ -79,11 +82,14 @@ export async function loginAction(input: any) {
         var user: any = await getUserByEmail(input.email);
         // console.log('user: ', user);
         if (!user) return 'user not registered';
-        const result = await bcrypt.compare(input.password, user.password).catch((e) => false);
-        if (!result) {
-            const errorMessage = 'password do not match';
-            return errorMessage;
-        }
+        // const result = await bcrypt.compare(input.password, user.password).catch((e) => false);
+        // if (!result) {
+        //     const errorMessage = 'password do not match';
+        //     return errorMessage;
+        // }
+
+        const result = await verifyPassword(input.password, user.password)
+
         const accessToken = jwt.sign(
             {
                 "UserInfo": {
