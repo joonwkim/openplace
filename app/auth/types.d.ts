@@ -19,15 +19,22 @@ interface RegisterForm extends SessionForm {
     passwordConfirmation: string;
     terms: boolean
 }
+interface ProfileChangeForm {
+    name: string;
+    currentPassword: string;
+    newPassword: string;
+    newPasswordConfirmation: string;
+}
+
 interface GoogleUser {
     name?: string;
     email?: string;
     image?: string;
     roles?: Role[];
-    googleLogin:boolean;
+    googleLogin: boolean;
     provider?: string,
 }
-interface TaskInputForm  {
+interface TaskInputForm {
     title: string;
     desc: string;
 }

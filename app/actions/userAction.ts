@@ -2,8 +2,8 @@
 import bcrypt from "bcrypt";
 import { revalidatePath } from "next/cache";
 import { cookies } from 'next/headers';
-import { createUser, getUserByEmail, getUserById, updateUser, updateUserPassword } from "../services/userService";
-import { generatePassword, hashPassword } from "../lib/password";
+import { createUser, getUserByEmail, getUserById, updateUser, updateUserNameAndPassword, updateUserPassword } from "../services/userService";
+import { comparePasswords, generateRandomPassword, getHashedPassword } from "../lib/password";
 import { sendMail } from "../lib/mailServer";
 const jwt = require('jsonwebtoken');
 
@@ -12,9 +12,25 @@ export async function getUserByIdAction(id: string) {
     revalidatePath('/');
 }
 
+export async function updateProfileAction(user: any, data: any) {
+    console.log('checkPasswordAction', user, data)
+    if (!user || !user.email || !data) return;
+    const userExist = await getUserByEmail(user?.email);
+    if (!userExist) {
+        return 'userDoesnotExist'
+    }
+    if (!(await comparePasswords(user.password, data.currentPassword))) {
+        return 'incorrectPasswordEntered'
+    }
+    const result = await updateUserNameAndPassword(user, data.newPassword);
+
+    if (result)
+        return "profileChanged"
+    return 'test';
+}
 export async function createUserAction(input: any) {
     try {
-        input.password = await hashPassword(input.password);
+        input.password = await getHashedPassword(input.password);
         delete input.passwordConfirmation;
         const userExist = await getUserByEmail(input.email);
         if (userExist) return 'email is being useed, use other email';
@@ -33,9 +49,9 @@ export async function sendNewPasswordAction(email: string) {
     console.log('email in sendNewPasswordAction:', email)
     var user: any = await getUserByEmail(email);
     if (user) {
-        const newPassword = generatePassword();
-        const passwordHashed = await hashPassword(newPassword);
-        const result = await updateUserPassword(email, passwordHashed);
+        const newPassword = generateRandomPassword();
+        // const passwordHashed = await getHashedPassword(newPassword);
+        const result = await updateUserPassword(email, newPassword);
 
         sendMail(email, newPassword)
         return true;
@@ -57,6 +73,7 @@ export async function findUserAction(email: any) {
         return 'user not registered';
     }
 }
+
 export async function loginAction(input: any) {
     try {
         var user: any = await getUserByEmail(input.email);
@@ -93,6 +110,7 @@ export async function loginAction(input: any) {
         throw new Error('loginAction error:' + errorMessage);
     }
 }
+
 export async function updateUserAction(id: string, input: any) {
     await updateUser(id, input);
     revalidatePath('/');

@@ -2,6 +2,7 @@ import { GoogleUser } from '@/app/auth/types';
 import prisma from '@/prisma/prisma';
 import { MembershipRequestStatus } from '@prisma/client';
 import bcrypt from "bcrypt";
+import { getHashedPassword } from '../lib/password';
 
 export async function getUsers() {
     try {
@@ -90,20 +91,45 @@ export async function getUserById(id: string) {
             profile: true,
         }
     })
-    console.log('user:', user)
+    // console.log('user:', user)
     return user;
 }
 
+export async function updateUserNameAndPassword(user: any, password: any) {
+    const hashedPassword = await getHashedPassword(password);
+    const updateUser = await prisma.user.update({
+        where: {
+            email: user.email,
+        },
+        data: {
+            name: user.name,
+            password: hashedPassword,
+        }
+    });
+    if (updateUser) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 export async function updateUserPassword(email: string, password: any) {
     try {
+        const hashedPassword = await getHashedPassword(password);
         const updateUser = await prisma.user.update({
             where: {
                 email: email,
             },
             data: {
-                password: password,
+                password: hashedPassword,
             }
         });
+        if (updateUser) {
+            return true;
+        }
+        else {
+            return false;
+        }
     } catch (error) {
         console.log('')
         return ({ error });
