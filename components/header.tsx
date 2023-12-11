@@ -6,28 +6,11 @@ import { useRouter, } from 'next/navigation';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 import SearchBar from './controls/searchBar';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from "@hookform/resolvers/zod";
-import { RegisterForm } from '@/app/auth/types';
-import { literal, object, string, TypeOf, ZodType } from "zod";
-import styles from './page.module.css';
 import { ProfileChange } from './controls/profileChange';
 import { updateProfileAction } from '@/app/actions/userAction';
 interface Props {
 
 }
-
-// const registerSchema: ZodType<RegisterForm> = object({
-//   name: string({ required_error: "이름을 입력하세요", }).min(3, "이름을 3글자 이상으로 입력하세요."),
-//   password: string({ required_error: "비밀번호를 입력하세요", })
-//     .min(6, "6글자 이상 비밀번호를 입력하세요."),
-//   passwordConfirmation: string({ required_error: "비밀번호를 재입력하세요", }).min(6, "위와 동일한 비밀번호를 입력하세요."),
-//   terms: literal(true, { errorMap: () => ({ message: "이용약관과 개인정보 처리방침을 확인하고 동의해야 합니다." }), }),
-//   email: string({ required_error: "이메일을 입력하세요", }).email("이메일 형태에 맞게 입력하세요.")
-// }).refine((data: any) => data.password === data.passwordConfirmation, {
-//   message: "비밀번호가 일치하지 않습니다.",
-//   path: ["passwordConfirmation"],
-// });
 
 const Header = () => {
 
@@ -39,18 +22,12 @@ const Header = () => {
   const router = useRouter();
   const ref = useRef(null);
   const profileChangeRef = useRef<any>(null);
-  useEffect(() => {
-    if (!session?.user.googleLogin) {
-      setAllowChangeProfile(true);
-    }
-  }, [session?.user.googleLogin])
-
-  // const { register, formState: { errors }, handleSubmit, reset } = useForm<RegisterForm>({ resolver: zodResolver(registerSchema), });
 
   const handleSignIn = (e: any) => {
     e.preventDefault();
     signIn();
   };
+
   const handleCancelBtnClicked = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     setSearch('');
     router.push('/');
@@ -63,9 +40,6 @@ const Header = () => {
     }
   };
 
-  const handleEditProfile = () => {
-    router.push(`/?myhome=profile&id=${session?.user.id}`);
-  }
   const handleShowMyKnowhow = () => {
     router.push(`/?myhome=registered&id=${session?.user.id}`);
   }
@@ -73,22 +47,20 @@ const Header = () => {
     router.push(`/?myhome=paticipated&id=${session?.user.id}`);
   }
 
-  const handleMyHomeClick = (event: any) => {
+  const handleUserIconOrNameClick = (event: any) => {
     setShowOverlay(!showOverlay);
     setOverlayTarget(event.target);
   };
+
   const handleSaveProfile = () => {
-    console.log('handleSaveProfile')
     profileChangeRef.current.handleSubmit();
   }
   const saveProfileChanged = async (data: any) => {
     const result = await updateProfileAction(session?.user, data)
-    // alert(result)
     if (result === "password do not match") {
       alert('비밀번호가 일치하지 않습니다.')
     } else {
       alert('프로필이 변경되었습니다.')
-
     }
     router.push(`/`);
   }
@@ -134,25 +106,25 @@ const Header = () => {
 
           {session && session.user ? (
             <Nav className="ms-auto" title={session?.user.name}>
-              {session.user.image ? (<Nav.Link ref={ref} onClick={handleMyHomeClick}>
+              {session.user.image ? (<Nav.Link ref={ref} onClick={handleUserIconOrNameClick}>
                 <Image id="userpicture" style={{ borderRadius: '50%' }} unoptimized src={session.user.image} alt={session.user.email} width="30" height="30" />
                 <Overlay show={showOverlay} target={ref} placement="left" container={ref} containerPadding={20}>
                   <Popover id="popover-contained">
                     <Popover.Header className='bg-dark text-center' as="h3">마이 홈</Popover.Header>
                     <Popover.Body>
-                      {allowChangeProfile && <div className="text-center" data-bs-toggle="modal" data-bs-target="#staticBackdropForProfileChange">내 정보 수정</div>}
+                      {session.user.googleLogin ? <div className="text-center" data-bs-toggle="modal" data-bs-target="#staticBackdropForProfileChange">내 정보 수정</div> : <></>}
                       <div className='text-center' onClick={handleShowMyKnowhow}>내가 등록한 컨텐츠 보기</div>
                       <div className='text-center' onClick={handleShowKnowhowsPaticipate}>내가 참여중인 컨텐츠 보기</div>
                     </Popover.Body>
                   </Popover>
                 </Overlay>
               </Nav.Link>) :
-                (<Nav.Link ref={ref} onClick={handleMyHomeClick}> {session.user.name}
+                (<Nav.Link ref={ref} onClick={handleUserIconOrNameClick}> {session.user.name}
                   <Overlay show={showOverlay} target={ref} placement="left" container={ref} containerPadding={20}                  >
                     <Popover id="popover-contained">
                       <Popover.Header className='bg-dark text-center' as="h3">마이 홈</Popover.Header>
                       <Popover.Body>
-                        {allowChangeProfile && <div className="text-center" data-bs-toggle="modal" data-bs-target="#staticBackdropForProfileChange">내 정보 수정</div>}
+                        {!session.user.googleLogin ? <div className="text-center" data-bs-toggle="modal" data-bs-target="#staticBackdropForProfileChange">내 정보 수정</div> : <></>}
                         <div className='text-center' onClick={handleShowMyKnowhow}>내가 등록한 컨텐츠 보기</div>
                         <div className='text-center' onClick={handleShowKnowhowsPaticipate}>내가 참여중인 컨텐츠 보기</div>
                       </Popover.Body>
@@ -183,7 +155,6 @@ const Header = () => {
           <div className="modal-footer">
             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">취소</button>
             <button type="submit" form="profileChangeForm" className="btn btn-primary" data-bs-dismiss="modal" onClick={handleSaveProfile} >저장</button>
-            {/* <button type="button" form="profileChangeForm" className="btn btn-primary" onClick={handleSaveProfile} data-bs-dismiss="modal">저장</button> */}
           </div>
         </div>
       </div>
@@ -194,4 +165,5 @@ const Header = () => {
 };
 
 export default Header;
+
 

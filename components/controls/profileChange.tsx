@@ -32,8 +32,6 @@ export const ProfileChange = forwardRef<any, ChangeProps>((props: ChangeProps, r
     const changeFormRef = useRef<any>();
     const [validated, setValidated] = useState(false);
 
-    console.log('user:', JSON.stringify(user, null, 2))
-
     useEffect(() => {
         if (user && user.name) {
             setValue('name', user?.name)
@@ -47,31 +45,18 @@ export const ProfileChange = forwardRef<any, ChangeProps>((props: ChangeProps, r
         ref,
         () => ({
             handleSubmit() {
-                // alert('useImperativeHandle: ')
-
-
                 const values = getValues();
-                if (values) {
-                    // onsubmit(values)
-                }
-                // alert('useImperativeHandle: ' + JSON.stringify(values))
-
-
                 setChangeDataToSave(values);
-                // reset({ 'name': '' });
-                // reset({ 'currentPassword': '' });
-                // reset({ 'newPassword': '' });
-                // reset({ 'newPasswordConfirmation': '' });
+                reset({ 'name': '' });
+                reset({ 'currentPassword': '' });
+                reset({ 'newPassword': '' });
+                reset({ 'newPasswordConfirmation': '' });
             }
         }),
     );
     async function onSubmit(values: any) {
-        // alert('on submit')
-        // reset({ 'name': '' });
-        // reset({ 'currentPassword': '' });
-        // reset({ 'newPassword': '' });
-        // reset({ 'newPasswordConfirmation': '' });
     }
+
     return (
         <div className='d-flex mt-1 gap-2'>
             <div className="card shadow p-3 col-4" tabIndex={0}>

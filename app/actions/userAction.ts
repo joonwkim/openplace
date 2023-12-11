@@ -14,7 +14,7 @@ export async function getUserByIdAction(id: string) {
 }
 
 export async function updateProfileAction(user: any, data: any) {
-    console.log('checkPasswordAction user and data entered:', user, data)
+    // console.log('checkPasswordAction user and data entered:', user, data)
     if (!user || !user.email || !data) return;
     const userExist: User = await getUserByEmail(user?.email) as User;
     if (!userExist || !userExist.password) {
@@ -29,7 +29,6 @@ export async function updateProfileAction(user: any, data: any) {
         if (result)
             return "profileChanged"
     }
-
 }
 export async function createUserAction(input: any) {
     try {
@@ -80,16 +79,8 @@ export async function findUserAction(email: any) {
 export async function loginAction(input: any) {
     try {
         var user: any = await getUserByEmail(input.email);
-        // console.log('user: ', user);
         if (!user) return 'user not registered';
-        // const result = await bcrypt.compare(input.password, user.password).catch((e) => false);
-        // if (!result) {
-        //     const errorMessage = 'password do not match';
-        //     return errorMessage;
-        // }
-
         const result = await verifyPassword(input.password, user.password)
-
         const accessToken = jwt.sign(
             {
                 "UserInfo": {

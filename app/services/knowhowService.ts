@@ -552,15 +552,31 @@ async function getRootKnowhow() {
     return knowhows;
 }
 
-export async function getKnowhowsBy(myhome: string | undefined | null, id: string | undefined | null) {
+export async function getKnowhowsBy(registeredOrpaticipated: string | undefined | null, userId: string | undefined | null) {
+    console.log('getKnowhowsBy', registeredOrpaticipated, userId)
     let knowhows: Array<Knowhow> = []
-    if (myhome === "registered") {
-        console.log(myhome, id)
+    if (registeredOrpaticipated === "registered" && userId) {
+        knowhows = await prisma.knowhow.findMany({
+            where: {
+                authorId: userId
+            },
+            include: {
+                // tags: true,
+                // author: true,
+                votes: true,
+                knowhowDetailInfo: true,
+                membershipRequest: true,
+                author: true,
+                children: true,
+                thumbnailCloudinaryData: true,
+            }
+
+        })
+    }
+    if (registeredOrpaticipated === "paticipated") {
 
     }
-    if (myhome === "paticipated") {
-        console.log(myhome, id)
-    }
+    console.log('knowhows: ', registeredOrpaticipated, JSON.stringify(knowhows, null, 2))
     return knowhows;
 }
 export async function getKnowhows(searchBy: string | undefined | null,) {

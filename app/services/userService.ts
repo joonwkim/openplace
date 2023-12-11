@@ -91,7 +91,6 @@ export async function getUserById(id: string) {
             profile: true,
         }
     })
-    // console.log('user:', user)
     return user;
 }
 

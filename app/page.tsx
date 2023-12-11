@@ -9,18 +9,22 @@ const PlaceHomePage = async ({ searchParams }: { searchParams: { searchText: str
 
   let knowhows: Knowhow[] = [];
   let user: User;
+
+  // console.log('search params: ', searchParams)
+
   if (searchParams?.searchText) {
     knowhows = (await getKnowhows(searchParams.searchText) as Array<Knowhow>);
   } else if (searchParams?.category) {
     knowhows = (await getKnowhows(searchParams.category) as Array<Knowhow>);
   } else if (searchParams?.myhome) {
-    if (searchParams.myhome === "profile") {
-      user = await getUserById(searchParams.id) as User;
-      knowhows = (await getKnowhows(null) as Array<Knowhow>);
-      // console.log(user)
-    } else {
-      knowhows = (await getKnowhowsBy(searchParams.myhome, searchParams.id) as Array<Knowhow>);
-    }
+    knowhows = (await getKnowhowsBy(searchParams.myhome, searchParams.id) as Array<Knowhow>);
+    // if (searchParams.myhome === "profile") {
+    //   user = await getUserById(searchParams.id) as User;
+    //   knowhows = (await getKnowhows(null) as Array<Knowhow>);
+    //   console.log('user: ', user)
+    // } else {
+    //   knowhows = (await getKnowhowsBy(searchParams.myhome, searchParams.id) as Array<Knowhow>);
+    // }
   }
   else {
     knowhows = (await getKnowhows(null) as Array<Knowhow>);
