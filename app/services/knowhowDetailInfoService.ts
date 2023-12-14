@@ -49,6 +49,7 @@ export async function updateCdIdsOfKnowHowDetailInfo(knowhowId: string, cdIds: s
         }
     });
     if (khd) {
+
         const khdiUpdateted = await prisma.knowhowDetailInfo.update({
             where: {
                 id: khd.id,
@@ -98,17 +99,11 @@ export async function updateKnowHowDetailInfo(knowhowId: string, knowhowDetailIn
 export async function updateKnowhowDetailInfo(knowhow: Knowhow, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], cdIds: string[], imgFormData: any[], pdfFormData: any[]) {
 
     try {
-        consoleLogFormDatas('imgFormData:', imgFormData);
-        consoleLogFormDatas('pdfFormData:', pdfFormData);
-
         let ytDataIds: string[] = [];
         if (ytData.length > 0) {
             ytDataIds = await getYtDataIds(ytData);
         }
-
-
-
-        const khd = await prisma.knowhowDetailInfo.findFirst({
+        let khd: any = await prisma.knowhowDetailInfo.findFirst({
             where: {
                 knowHowId: knowhow.id,
             },
@@ -116,9 +111,19 @@ export async function updateKnowhowDetailInfo(knowhow: Knowhow, knowhowDetailInf
                 cloudinaryDatas: true,
             }
         });
-
+        if (!khd) {
+            khd = await prisma.knowhowDetailInfo.create({
+                data: {
+                    thumbnailType: knowhowDetailInfo.thumbnailType as ThumbnailType,
+                    knowhow: {
+                        connect: {
+                            id: knowhow.id,
+                        }
+                    },
+                }
+            });
+        }
         if (khd) {
-            // console.log('knowhowdetailinfo found: ', khd);
             const khdiUpdateted = await prisma.knowhowDetailInfo.update({
                 where: {
                     id: khd.id,
@@ -134,24 +139,16 @@ export async function updateKnowhowDetailInfo(knowhow: Knowhow, knowhowDetailInf
                 }
             });
             await getAndAddCloudinaryDataIds(imgFormData, knowhow.id);
-
             await getAndAddCloudinaryDataIds(pdfFormData, knowhow.id);
-
         }
-        else {
-            console.log('knowhow detail info not found:');
-        }
-
     } catch (error) {
         console.log('updateKnowhowDetailInfo error: ', error);
         throw error;
     }
-
 }
 
 export async function createKnowhowDetailInfo(knowhow: Knowhow, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytDataIds: string[]) {
     try {
-        // console.log('ytData:', ytDataIds);
         const knowhowDetail = await prisma.knowhowDetailInfo.create({
             data: {
                 thumbnailType: knowhowDetailInfo.thumbnailType as ThumbnailType,
@@ -163,7 +160,7 @@ export async function createKnowhowDetailInfo(knowhow: Knowhow, knowhowDetailInf
                 },
             }
         });
-        if (knowhowDetail) {
+        if (knowhowDetail && ytDataIds.length > 0) {
             const update = await prisma.knowhowDetailInfo.update({
                 where: {
                     id: knowhowDetail.id,
@@ -174,29 +171,28 @@ export async function createKnowhowDetailInfo(knowhow: Knowhow, knowhowDetailInf
             });
             return update;
         }
-        // console.log('knowhow created: ', knowhowDetail);
         return knowhowDetail;
     }
     catch (error) {
-
+        console.log('createKnowhowDetailInfo error: ', error);
+        throw error;
     }
 }
 
 export async function createAndUpdateKnowhowDetailInfo(knowhow: Knowhow, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], imgFormData: any[], pdfFormData: any[]) {
 
     let ytDataIds: string[] = [];
-    if (ytData.length > 0) {
+    if (ytData !== undefined && ytData.length > 0) {
         ytDataIds = await getYtDataIds(ytData);
-
     }
-    const khdi = await createKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytDataIds);
-
-    console.log('knowhow detail info created: ', khdi);
-
-    if (khdi) {
-        await getAndAddCloudinaryDataIds(imgFormData, knowhow.id);
-        await getAndAddCloudinaryDataIds(pdfFormData, knowhow.id);
+    // console.log('knowhowDetailInfo:', knowhowDetailInfo, ytDataIds)
+    if (knowhowDetailInfo.detailText) {
+        const khdi = await createKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytDataIds);
+        console.log('knowhow detail info created: ', khdi);
+        if (khdi) {
+            await getAndAddCloudinaryDataIds(imgFormData, knowhow.id);
+            await getAndAddCloudinaryDataIds(pdfFormData, knowhow.id);
+        }
     }
-
 }
 

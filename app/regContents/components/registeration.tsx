@@ -64,11 +64,8 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
         };
 
         if (knowhowSelected) {
-
             let uniqueCdIds = [...imgCdIds, ...pdfCdIds];
-            console.log('uniqueCdIds', uniqueCdIds);
-            consoleLogFormDatas('imgFormData', imgFormData);
-            consoleLogFormDatas('pdfFormData', pdfFormData);
+            console.log('ytData0', ytData)
             await updateKnowHowWithDetailInfoAction(knowhowSelected, genFormData, knowhowDetailInfo, ytData, uniqueCdIds, imgFormData, pdfFormData);
         }
         else {
@@ -86,23 +83,18 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
     };
 
     const handleMouseLeaveGenInfo = () => {
-        // alert('handleMouseLeaveGenInfo');
         regGenRef.current?.handleSubmit();
     };
     const handleMouseLeaveOnYtFile = () => {
-        // alert('handleMouseLeaveOnYtFile');
         ytRef.current?.handleSubmit();
     };
     const handleMouseLeaveOnImgFile = () => {
-        // alert('handleMouseLeaveOnImgFile');
         imgRef.current?.handleSubmit();
     };
     const handleMouseLeaveOnPdfFile = () => {
-        // alert('handleMouseLeaveOnPdfFile');
         pdfFileRef.current?.handleSubmit();
     };
     const handleMouseLeaveOnText = () => {
-        // alert('handleMouseLeaveOnText');
         textRef.current?.handleSubmit();
     };
     const getFormGenData = (data: any) => {
