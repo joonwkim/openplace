@@ -459,19 +459,12 @@ export async function updateKnowhowToSetParent(parentId: string, knowhow: Knowho
 
 export async function createKnowhow(formData: any) {
     try {
-        // console.log('createKnowHow:', formData);
         if (formData === null) {
             return;
         }
 
         const { otherFormData, thumbNailFormData } = formData;
-        // consoleLogFormData('otherFormData: ', otherFormData);
-        // consoleLogFormData('thumbNailFormData: ', thumbNailFormData);
-
         const thumbnailCdId = await getThumbnailCloudinaryDataId(thumbNailFormData) as string;
-
-        // console.log('thumbnailCdId: ', thumbnailCdId);
-
         const tagList = otherFormData.get('tags') as string;
         let tagConnect = await createTags(tagList) as any[];
 
@@ -492,8 +485,6 @@ export async function createKnowhow(formData: any) {
                     tags: true,
                 }
             });
-            // console.log('created knowhow:', kn);
-
             return kn;
         } catch (error) {
             console.log('knowhow creation error(createKnowHow):', error);
@@ -501,7 +492,6 @@ export async function createKnowhow(formData: any) {
     } catch (error) {
         console.log('createKnowhow error:', error);
     }
-
 }
 
 export async function updateKnowhow(knowhow: Knowhow) {
@@ -539,8 +529,7 @@ async function getRootKnowhow() {
             parent: null,
         },
         include: {
-            // tags: true,
-            // author: true,
+            tags: true,
             votes: true,
             knowhowDetailInfo: true,
             membershipRequest: true,
@@ -561,8 +550,7 @@ export async function getKnowhowsBy(registeredOrpaticipated: string | undefined 
                 authorId: userId
             },
             include: {
-                // tags: true,
-                // author: true,
+                tags: true,
                 votes: true,
                 knowhowDetailInfo: true,
                 membershipRequest: true,
@@ -570,7 +558,6 @@ export async function getKnowhowsBy(registeredOrpaticipated: string | undefined 
                 children: true,
                 thumbnailCloudinaryData: true,
             }
-
         })
     }
     if (registeredOrpaticipated === "paticipated" && userId) {
@@ -581,8 +568,7 @@ export async function getKnowhowsBy(registeredOrpaticipated: string | undefined 
             include: {
                 knowhow: {
                     include: {
-                        // tags: true,
-                        // author: true,
+                        tags: true,
                         votes: true,
                         knowhowDetailInfo: true,
                         membershipRequest: true,
@@ -593,22 +579,16 @@ export async function getKnowhowsBy(registeredOrpaticipated: string | undefined 
                 }
             }
         })
-
         requestedBys.forEach(s => {
             knowhows.push(s.knowhow)
         })
-
-        console.log('requestedBys:', JSON.stringify(requestedBys, null, 2))
-
     }
-    console.log('knowhows: ', registeredOrpaticipated, JSON.stringify(knowhows, null, 2))
     return knowhows;
 }
 export async function getKnowhows(searchBy: string | undefined | null,) {
     try {
         let knowhows: Array<Knowhow> = []
         if (searchBy === null || searchBy === undefined) {
-            // console.log('searchBy', searchBy);
             knowhows = await getRootKnowhow();
         } else if (searchBy === "놀기" || searchBy === "배우기" || searchBy === "만들기") {
             const category = await prisma.category.findFirst({
@@ -623,8 +603,7 @@ export async function getKnowhows(searchBy: string | undefined | null,) {
                         categoryId: category.id
                     },
                     include: {
-                        // tags: true,
-                        // author: true,
+                        tags: true,
                         votes: true,
                         knowhowDetailInfo: true,
                         membershipRequest: true,
@@ -645,8 +624,7 @@ export async function getKnowhows(searchBy: string | undefined | null,) {
                     }
                 },
                 include: {
-                    // tags: true,
-                    // author: true,
+                    tags: true,
                     votes: true,
                     knowhowDetailInfo: true,
                     membershipRequest: true,
@@ -656,8 +634,6 @@ export async function getKnowhows(searchBy: string | undefined | null,) {
                 }
             });
         }
-
-        // console.log('knowhows', JSON.stringify(knowhows, null, 2));
         return knowhows;
     }
     catch (error) {

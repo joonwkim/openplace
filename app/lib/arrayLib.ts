@@ -1,3 +1,4 @@
+import { Knowhow, Tag } from "@prisma/client";
 import { getYoutubeDataAction } from "../actions/youtubeAction";
 import { YoutubeInfo } from "./convert";
 
@@ -48,4 +49,16 @@ export const getYtInfos = (videoIds: any[] | undefined) => {
     }
     return ytInfos;
 };
+
+export const getTagsFromKnowhows = (knowhows: Knowhow[]) => {
+    let tags: Tag[] = [];
+    knowhows.forEach((knowhow: any) => {
+        if (knowhow.tags && knowhow.tags.length > 0) {
+            knowhow?.tags.forEach((tag: Tag) => {
+                tags.push(tag)
+            })
+        }
+    })
+    return tags;
+}
 
