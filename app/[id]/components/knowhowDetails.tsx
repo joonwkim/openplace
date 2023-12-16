@@ -154,6 +154,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
             <button
                 className='scroll-button left'
                 onClick={() => scrollContent('left')}
+                style={{color: 'black'}}
             >
                 &lt;
             </button>
@@ -171,11 +172,12 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
             <button
                 className='scroll-button right'
                 onClick={() => scrollContent('right')}
+                style={{color: 'black'}}
             >
                 &gt;
             </button>
         </div>
-            <div className='mt-3'>
+            {/* <div className='mt-3'>
                 {isAuthorLoggedIn() && (<button className='me-3 btn btn-primary' type="submit" onClick={handleEditContents}>컨텐츠 수정</button>)}
                 <button className='me-3 btn btn-primary' type="submit" onClick={handleMembershipRequest} >{membershipRequestBtnText}</button>
                 <button className='me-3 btn btn-primary' type="submit" onClick={handleShowDetailContens}>{getContentsBtnText()}</button>
@@ -186,7 +188,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
                 <button className='me-3 btn btn-primary' type="submit">화상회의</button>
                 <button className='me-3 btn btn-primary' type="submit">공지사항</button>
                 <button className='me-3 btn btn-primary' type="submit">게시판</button>
-            </div>
+            </div> */}
             <DispGeneral knowhow={knowhow} session={session} thumbnailSecureUrl={thumbnailSecureUrl} />
             {showKnowhowContents()}
             {showChildrenContents && knowhow?.children.length > 0 && (<>
