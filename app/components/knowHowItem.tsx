@@ -30,6 +30,10 @@ const KnowhowItem = (props: KnowHowProps) => {
         }
     };
 
+    const getTags = () => {
+        const names = knowhow?.tags.map((s: any) => s.name);
+        return names.join(", ")
+    }
     return (
         <>
 
@@ -44,6 +48,11 @@ const KnowhowItem = (props: KnowHowProps) => {
                             <div>
                                 <span className="me-2">작성자:</span>
                                 <span className="me-2">{knowhow.author?.name}</span>
+                            </div>
+                            <div>
+                                <span className="me-2">태그:</span>
+                                <span className="me-2">  {getTags()}</span>
+
                             </div>
                         </div>
                     </Card.Body>

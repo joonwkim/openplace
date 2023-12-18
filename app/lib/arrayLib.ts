@@ -62,3 +62,21 @@ export const getTagsFromKnowhows = (knowhows: Knowhow[]) => {
     return tags;
 }
 
+export const compareByName = (a: any, b: any) => {
+    if (a.name < b.name) {
+        return -1;
+    }
+    if (a.name > b.name) {
+        return 1;
+    }
+    return 0;
+}
+
+export const removeDuplicate = (array: string[]) => {
+    return [... new Set(array)];
+}
+
+export const removeDuplicatedObject = (objects: any[]) => {
+    const objs = objects.filter((value, index, array) => index == array.findIndex(item => item.id == value.id));
+    return objs;
+}

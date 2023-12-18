@@ -4,7 +4,7 @@ import { FaSignInAlt, FaSignOutAlt, FaUser } from "react-icons/fa";
 import Image from 'next/image';
 import { useRouter, } from 'next/navigation';
 import { useSession, signIn, signOut } from 'next-auth/react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import SearchBar from './controls/searchBar';
 import { ProfileChange } from './controls/profileChange';
 import { updateProfileAction } from '@/app/actions/userAction';
