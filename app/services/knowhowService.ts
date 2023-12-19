@@ -665,12 +665,6 @@ export async function getKnowhow(id: string) {
                 },
                 knowhowDetailInfo: {
                     include: {
-                        // knowhowDetailOnCloudinaries: {
-                        //     include: {
-                        //         thumbnailCloudinaryData: true,
-                        //         knowhowDetailInfo: true,
-                        //     }
-                        // },
                         youtubeDatas: true,
                         cloudinaryDatas: true,
 

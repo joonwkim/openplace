@@ -18,7 +18,6 @@ const Header = () => {
   const [search, setSearch] = useState('');
   const [showOverlay, setShowOverlay] = useState(false);
   const [overlayTarget, setOverlayTarget] = useState(null);
-  const [allowChangeProfile, setAllowChangeProfile] = useState(false)
   const router = useRouter();
   const ref = useRef(null);
   const profileChangeRef = useRef<any>(null);

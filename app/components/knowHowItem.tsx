@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation';
 import { useSession } from "next-auth/react";
 import { updateKnowHowAction } from "../actions/knowhowAction";
 import GeneralFooter from "./controls/generalFooter";
-// import { useState } from "react";
-// import { getThumbnailSecureUrl } from "../services/cloudinaryService";
 
 type KnowHowProps = {
     knowhow: any,
@@ -17,8 +15,6 @@ export type VoteData = Omit<Vote, "id">;
 const KnowhowItem = (props: KnowHowProps) => {
     const { knowhow } = props;
     const { data: session } = useSession();
-    // const [thumbnailSecureUrl, setThumbnailSecureUrl] = useState(getThumbnailSecureUrl(knowhow) as string);
-
     const router = useRouter();
     const handleClickOnCard = async (e: any) => {
         try {
@@ -31,14 +27,17 @@ const KnowhowItem = (props: KnowHowProps) => {
     };
 
     const getTags = () => {
-        const names = knowhow?.tags.map((s: any) => s.name);
-        return names.join(", ")
+        if (knowhow && knowhow.tags && knowhow.tags.length > 0) {
+            const names = knowhow?.tags?.map((s: any) => s.name);
+            return names.join(", ")
+        }
+        else {
+            return '';
+        }
     }
     return (
         <>
-
             <div key={knowhow?.id} className='col-sm btn'>
-
                 <Card className='card shadow-lg p-1 bg-body rounded h-100' >
                     <Card.Img onClick={(e) => handleClickOnCard(e)} variant="top" src={knowhow?.thumbnailCloudinaryData?.secure_url} sizes="100vw" height={250} style={{ objectFit: 'contain', }} />
                     <Card.Body onClick={handleClickOnCard} >
@@ -51,8 +50,7 @@ const KnowhowItem = (props: KnowHowProps) => {
                             </div>
                             <div>
                                 <span className="me-2">태그:</span>
-                                <span className="me-2">  {getTags()}</span>
-
+                                <span className="me-2">{getTags()}</span>
                             </div>
                         </div>
                     </Card.Body>

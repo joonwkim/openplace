@@ -29,16 +29,13 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     const pdfCloudinaryDatas = getCloudinaryPdfData(knowhow);
     const [left, setLeft] = useState<number>(0);
     const [right, setRight] = useState<number>(0);
-
     const isLoggedIn = useCallback(() => {
         return session?.user;
     }, [session?.user]);
     const isAuthorLoggedIn = useCallback(() => {
         return session?.user.id === knowhow?.author.id;
     }, [knowhow?.author.id, session?.user.id]);
-
     const scrollContainerRef = useRef<HTMLDivElement>(null);
-
     const scrollContent = (direction: 'left' | 'right') => {
         const container = scrollContainerRef.current;
         const scrollAmount = direction === 'left' ? -200 : 200; // 스크롤할 양을 조정
@@ -48,8 +45,6 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
             setRight(container.scrollWidth - container.scrollLeft);
         }
     };
-
-
     const buttonStyle: CSSProperties = {
         flex: '0 0 auto', // 버튼이 스크롤 가능한 컨테이너 내에서 자신의 크기를 유지
     };
@@ -79,7 +74,6 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
         };
         fetch();
     }, [isAuthorLoggedIn, isLoggedIn, knowhow?.author.id, knowhow?.id, session?.user]);
-
 
     const handleMembershipRequest = async () => {
         if (membershipRequestBtnText === '멤버 참여신청') {
@@ -144,9 +138,11 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
             </div>);
         }
     };
+
     const handleEditContents = () => {
         router.push(`/regContents/?knowhowId=${knowhow.id}&editMode=true`);
     };
+
     const hideRight = () => {
         if (left > 200 && right < 500) {
             return 'true';
@@ -166,7 +162,6 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
                         <path fillRule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
                     </svg>
                 </button>}
-
                 <div className='scroll-container' ref={scrollContainerRef}>
                     {isAuthorLoggedIn() && (<button className='me-3 btn btn-primary' type="submit" onClick={handleEditContents}>컨텐츠 수정</button>)}
                     <button className='me-3 btn btn-primary' type="submit" onClick={handleMembershipRequest} >{membershipRequestBtnText}</button>
