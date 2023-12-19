@@ -17,6 +17,8 @@ const PlaceHomePage = async ({ searchParams }: { searchParams: { searchText: str
     knowhows = (await getKnowhows(null) as Array<Knowhow>);
   }
   const tags = getTagsFromKnowhows(knowhows);
+  // console.log('tags:', JSON.stringify(tags, null, 2))
+
   const tagsSortedByName = removeDuplicatedObject(tags).sort(compareByName)
   const ntags = tagsSortedByName.map((tag: any) => {
     Object.assign(tag, { checked: false });
@@ -28,7 +30,7 @@ const PlaceHomePage = async ({ searchParams }: { searchParams: { searchText: str
     knowhows.forEach(s => {
       if (s.tagIds?.length > 0) {
         s.tagIds.forEach(t => {
-          if (selectedTagIds.includes(t)) {
+          if (selectedTagIds.includes(t) && !filteredKnowhow.includes(s)) {
             filteredKnowhow.push(s);
           }
         })
