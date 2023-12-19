@@ -1,6 +1,6 @@
 'use client'
 import { useRouter, } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type TagProps = {
     tags: any[],
@@ -10,8 +10,12 @@ type TagProps = {
 const TagList = (props: TagProps) => {
     const { tags, searchParams } = props;
     const { searchText, category, myhome, id } = searchParams;
-    const [tagList, setTagList] = useState<any[]>(tags)
+    const [tagList, setTagList] = useState<any[]>([])
     const router = useRouter();
+
+    useEffect(() => {
+        setTagList(tags);
+    }, [tags])
     const handleClicked = (tag: any, value: any) => {
         tag.checked = value;
         const seletedTags = tagList.filter(s => s.checked === true).map(s => s.id);
@@ -21,7 +25,7 @@ const TagList = (props: TagProps) => {
         } else if (category) {
             router.push(`/?category=${category}&selectedTagList=${seletedTagsId}`);
         } else if (myhome) {
-            router.push(`/?myhome=${myhome}&selectedTagList=${seletedTagsId}`);
+            router.push(`/?myhome=${myhome}&id=${id}&selectedTagList=${seletedTagsId}`);
         } else {
             router.push(`/?selectedTagList=${seletedTagsId}`);
         }
