@@ -32,7 +32,7 @@ export async function isPasswordValid(email: string, password: string): Promise<
         return result;
     } catch (error: any) {
         const errorMessage = error.response.data.message;
-        throw new Error(errorMessage);
+        throw error;
     }
 }
 

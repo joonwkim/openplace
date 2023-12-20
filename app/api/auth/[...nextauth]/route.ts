@@ -25,11 +25,11 @@ export const authOptions: NextAuthOptions = {
           };
           const user = await loginAction(input);
           if (user === 'password do not match' || user === 'user not registered') {
-            throw new Error('password do not match or user not registered');
+            throw 'password do not match or user not registered';
           }
           return user;
         } catch (error) {
-          throw new Error(JSON.stringify(error));
+          throw JSON.stringify(error);
         }
         return null;
       },

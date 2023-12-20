@@ -17,6 +17,6 @@ export async function createVoteActionAndUpdateKnowHow(knowhow: Knowhow, logInUs
 
     } catch (error) {
         console.log('createVoteActionAndUpdateKnowHow error', error);
-        throw new Error('createVoteActionAndUpdateKnowHow error:');
+        throw error;
     }
 }

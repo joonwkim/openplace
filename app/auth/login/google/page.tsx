@@ -23,7 +23,7 @@ export default function GoogleLogin({ searchParams }: { searchParams: any; }) {
 
     } catch (error: any) {
       console.log('GoogleLogin error:', error);
-      throw new Error('GoogleLogin error:');
+      throw 'GoogleLogin error:';
     }
 
   }, [router, searchParams.accessToken]);

@@ -131,7 +131,7 @@ const Header = () => {
                   </Overlay>
                 </Nav.Link>)
               }
-              <Nav.Link href="/" onClick={(e) => { e.preventDefault(); signOut(); }}>  <FaSignOutAlt /> Logout</Nav.Link>
+              <Nav.Link href="/" onClick={(e) => { e.preventDefault(); signOut(); }}>  <FaSignOutAlt />나가기</Nav.Link>
             </Nav>
           ) : (<Nav className="ms-auto">
             <Nav.Link href="/auth/login" onClick={(e) => handleSignIn(e)}><FaSignInAlt />로그인</Nav.Link>

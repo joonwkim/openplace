@@ -14,7 +14,7 @@ export async function createChildKnowHowWithDetailAction(parentKnowhowId: string
     await updateKnowhowToSetParent(parentKnowhowId, knowhow);
     await createAndUpdateKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
   } catch (error) {
-    throw new Error('createChildKnowHowWithDetailAction error:');    
+    throw error;   
   }
   revalidatePath('/');
 }

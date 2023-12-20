@@ -638,7 +638,7 @@ export async function getKnowhows(searchBy: string | undefined | null,) {
     }
     catch (error) {
         console.log(error);
-        throw new Error('getKnowhows error:');
+        throw 'getKnowhows error:';
     }
 
 }
@@ -682,7 +682,7 @@ export async function getKnowhow(id: string) {
     }
     catch (error) {
         console.log('getKnowhow', error);
-        throw new Error('getKnowhow error:');
+        throw 'getKnowhow error:';
     }
 }
 
