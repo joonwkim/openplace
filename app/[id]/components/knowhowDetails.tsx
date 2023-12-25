@@ -14,6 +14,7 @@ import KnowHowItem from '@/app/components/knowHowItem';
 import { Session } from 'inspector';
 import { getImgUrls, getPdfUrls } from '@/app/lib/arrayLib';
 import { getThumbnailSecureUrl } from '@/app/services/cloudinaryService';
+import { Container, Nav, Navbar, Button } from 'react-bootstrap';
 import './scroll.css';
 
 type RegProps = {
@@ -111,15 +112,15 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     };
 
     const getContentsBtnText = () => {
-        if (showDetailContents) { return ('세부 컨테츠 숨기기'); }
+        if (showDetailContents) { return ('세부 컨텐츠 숨기기'); }
         else {
-            return ('세부 컨테츠 보이기');
+            return (showEmojis ? menuEmojis.detailContents : '세부 컨텐츠 보이기');
         }
     };
 
     const getChildrenContentsBtnText = () => {
         if (showChildrenContents) {
-            return ('멤버 숨기기');
+            return (showEmojis ? menuEmojis.hideMember : '멤버 숨기기');
         }
         else {
             return ('멤버 보이기');
@@ -148,9 +149,28 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
         router.push(`/regContents/?knowhowId=${knowhow.id}&editMode=true`);
     };
 
+    const [showEmojis, setShowEmojis] = useState(false);
+
+    const toggleText = () => {
+        setShowEmojis(prevShow => !prevShow);
+    };
+
+    const menuEmojis = {
+        info : '📍',
+        message : '📩',
+        chat : '💬',
+        meeting : '🧑‍💻',
+        notice : '🔊',
+        board : '📋',
+        membershipRequest : '👥', 
+        detailContents : '📜',  
+        hideMember : '👀'
+        
+    };
+
     return (
         <>
-            <div className='scroll-wrapper'>
+            <div className='scroll-wrapper' style={{marginTop: '30px'}}>
             <button
                 className='scroll-button left'
                 onClick={() => scrollContent('left')}
@@ -159,15 +179,16 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
                 &lt;
             </button>
             <div className='scroll-container' ref={scrollContainerRef}>
-                <button className='me-3 btn btn-primary' type="submit" onClick={handleMembershipRequest} >{membershipRequestBtnText}</button>
-                <button className='me-3 btn btn-primary' type="submit" onClick={handleShowDetailContens}>{getContentsBtnText()}</button>
-                <button className='me-3 btn btn-primary' type="submit" onClick={handleShowChildrenContens}>{getChildrenContentsBtnText()}</button>
-                <button className='me-3 btn btn-primary' type="submit" >모임안내</button>
-                <button className='me-3 btn btn-primary' type="submit">메시지보내기</button>
-                <button className='me-3 btn btn-primary' type="submit">채 팅</button>
-                <button className='me-3 btn btn-primary' type="submit">화상회의</button>
-                <button className='me-3 btn btn-primary' type="submit">공지사항</button>
-                <button className='me-3 btn btn-primary' type="submit">게시판</button>
+                <button className='me-3 btn btn-primary' type="submit" style={{color: 'black', borderColor: 'black', backgroundColor:'white'}} title='멤버 참여신청' onClick={handleMembershipRequest} >{membershipRequestBtnText}</button>
+                <button className='me-3 btn btn-primary' type="submit" style={{color: 'black', borderColor: 'black', backgroundColor:'white'}} title='세부 컨텐츠 보이기' onClick={handleShowDetailContens}>{getContentsBtnText()}</button>
+                <button className='me-3 btn btn-primary' type="submit" style={{color: 'black', borderColor: 'black', backgroundColor:'white'}} title='멤버 숨기기' onClick={handleShowChildrenContens}>{getChildrenContentsBtnText()}</button>
+                <button className='me-3 btn btn-primary' type="submit" style={{color: 'black', borderColor: 'black', backgroundColor:'white'}} title='모임 안내' >{showEmojis ? menuEmojis.info : '모임안내'}</button>
+                <button className='me-3 btn btn-primary' type="submit" style={{color: 'black', borderColor: 'black', backgroundColor:'white'}} title='메시지보내기'>{showEmojis ? menuEmojis.message : '메시지보내기'}</button>
+                <button className='me-3 btn btn-primary' type="submit" style={{color: 'black', borderColor: 'black', backgroundColor:'white'}} title='채팅'>{showEmojis ? menuEmojis.chat : '채팅'}</button>
+                <button className='me-3 btn btn-primary' type="submit" style={{color: 'black', borderColor: 'black', backgroundColor:'white'}} title='화상회의'>{showEmojis ? menuEmojis.meeting : '화상회의'}</button>
+                <button className='me-3 btn btn-primary' type="submit" style={{color: 'black', borderColor: 'black', backgroundColor:'white'}} title='공지사항'>{showEmojis ? menuEmojis.notice : '공지사항'}</button>
+                <button className='me-3 btn btn-primary' type="submit" style={{color: 'black', borderColor: 'black', backgroundColor:'white'}} title='게시판'>{showEmojis ? menuEmojis.board : '게시판'}</button>
+                
             </div>
             <button
                 className='scroll-button right'
@@ -176,7 +197,13 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
             >
                 &gt;
             </button>
-        </div>
+
+            </div>
+            <Nav className="ms-auto">
+                <Button variant='' onClick={toggleText} style={{color: 'black', borderColor: 'black'}}>
+                    {showEmojis ? 'Text' : 'Emoji'}
+                </Button>
+            </Nav>
             {/* <div className='mt-3'>
                 {isAuthorLoggedIn() && (<button className='me-3 btn btn-primary' type="submit" onClick={handleEditContents}>컨텐츠 수정</button>)}
                 <button className='me-3 btn btn-primary' type="submit" onClick={handleMembershipRequest} >{membershipRequestBtnText}</button>

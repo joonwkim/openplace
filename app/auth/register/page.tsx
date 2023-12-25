@@ -15,6 +15,8 @@ import { RegisterForm } from "../types";
 import FormContainer from "@/components/controls/formContainer";
 import Modal from 'react-bootstrap/Modal';
 
+import * as styled from './styles';
+
 // import { useAddNewUserMutation } from '@/globalRedux/api/usersApi';
 // import { useLoginMutation } from '@/globalRedux/api/authApi'
 // import { setCredentials } from '@/globalRedux/features/auth/authSlice'
@@ -43,11 +45,38 @@ export function RegisterPage() {
 
     const { register, formState: { errors }, handleSubmit, reset } = useForm<RegisterForm>({ resolver: zodResolver(registerSchema), });
     
-    // 모달 상태를 관리하는 상태 변수들
-    const [showTermsModal, setShowTermsModal] = useState(false);
+    const [isModal, setisModal] = useState(false);
+    const showModal = () => {
+        setisModal(true);
+    };
 
-    // 모달 표시/숨김을 처리하는 핸들러 함수들
-    const handleTermsModal = () => setShowTermsModal(!showTermsModal);
+    const ChangeCompleteModal = () => {
+        return (
+            <styled.Modal>
+                <styled.ModalContainer>
+                    <styled.ModalTitle>이용약관</styled.ModalTitle>
+                    <styled.ModalText>
+                        <styled.TermsNumber>제1장</styled.TermsNumber>
+                        총칙 제1조 목적 제2조 용어의 정의 제3조 약관의 명시, 효력 및 개정 제4조 관련법령과의 관계 <br /><br />
+
+                        <styled.TermsNumber>제2장</styled.TermsNumber>
+                        이용계약 체결 제5조 회원가입 및 이용 계약의 성립 제6조 이용 신청의 승낙과 제한 제7조 개인정보의 보호 및 사용 제8조 회원 ID 부여 및 관리 제9조 회원정보의 변경 제10조 회원의 ID 및 비밀번호 관리의무 제11조 회원에 대한 통지<br /><br />
+
+                        <styled.TermsNumber>제3장</styled.TermsNumber>
+                        계약 당사자의 의무 제12조 회사의 의무 제13조 회원의 의무<br /><br />
+
+                        <styled.TermsNumber>제4장</styled.TermsNumber>
+                        서비스의 이용 제14조 서비스 제공 제15조 서비스의 변경 제16조 정보의 제공 및 광고의 게재 제17조 게시물의 관리 제18조 게시물의 저작권 제19조 권리의 귀속 제20조 계약 해지 제21조 서비스 이용제한 또는 중지 및 회원 탈퇴 제22조 손해배상 제23조 책임제한 제24조 재판권 및 준거법<br /><br />
+
+                    </styled.ModalText>
+                    <styled.ModalOkButton onClick={() => { setisModal(false) }}>
+                        <span>닫기</span>
+                    </styled.ModalOkButton>
+                </styled.ModalContainer>
+            </styled.Modal>
+        )
+    }
+
 
     async function onSubmit(values: RegisterForm): Promise<void> {
         try {
@@ -158,7 +187,7 @@ export function RegisterPage() {
                                 {...register("terms")}
                             />
                             <span className='font9'>
-                                <a className="link-href"  onClick={handleTermsModal} style={{cursor: "pointer"}}>이용약관 및 개인정보 처리방침
+                                <a className="link-href"  onClick={showModal} style={{cursor: "pointer"}}>이용약관 및 개인정보 처리방침
                                 </a>
                                 에 동의합니다.
                             </span>
@@ -174,27 +203,11 @@ export function RegisterPage() {
 
                 </form>
             </FormContainer>
-            {/* 이용약관 모달 */}
-            <Modal show={showTermsModal} onHide={handleTermsModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>이용약관</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <p>[차례]</p>
 
-제1장
-총칙 제1조 목적 제2조 용어의 정의 제3조 약관의 명시, 효력 및 개정 제4조 관련법령과의 관계
 
-제2장
-이용계약 체결 제5조 회원가입 및 이용 계약의 성립 제6조 이용 신청의 승낙과 제한 제7조 개인정보의 보호 및 사용 제8조 회원 ID 부여 및 관리 제9조 회원정보의 변경 제10조 회원의 ID 및 비밀번호 관리의무 제11조 회원에 대한 통지
+            {isModal && <ChangeCompleteModal />}
 
-제3장
-계약 당사자의 의무 제12조 회사의 의무 제13조 회원의 의무
 
-제4장
-서비스의 이용 제14조 서비스 제공 제15조 서비스의 변경 제16조 정보의 제공 및 광고의 게재 제17조 게시물의 관리 제18조 게시물의 저작권 제19조 권리의 귀속 제20조 계약 해지 제21조 서비스 이용제한 또는 중지 및 회원 탈퇴 제22조 손해배상 제23조 책임제한 제24조 재판권 및 준거법
-                </Modal.Body>
-            </Modal>
 
         </>
     );

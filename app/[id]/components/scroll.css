@@ -62,3 +62,9 @@
     right: 0;
     background: linear-gradient(to left, white, transparent);
 }
+
+@media screen and (min-width: 1200px) {
+    .scroll-button {
+        display: none;
+    }
+}
