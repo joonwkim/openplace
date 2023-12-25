@@ -9,7 +9,7 @@ module.exports = {
       key: 'key.pem',
       user: 'ubuntu',
       host: '3.36.91.10',
-      ref: 'edit-mode',
+      ref: 'origin/edit-mode',
       repo: 'git@github.com:joonwkim/openplace.git',
       path: 'home/ubuntu',
       'pre-deploy-local': '',
