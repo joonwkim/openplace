@@ -40,7 +40,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
             }
         };
         fetch();
-    }, [knowhow.id, session?.user]);
+    }, [knowhow?.id, session?.user]);
 
     const handleMembershipRequest = async () => {
         if (membershipRequestBtnText === '참여신청') {
@@ -109,7 +109,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
             {showChildrenContents && (<>
                 <h4>그룹멤버</h4>
                 <div className="row row-cols-1 row-cols-md-3 row-cols-sm-2 mt-0 g-4">
-                    {knowhow.children?.map((child: any) => (
+                    {knowhow?.children?.map((child: any) => (
                         <KnowHowItem key={child.id} knowhow={child} />
                     ))}
                 </div>
