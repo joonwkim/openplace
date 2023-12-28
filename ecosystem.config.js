@@ -6,9 +6,8 @@ module.exports = {
 
   deploy: {
     production: {
-      key: 'key.pem',
       user: 'ubuntu',
-      host: '3.36.91.10',
+      host: '54.180.128.72',
       ref: 'origin/edit-mode',
       repo: 'git@github.com:joonwkim/openplace.git',
       path: 'home/ubuntu',
