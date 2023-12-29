@@ -4,9 +4,9 @@ const nextConfig = {
     locales: ['ko-KR'],
     defaultLocale: 'ko-KR',
   },
-  experimental: {
-    serverActions: true,
-  },
+  // experimental: {
+  //   serverActions: true,
+  // },
   typescript: {
     ignoreBuildErrors: true,
   },
