@@ -51,7 +51,6 @@ const PlaceHomePage = async ({ searchParams }: { searchParams: { searchText: str
 
   return (
     <>
-      {/* {JSON.stringify(ntags, null, 2)} */}
       <TagList tags={ntags} searchParams={searchParams} />
       {knowhows?.length > 0 ? (<div className="row row-cols-1 row-cols-md-3 row-cols-sm-2 mt-0 g-4">
         {knowhows?.map(knowhow => (
