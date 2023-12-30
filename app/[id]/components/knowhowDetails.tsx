@@ -10,7 +10,7 @@ import { useSession, } from 'next-auth/react';
 import { createMembershipRequestAction } from '@/app/actions/membershipRequestAction';
 import { getMembershipApprovalStatus } from '@/app/lib/membership';
 import { useRouter } from 'next/navigation';
-import KnowHowItem from '@/app/components/knowhowItem';
+import KnowhowItem from '@/app/components/knowhowItem';
 import { getCloudinaryImgData, getCloudinaryPdfData, } from '@/app/lib/arrayLib';
 import GroupMemberList from './groupMemberList';
 import './scroll.css';
@@ -190,7 +190,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
                 </div>
                 <div className="row row-cols-1 row-cols-md-3 row-cols-sm-2 mt-0 g-4">
                     {knowhow.children?.map((child: any) => (
-                        <KnowHowItem key={child.id} knowhow={child} />
+                        <KnowhowItem key={child.id} knowhow={child} />
                     ))}
                 </div>
             </>
