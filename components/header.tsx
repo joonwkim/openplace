@@ -8,6 +8,7 @@ import { useRef, useState } from 'react';
 import SearchBar from './controls/searchBar';
 import { updateProfileAction } from '@/app/actions/userAction';
 import { ProfileChange } from './controls/profileChange';
+import logo from '../public/images/homelogo.png';
 
 interface Props {
 
@@ -68,7 +69,12 @@ const Header = () => {
     <Navbar bg="dark" variant='dark' expand="lg" collapseOnSelect>
       <Container>
         <Navbar.Brand href="/">
-          {'오픈플레이스홈'}
+          {/* {'오픈플레이스홈'} */}
+          <Image src={logo}
+            alt="Open Place Home"
+            width={100}
+            height={95}
+          /> 
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">

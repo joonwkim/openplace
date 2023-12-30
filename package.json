@@ -39,6 +39,7 @@
     "react-icons": "^4.10.1",
     "react-toastify": "^9.1.3",
     "rolebased-nextauth": "file:",
+    "styled-components": "^6.1.6",
     "typescript": "5.1.6",
     "zod": "^3.21.4"
   },
