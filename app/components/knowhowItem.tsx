@@ -34,6 +34,7 @@ const KnowhowItem = (props: KnowHowProps) => {
         else {
             return '';
         }
+
     }
     return (
         <>
