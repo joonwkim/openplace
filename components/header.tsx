@@ -165,8 +165,7 @@ const Header = () => {
               <Nav.Link href="/" onClick={(e) => { e.preventDefault(); signOut(); }}>  <FaSignOutAlt />나가기</Nav.Link>
             </Nav>
           ) : (<Nav className="ms-auto">
-              {/* <Nav.Link href="/auth/login" onClick={(e) => handleSignIn(e)}><FaSignInAlt />로그인</Nav.Link> */}
-              <Nav.Link href="/auth/login"><FaSignInAlt />로그인</Nav.Link>
+              <Nav.Link href="/auth/login" onClick={(e) => handleSignIn(e)}><FaSignInAlt />로그인</Nav.Link>
             <Nav.Link href="/auth/register"> <FaUser />회원가입</Nav.Link>
           </Nav>)}
         </Navbar.Collapse>
