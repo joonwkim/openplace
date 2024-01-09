@@ -1,15 +1,14 @@
-.scroll-wrapper {
+/* .scroll-wrapper {
     position: relative;
     padding-left: 30px;
     padding-right: 30px;
-}
-
+} */
+/* 
 .scroll-container {
     display: flex;
     overflow-x: auto;
     scroll-behavior: smooth;
     -ms-overflow-style: none;
-    /* scrollbar-width: none; */
     white-space: nowrap;
 }
 
@@ -40,6 +39,75 @@
 
 .scroll-button.right {
     right: 0;
+} */
+
+.scroll-wrapper {
+    position: relative;
+    margin-left: 30px; 
+    margin-right: 30px;
+    background: white; 
 }
 
-/* .button {} */
+.scroll-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    white-space: nowrap;
+    position: relative;
+    padding-left: 50px; 
+    padding-right: 30px;
+    /* width: 400px; */
+    /* margin-left: 20px;
+    margin-right: 20px; */
+}
+
+.scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+.scroll-button {
+    display: block; 
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3; 
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: black; 
+}
+
+.scroll-button.left {
+    left: 0;
+}
+
+.scroll-button.right {
+    right: 0;
+}
+
+/* Gradient overlay styles */
+.scroll-wrapper::before, .scroll-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 30px; /* Gradient width */
+    pointer-events: none; /* Allows clicks to pass through */
+    z-index: 2; /* Lower than scroll-button to keep them clickable */
+}
+
+.scroll-wrapper::before {
+    left: 0;
+    background: linear-gradient(to right, white, transparent);
+}
+
+.scroll-wrapper::after {
+    right: 0;
+    background: linear-gradient(to left, white, transparent);
+}
+
+@media screen and (min-width: 1200px) {
+    .scroll-button {
+        display: none;
+    }
+}

@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation';
 import KnowhowItem from '@/app/components/knowhowItem';
 import { getCloudinaryImgData, getCloudinaryPdfData, } from '@/app/lib/arrayLib';
 import GroupMemberList from './groupMemberList';
+import { Container, Nav, Navbar, Button } from 'react-bootstrap';
 import './scroll.css';
 
 type RegProps = {
@@ -105,15 +106,15 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     };
 
     const getContentsBtnText = () => {
-        if (showDetailContents) { return ('세부 컨테츠 숨기기'); }
+        if (showDetailContents) { return ('세부 컨텐츠 숨기기'); }
         else {
-            return ('세부 컨테츠 보이기');
+            return (showEmojis ? menuEmojis.detailContents : '세부 컨텐츠 보이기');;
         }
     };
 
     const getChildrenContentsBtnText = () => {
         if (showChildrenContents) {
-            return ('멤버 숨기기');
+            return (showEmojis ? menuEmojis.hideMember : '멤버 숨기기');
         }
         else {
             return ('멤버 보이기');
@@ -154,9 +155,28 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
         window.open(`https://s3.ap-northeast-2.amazonaws.com/depot.opensrcdesign.com/build/index.html?room=${knowhow.id}&auth=${session?.user.id}`, "vmeet");
     };
 
+    const [showEmojis, setShowEmojis] = useState(false);
+
+    const toggleText = () => {
+        setShowEmojis(prevShow => !prevShow);
+    };
+
+    const menuEmojis = {
+        info : '📍',
+        message : '📩',
+        chat : '💬',
+        meeting : '🧑‍💻',
+        notice : '🔊',
+        board : '📋',
+        membershipRequest : '👥', 
+        detailContents : '📜',  
+        hideMember : '👀'
+        
+    };
+
     return (
         <>
-            <div className='scroll-wrapper mt-3'>
+            {/* <div className='scroll-wrapper mt-3'>
                 {left > 100 && <button type='button' className='btn btn-outline-light border rounded-circle scroll-button left' onClick={() => scrollContent('left')} title='Move Left'>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" className="bi bi-chevron-left" viewBox="0 0 16 16">
                         <path fillRule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
@@ -180,7 +200,42 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
                         <path fillRule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
                     </svg>
                 </button></>)}
+            </div> */}
+
+<div className='scroll-wrapper' style={{marginTop: '30px'}}>
+            <button
+                className='scroll-button left'
+                onClick={() => scrollContent('left')}
+                style={{color: 'black'}}
+            >
+                &lt;
+            </button>
+            <div className='scroll-container' ref={scrollContainerRef}>
+                <button className='me-3 btn btn-primary' type="submit" style={{color: 'black', borderColor: 'black', backgroundColor:'white'}} title='멤버 참여신청' onClick={handleMembershipRequest} >{membershipRequestBtnText}</button>
+                <button className='me-3 btn btn-primary' type="submit" style={{color: 'black', borderColor: 'black', backgroundColor:'white'}} title='세부 컨텐츠 보이기' onClick={handleShowDetailContens}>{getContentsBtnText()}</button>
+                <button className='me-3 btn btn-primary' type="submit" style={{color: 'black', borderColor: 'black', backgroundColor:'white'}} title='멤버 숨기기' onClick={handleShowChildrenContens}>{getChildrenContentsBtnText()}</button>
+                <button className='me-3 btn btn-primary' type="submit" style={{color: 'black', borderColor: 'black', backgroundColor:'white'}} title='모임 안내' >{showEmojis ? menuEmojis.info : '모임안내'}</button>
+                <button className='me-3 btn btn-primary' type="submit" style={{color: 'black', borderColor: 'black', backgroundColor:'white'}} title='메시지보내기'>{showEmojis ? menuEmojis.message : '메시지보내기'}</button>
+                <button className='me-3 btn btn-primary' type="submit" style={{color: 'black', borderColor: 'black', backgroundColor:'white'}} title='채팅'>{showEmojis ? menuEmojis.chat : '채팅'}</button>
+                <button className='me-3 btn btn-primary' type="submit" style={{color: 'black', borderColor: 'black', backgroundColor:'white'}} title='화상회의'>{showEmojis ? menuEmojis.meeting : '화상회의'}</button>
+                <button className='me-3 btn btn-primary' type="submit" style={{color: 'black', borderColor: 'black', backgroundColor:'white'}} title='공지사항'>{showEmojis ? menuEmojis.notice : '공지사항'}</button>
+                <button className='me-3 btn btn-primary' type="submit" style={{color: 'black', borderColor: 'black', backgroundColor:'white'}} title='게시판'>{showEmojis ? menuEmojis.board : '게시판'}</button>
+                
             </div>
+            <button
+                className='scroll-button right'
+                onClick={() => scrollContent('right')}
+                style={{color: 'black'}}
+            >
+                &gt;
+            </button>
+
+            </div>
+            <Nav className="ms-auto">
+                <Button variant='' onClick={toggleText} style={{color: 'black', borderColor: 'black'}}>
+                    {showEmojis ? 'Text' : 'Emoji'}
+                </Button>
+            </Nav>
             <DispGeneral knowhow={knowhow} session={session} thumbnailSecureUrl={knowhow.thumbnailCloudinaryData?.secure_url} />
             {showKnowhowContents()}
             {showChildrenContents && knowhow?.children.length > 0 && (<>
@@ -197,6 +252,8 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
             )}
         </>
     );
+
+    
 };
 
 export default KnowhowDetails;
