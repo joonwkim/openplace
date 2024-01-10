@@ -127,6 +127,10 @@ model Knowhow {
   tagIds String[] @db.ObjectId
   tags   Tag[]    @relation(fields: [tagIds], references: [id])
 
+  isProjectType Boolean @default(false)
+  stage Int @default(0)
+  levelInStage Int @default(0)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

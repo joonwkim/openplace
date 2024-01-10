@@ -100,7 +100,7 @@ export async function updateKnowhowDetailInfo(knowhow: Knowhow, knowhowDetailInf
 
     try {
         let ytDataIds: string[] = [];
-        if (ytData.length > 0) {
+        if (ytData?.length > 0) {
             ytDataIds = await getYtDataIds(ytData);
         }
         let khd: any = await prisma.knowhowDetailInfo.findFirst({

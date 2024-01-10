@@ -9,21 +9,18 @@ import { useSession, } from 'next-auth/react';
 import { createTagAction } from '@/app/actions/tagAction';
 import { useRouter } from 'next/navigation';
 import ImgUploader from '@/components/controls/imgUploader';
-import { getFormdata } from '../lib/formData';
+import { getFormdata } from '@/app/regContents/lib/formData';
 
 type RegProps = {
-    categories: Category[],
-    knowHowTypes: KnowhowType[],
-    tags: Tag[],
     setRegDataToSave: (data: any) => void,
     knowhow: any | undefined,
     editMode: boolean | undefined,
     thumbnailCloudinaryData: CloudinaryData;
 };
 
-export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
+export const RegiProjectStage = forwardRef<any, RegProps>((props: RegProps, ref) => {
 
-    const { categories, knowHowTypes, tags, setRegDataToSave, knowhow, editMode, thumbnailCloudinaryData } = props;
+    const { setRegDataToSave, knowhow, editMode, thumbnailCloudinaryData } = props;
     const [otherFormData, setOtherFormData] = useState<any>(null);
     const [thumbNailFormData, setThumbNailFormData] = useState<any>(null);
     const { data: session } = useSession();
@@ -52,15 +49,7 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
         }),
     );
 
-    useEffect(() => {
-        if (knowhow?.tags) {
-            const lst = knowhow.tags.map((t: any) => t.name);
-            const ttext = lst.join(', ');
-            if (ttext) {
-                setTagText(ttext);
-            }
-        }
-    }, [knowhow, tags]);
+
 
     useEffect(() => {
         if (selectedTag !== null) {
@@ -80,30 +69,6 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
         setFile(Object.assign(files[0], { secure_url: URL.createObjectURL(files[0]) }));
 
     }, []);
-
-    //! local public folder에 Image를 저장하는 경우 사용함
-    // const onDrop = useCallback(async (files: File[]) => {
-    //     setFile(Object.assign(files[0], { preview: URL.createObjectURL(files[0]) }));
-    //     try {
-
-    //         // public에 img file를 저장하는 경우(무료 cloudinary저장후 display 속도 문제가 있을 경우에 이용)
-    //         const data = new FormData();
-    //         // console.log('file on Drop:', files[0].size);
-    //         data.set('file', files[0]);
-    //         const res = await fetch('/api/upload', {
-    //             method: 'POST',
-    //             body: data
-    //         });
-    //         const imgUrl = `/images/${files[0].name}`;
-    //         setImgSrc(imgUrl);
-    //         if (!res.ok) throw new Error(await res.text());
-
-    //     } catch (error) {
-    //         //파일 사이즈 제약을 지정하였을 경우
-    //         alert('1024 * 1000 이내 파일을 올릴 수 있습니다.');
-    //         router.push('/regContents');
-    //     }
-    // }, [router]);
 
     const options: DropzoneOptions = {
         accept: { 'image/*': [] }, maxSize: 1024 * 1000, maxFiles: 1, onDrop
@@ -185,31 +150,6 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
         }
     };
 
-    const onBadgeClick = (tag: Tag) => {
-        setTagSelected(tag);
-    };
-
-    const onTabKeyDown = ((e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Tab' && tags?.length > 0) {
-            const firstTag = tags[0];
-            setTagSelected(firstTag);
-        }
-    });
-
-    const getKnowhowTypeSelected = (knowhowTypeId: string) => {
-        if (knowhowTypeId === initialKnowhowTypeId) {
-            return true;
-        }
-        return false;
-    };
-
-    const getCategorySelected = (categoryId: string) => {
-        if (categoryId === initialCategoryId) {
-            return true;
-        }
-        return false;
-    };
-
     return (<>
         <Form ref={formRef} noValidate validated={validated} onSubmit={handleSubmit}>
             <div className='d-flex mt-3 gap-2'>
@@ -245,57 +185,19 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
                     <Form.Group controlId="title" className='mb-3'>
                         <Row>
                             <Form.Label column="lg" lg={3}>
-                                제목 <b className={styles.redColor}>*</b>
+                                스테이지 제목 <b className={styles.redColor}>*</b>
                             </Form.Label>
                             <Col>
-                                <Form.Control size="lg" type="text" required placeholder="제목을 입력하세요" name='title' defaultValue={knowhow?.title} />
+                                <Form.Control size="lg" type="text" required placeholder="스테이지 제목을 입력하세요" name='title' defaultValue={knowhow?.title} />
                                 <Form.Control.Feedback type="invalid">
-                                    제목을 입력하세요
+                                    스테이지 제목을 입력하세요
                                 </Form.Control.Feedback>
                             </Col>
 
                         </Row>
                     </Form.Group>
-                    <Form.Group controlId="knowhowtype" className='mb-3'>
-                        <Row>
-                            <Form.Label column="lg" lg={3}>
-                                경험유형  <b className={styles.redColor}>*</b>
-                            </Form.Label>
-                            <Col>
-                                <Form.Select required aria-label="know how type select" name='knowHowTypeId' >
-                                    <option value="">경험유형(필수)</option>
-                                    {knowHowTypes.map(knowhowType => (
-                                        <>
-                                            <option key={knowhowType.id} selected={getKnowhowTypeSelected(knowhowType.id)} value={knowhowType.id}>{knowhowType.name}</option>
-                                        </>
-                                    ))}
-                                </Form.Select>
-                                <Form.Control.Feedback type="invalid">
-                                    경험유형을 선택하세요
-                                </Form.Control.Feedback>
-                            </Col>
 
-                        </Row>
-                    </Form.Group>
-                    <Form.Group controlId="categorytype" className='mb-3'>
-                        <Row>
-                            <Form.Label column="lg" lg={3}>
-                                카테고리  <b className={styles.redColor}>*</b>
-                            </Form.Label>
-                            <Col>
-                                <Form.Select required as='select' name='categoryId' >
-                                    <option value="">카테고리(필수)</option>
-                                    {categories.map(category => (
-                                        <option key={category.id} selected={getCategorySelected(category.id)} value={category.id}>{category.name}</option>
-                                    ))}
-                                </Form.Select>
-                                <Form.Control.Feedback type="invalid">
-                                    카테고리를 선택하세요
-                                </Form.Control.Feedback>
-                            </Col>
 
-                        </Row>
-                    </Form.Group>
                     <Form.Group controlId="description" className='mb-3'>
                         <Row>
                             <Form.Label column="lg" lg={3}>
@@ -314,37 +216,7 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
                             </Col>
                         </Row>
                     </Form.Group>
-                    <Form.Group controlId="tags" className='mb-3'>
-                        <Row>
-                            <Form.Label column="lg" lg={3}>
-                                태그  <b className={styles.redColor}>*</b>
-                            </Form.Label>
-                            <Col>
-                                <Form.Control size="lg" required type="text" placeholder="태그를 입력하세요" name='tags' value={tagText} onKeyDown={onTabKeyDown} onKeyUp={onTagKeyUp} onChange={e => setTagText(e.target.value)} />
-                                <Form.Control.Feedback type="invalid">
-                                    관련 태그를 입력하세요
-                                </Form.Control.Feedback>
-                            </Col>
 
-                        </Row>
-                        <Row>
-                            <Form.Label column="lg" lg={3}>
-                            </Form.Label>
-                            <Col className='ms-1'>
-                                {tags?.length > 0 ? <div className='bt-1 d-flex gap-1'>{
-                                    tags?.map((t) => (
-                                        <div className={`mt-1 ${styles.cursorHand}`} key={t.id}>
-                                            <h6>
-                                                <Badge onClick={e => onBadgeClick(t)} bg="info">{t.name}</Badge>
-                                            </h6>
-                                        </div>
-                                    ))
-                                }</div> : <></>}
-                            </Col>
-
-                        </Row>
-
-                    </Form.Group>
                 </div>
             </div>
         </Form>
@@ -352,4 +224,4 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
     );
 });
 
-RegiGeneral.displayName = "RegiGeneral";
+RegiProjectStage.displayName = "RegiProjectStage";

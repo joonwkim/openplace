@@ -36,7 +36,8 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
         return session?.user.id === knowhow?.author.id;
     }, [knowhow?.author.id, session?.user.id]);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const scrollContent = (direction: 'left' | 'right') => {
+
+    const handleScrollContent = (direction: 'left' | 'right') => {
         const container = scrollContainerRef.current;
         const scrollAmount = direction === 'left' ? -200 : 200; // 스크롤할 양을 조정
         if (container) {
@@ -157,7 +158,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     return (
         <>
             <div className='scroll-wrapper mt-3'>
-                {left > 100 && <button type='button' className='btn btn-outline-light border rounded-circle scroll-button left' onClick={() => scrollContent('left')} title='Move Left'>
+                {left > 100 && <button type='button' className='btn btn-outline-light border rounded-circle scroll-button left' onClick={() => handleScrollContent('left')} title='Move Left'>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" className="bi bi-chevron-left" viewBox="0 0 16 16">
                         <path fillRule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
                     </svg>
@@ -174,8 +175,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
                     <button className='me-3 btn btn-primary' type="submit">공지사항</button>
                     <button className='me-3 btn btn-primary' type="submit">게시판</button>
                 </div>
-
-                {left > 200 && right < 500 ? (<></>) : (<> <button type='button' className='ms-3 btn btn-outline-light border rounded-circle scroll-button right' onClick={() => scrollContent('right')} title='Move Right'>
+                {left > 200 && right < 500 ? (<></>) : (<> <button type='button' className='ms-3 btn btn-outline-light border rounded-circle scroll-button right' onClick={() => handleScrollContent('right')} title='Move Right'>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="grey" className="bi bi-chevron-right" viewBox="0 0 16 16">
                         <path fillRule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
                     </svg>

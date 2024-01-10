@@ -129,7 +129,7 @@ export async function updateGeneralKnowhow(knowhowSelected: Knowhow, genFormData
             }
         });
     }
-    console.log('updatedKnowhow:', updatedKnowhow);
+    // console.log('updatedKnowhow:', updatedKnowhow);
     // return updatedKnowhow;
 }
 
@@ -457,6 +457,11 @@ export async function updateKnowhowToSetParent(parentId: string, knowhow: Knowho
     });
 }
 
+const getProjectType = (value: string) => {
+    if (value === "true") return true;
+    return false;
+}
+
 export async function createKnowhow(formData: any) {
     try {
         if (formData === null) {
@@ -476,6 +481,7 @@ export async function createKnowhow(formData: any) {
                     knowHowTypeId: otherFormData.get('knowHowTypeId') as string,
                     categoryId: otherFormData.get('categoryId') as string,
                     authorId: otherFormData.get('authorId') as string,
+                    isProjectType: getProjectType(otherFormData.get('isProjectType')),
                     cloudinaryDataId: thumbnailCdId,
                     tags: {
                         connect: tagConnect,
@@ -485,6 +491,7 @@ export async function createKnowhow(formData: any) {
                     tags: true,
                 }
             });
+            console.log('create Knowhow:', JSON.stringify(kn, null, 2))
             return kn;
         } catch (error) {
             console.log('knowhow creation error(createKnowHow):', error);
@@ -528,6 +535,11 @@ async function getRootKnowhow() {
         where: {
             parent: null,
         },
+        orderBy: [
+            {
+                createdAt: 'desc'
+            }
+        ],
         include: {
             tags: true,
             votes: true,
@@ -602,6 +614,11 @@ export async function getKnowhows(searchBy: string | undefined | null,) {
                         parent: null,
                         categoryId: category.id
                     },
+                    orderBy: [
+                        {
+                            createdAt: 'desc'
+                        }
+                    ],
                     include: {
                         tags: true,
                         votes: true,

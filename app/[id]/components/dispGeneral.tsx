@@ -11,7 +11,7 @@ type GenProps = {
 
 const DispGeneral = (props: GenProps) => {
     const { knowhow, session, thumbnailSecureUrl } = props;
-    console.log('knowhow:', JSON.stringify(knowhow, null, 2))
+    // console.log('knowhow:', JSON.stringify(knowhow, null, 2))
 
     const getTags = () => {
         if (knowhow && knowhow.tags && knowhow.tags.length > 0) {

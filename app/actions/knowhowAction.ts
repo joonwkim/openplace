@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { addKnowhowViewCount, createKnowhow, updateGeneralKnowhow, updateKnowhow, updateKnowhowToSetParent } from "../services/knowhowService";
 import { Knowhow, KnowhowDetailInfo } from "@prisma/client";
 import { createAndUpdateKnowhowDetailInfo, updateKnowhowDetailInfo, } from "../services/knowhowDetailInfoService";
+import { consoleLogFormData } from "../lib/formdata";
 
 export async function createChildKnowHowWithDetailAction(parentKnowhowId: string, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], imgFormData: any[], pdfFormData: any[]) {
   try {
@@ -19,6 +20,21 @@ export async function createChildKnowHowWithDetailAction(parentKnowhowId: string
   revalidatePath('/');
 }
 
+export async function createKnowhowWithProjects(genFormData: any) {
+  try {
+    const { otherFormData, thumbNailFormData } = genFormData;
+    consoleLogFormData('createKnowhowWithProjects', otherFormData)
+    const knowhow = await createKnowhow(genFormData) as Knowhow;
+    if (!knowhow) {
+      return;
+    }
+    // await createAndUpdateKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
+  } catch (error) {
+    console.log('createKnowhowWithDetailInfoAction error:', error);
+    throw error
+  }
+  revalidatePath('/');
+}
 export async function createKnowhowWithDetailInfoAction(genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], imgFormData: any[], pdfFormData: any[]) {
   try {
     const knowhow = await createKnowhow(genFormData) as Knowhow;

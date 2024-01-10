@@ -48,7 +48,7 @@ export async function createUserAction(input: any) {
 }
 
 export async function sendNewPasswordAction(email: string) {
-    console.log('email in sendNewPasswordAction:', email)
+    // console.log('email in sendNewPasswordAction:', email)
     var user: any = await getUserByEmail(email);
     if (user) {
         const newPassword = generateRandomPassword();
