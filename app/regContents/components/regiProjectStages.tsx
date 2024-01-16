@@ -209,12 +209,13 @@ export const RegiProjectStages = forwardRef<any, GenProps>((props: GenProps, ref
                             <RegiStageContents ref={regiStageContentsRef} setRegDataToSave={getStageProjectData} stage={stage} handleCreateProject={handleCreateChildStageProject} />
                         </div>
                     ))}
-                    <div className='mt-4' data-bs-toggle="modal" data-bs-target="#staticBackdropForAddStageTitle">
+                    {props.editMode && <div className='mt-4' data-bs-toggle="modal" data-bs-target="#staticBackdropForAddStageTitle">
                         <button className='btn btn-primary p-2'>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-plus-lg" viewBox="0 0 16 16"  >
                                 <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
                             </svg>단계 생성하기</button>
-                    </div>
+                    </div>}
+
                 </div>
                 {/* button on the right */}
                 {stages.length > 0 && <button type='button' className='ms-3 btn btn-outline-light border rounded-circle scroll-button right' onClick={() => handleStageItemsScrollContent('right')} title='Move Right'>

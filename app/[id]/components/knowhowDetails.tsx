@@ -14,6 +14,7 @@ import KnowhowItem from '@/app/components/knowhowItem';
 import { getCloudinaryImgData, getCloudinaryPdfData, } from '@/app/lib/arrayLib';
 import GroupMemberList from './groupMemberList';
 import './scroll.css';
+import { RegiProjectStages } from '@/app/regContents/components/regiProjectStages';
 
 type RegProps = {
     knowhow: any | Knowhow,
@@ -154,7 +155,9 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     const handleMeetButtonClicked = () => {
         window.open(`https://s3.ap-northeast-2.amazonaws.com/depot.opensrcdesign.com/build/index.html?room=${knowhow.id}&auth=${session?.user.id}`, "vmeet");
     };
+    const getProjectStageData = (data: any) => {
 
+    }
     return (
         <>
             <div className='scroll-wrapper mt-3'>
@@ -189,7 +192,9 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
                     <GroupMemberList membershipRequest={knowhow?.membershipRequest} groupId={knowhow?.id} />
                 </div>
                 <div className="row row-cols-1 row-cols-md-3 row-cols-sm-2 mt-0 g-4">
-                    {knowhow.isProjectType ? (<></>) : (<>
+                    {knowhow.isProjectType ? (<>
+                        <RegiProjectStages ref={null} setRegDataToSave={getProjectStageData} rootThumbnailUrl={''} knowhow={knowhow} editMode={false} />
+                    </>) : (<>
                         {knowhow.children?.map((child: any) => (
                             <KnowhowItem key={child.id} knowhow={child} />
                         ))}                    
