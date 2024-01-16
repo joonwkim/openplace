@@ -99,7 +99,7 @@ export const getPathNullOrUndefinedCD = async () => {
 };
 
 export const getAndAddCloudinaryDataIds = async (formdatas: FormData[], knowhowid: string) => {
-    consoleLogFormDatas('formdatas:', formdatas);
+    // consoleLogFormDatas('formdatas:', formdatas);
     formdatas?.forEach(async formData => {
         const path = formData.get('path') as string;
         // console.log('path', path);
@@ -143,7 +143,7 @@ export const getAndAddCloudinaryDataIds = async (formdatas: FormData[], knowhowi
 };
 export const getAndUpdateCloudinaryDataIds = async (formdatas: FormData[], knowhowid: string) => {
 
-    consoleLogFormDatas('formdatas:', formdatas);
+    // consoleLogFormDatas('formdatas:', formdatas);
     let cdIds: string[] = [];
     formdatas?.forEach(async formData => {
         const path = formData.get('path') as string;

@@ -4,6 +4,7 @@ import { Knowhow, KnowhowDetailInfo, ThumbnailType } from "@prisma/client";
 import { getYtDataIds } from './youtubeService';
 import { getAndAddCloudinaryDataIds, } from './cloudinaryService';
 import { consoleLogFormDatas } from '../lib/formdata';
+import { StageProjectDetailData } from '../lib/types';
 
 export async function addCdIdToKnowHowDetailInfo(knowhowId: string, cdId: string) {
     const khd = await prisma.knowhowDetailInfo.findFirst({
@@ -35,10 +36,11 @@ export async function addCdIdToKnowHowDetailInfo(knowhowId: string, cdId: string
                 cloudinaryDatas: true,
             }
         });
-        console.log('added cdids:', JSON.stringify(khdiUpdateted.cloudinaryDataIds, null, 2));
+        // console.log('added cdids:', JSON.stringify(khdiUpdateted.cloudinaryDataIds, null, 2));
     }
 
 }
+
 export async function updateCdIdsOfKnowHowDetailInfo(knowhowId: string, cdIds: string[]) {
     const khd = await prisma.knowhowDetailInfo.findFirst({
         where: {
@@ -147,6 +149,25 @@ export async function updateKnowhowDetailInfo(knowhow: Knowhow, knowhowDetailInf
     }
 }
 
+export async function createChildKnowhowDetailInfo(knowhow: Knowhow, stageProjectDetail?: StageProjectDetailData) {
+    try {
+        const knowhowDetail = await prisma.knowhowDetailInfo.create({
+            data: {
+                thumbnailType: ThumbnailType.MEDIUM,
+                detailText: stageProjectDetail?.text,
+                knowhow: {
+                    connect: {
+                        id: knowhow.id,
+                    }
+                },
+            }
+        });
+        return knowhowDetail;
+
+    } catch (error) {
+
+    }
+}
 export async function createKnowhowDetailInfo(knowhow: Knowhow, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytDataIds: string[]) {
     try {
         const knowhowDetail = await prisma.knowhowDetailInfo.create({
@@ -192,6 +213,7 @@ export async function createAndUpdateKnowhowDetailInfo(knowhow: Knowhow, knowhow
         if (khdi) {
             await getAndAddCloudinaryDataIds(imgFormData, knowhow.id);
             await getAndAddCloudinaryDataIds(pdfFormData, knowhow.id);
+            return khdi;
         }
     }
 }

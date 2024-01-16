@@ -10,6 +10,7 @@ import { createTagAction } from '@/app/actions/tagAction';
 import { useRouter } from 'next/navigation';
 import ImgUploader from '@/components/controls/imgUploader';
 import { getFormdata } from '../lib/formData';
+import { consoleLogFormData } from '@/app/lib/formdata';
 
 type RegProps = {
     categories: Category[],
@@ -46,7 +47,6 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
         () => ({
             handleSubmit() {
                 handleSubmit(formRef.current);
-                // console.log('canDisable in useImperativeHandle', canDisable)
                 setRegDataToSave({ otherFormData, thumbNailFormData, canDisable });
             }
         }),
@@ -137,15 +137,18 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
                 // console.log('canDisable', canDisable)
             }
             setValidated(true);
-            const formData = new FormData(form);
-            formData.append('file', file);
-            formData.append('authorId', session?.user.id);
-            formData.set('thumbNailImage', imgSrc);
-            setOtherFormData(formData);
+            if (file) {
+                const formData = new FormData(form);
+                formData.append('file', file);
+                formData.append('authorId', session?.user.id);
+                formData.set('thumbNailImage', imgSrc);
+                setOtherFormData(formData);
 
-            const td = await getFormdata(file, 'openplace');
-            td.append('path', file.path);
-            setThumbNailFormData(td);
+                const td = await getFormdata(file, 'openplace');
+                td.append('path', file.path);
+                setThumbNailFormData(td);
+            }
+
         } catch (error) {
             console.log('handleSubmit in regiGeneral error: ', error);
         }
@@ -214,12 +217,10 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
         <Form ref={formRef} noValidate validated={validated} onSubmit={handleSubmit}>
             <div className='d-flex mt-3 gap-2'>
                 <div className="card shadow p-3 mb-5 col-4" tabIndex={0}>
-                    {thumbnailSecureUrl ? (<div className='col-5 p-3'>
-                        <Image alt={thumbnailSecureUrl} src={thumbnailSecureUrl} quality={100} fill sizes="100vw" style={{
-                            objectFit: 'contain',
-                        }}
-                        />
-                    </div>) : (<>{file ? (
+                    {thumbnailSecureUrl ? (
+                        <div className='col-5 p-3'>
+                            <Image alt={thumbnailSecureUrl} src={thumbnailSecureUrl} quality={100} fill sizes="100vw" style={{ objectFit: 'contain', }} />
+                        </div>) : (<>{file ? (
                         <div className='col-5 p-3'>
                             <Image
                                 alt={file.name}
@@ -229,17 +230,15 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
                                 sizes="100vw"
                                 style={{
                                     objectFit: 'contain',
-                                }}
-                            />
+                                    }} />
                         </div>
-                    ) : (<div>
-                        <h3 className='text-center mt-3 mb-2'>  썸네일 이미지 등록 <b className={styles.redColor}>*</b></h3>
-                        <div className={styles.inputDrop}>
-                            <ImgUploader loaderMessage='썸네일 이미지를 끌어오거나 선택하세요 ' dropMessage='Drag &amp; drop files here, or click to select files' options={options} showUploadIcon={true} />
-                        </div>
-                    </div>)}</>)}
-
-
+                        ) : (
+                            <div>
+                                <h3 className='text-center mt-3 mb-2'>  썸네일 이미지 등록 <b className={styles.redColor}>*</b></h3>
+                                <div className={styles.inputDrop}>
+                                <ImgUploader loaderMessage='썸네일 이미지를 끌어오거나 선택하세요 ' dropMessage='여기에 놓으세요...' options={options} showUploadIcon={true} />
+                            </div>
+                        </div>)}</>)}
                 </div>
                 <div className="card shadow p-3 mb-5 col-7">
                     <Form.Group controlId="title" className='mb-3'>
@@ -262,11 +261,11 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
                                 경험유형  <b className={styles.redColor}>*</b>
                             </Form.Label>
                             <Col>
-                                <Form.Select required aria-label="know how type select" name='knowHowTypeId' >
+                                <Form.Select id='knowhowtypeId' required aria-label="know how type select" name='knowHowTypeId' >
                                     <option value="">경험유형(필수)</option>
-                                    {knowHowTypes.map(knowhowType => (
+                                    {knowHowTypes.map((knowhowType: any, index: number) => (
                                         <>
-                                            <option key={knowhowType.id} selected={getKnowhowTypeSelected(knowhowType.id)} value={knowhowType.id}>{knowhowType.name}</option>
+                                            <option key={index} selected={getKnowhowTypeSelected(knowhowType.id)} value={knowhowType.id}>{knowhowType.name}</option>
                                         </>
                                     ))}
                                 </Form.Select>

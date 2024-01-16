@@ -151,7 +151,7 @@ export async function saveToDatabase({ public_id, version, signature }: { public
   if (expectedSignature === signature) {
     // safe to write to database
     console.log('saveToDatabase in cloudinary: ', { public_id });
-    throw error;
+    // throw error;
 
   }
 }

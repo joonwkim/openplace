@@ -48,7 +48,7 @@ export const Editor = forwardRef<CanHandleSubmit, FileProps>((props: FileProps, 
                     // console.log('Blur.', editor);
                 }}
                 onFocus={(event, editor) => {
-
+                    setMinHeight(editor);
                     // console.log('Focus.', editor);
                 }}
             />

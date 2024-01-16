@@ -1,10 +1,12 @@
 'use client';
-import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import Image from 'next/image';
 import styles from '../page.module.css';
 import { getYoutubeData } from '../../lib/convert';
 import { Alert } from 'react-bootstrap';
 import { YouTubeData } from '@prisma/client';
+import ImgUploader from '@/components/controls/imgUploader';
+import { DropzoneOptions } from 'react-dropzone';
 
 type YTProps = {
   showYtInput: boolean,
@@ -48,7 +50,6 @@ export const RegiYoutube = forwardRef<CanHandleSubmit, YTProps>((props: YTProps,
         if (ytData === null || ytData === undefined) {
           setYtData([]);
         }
-        console.log('youtube added');
         setYtData(prev => [...prev, yd]);
       }
     } catch (error) {
@@ -80,10 +81,11 @@ export const RegiYoutube = forwardRef<CanHandleSubmit, YTProps>((props: YTProps,
 
   return (
     <>
+      {/* thumbnail이 등록되야 Darg 할 수 있음 */}
       {showYtInput && (<input className={`border border-primary ${styles.inputDropYt}`}
         value={url}
         type="text"
-        name="fruitName"
+        name="youtube"
         placeholder="유튜브를 끌어오세요"
         onChange={handleInputChange}
       />)}

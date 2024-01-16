@@ -56,7 +56,7 @@ const PlaceHomePage = async ({ searchParams }: { searchParams: { searchText: str
         {knowhows?.map(knowhow => (
           <KnowhowItem key={knowhow.id} knowhow={knowhow} />
         ))}
-      </div>) : (<div className='mt-3 text-center'><h2>{`등록된 ${searchParams.category ? (searchParams.category) : (searchParams.searchText)} 데이터가 없습니다.`}</h2></div>)}
+      </div>) : (<div className='mt-3 text-center'><h2>{`내가 참여중인 그룹 컨텐츠가 없습니다.`}</h2></div>)}
     </>
   );
 };

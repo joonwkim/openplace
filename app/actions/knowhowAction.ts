@@ -1,9 +1,10 @@
 'use server'
 import { revalidatePath } from "next/cache";
-import { addKnowhowViewCount, createKnowhow, updateGeneralKnowhow, updateKnowhow, updateKnowhowToSetParent } from "../services/knowhowService";
+import { addKnowhowViewCount, createChildKnowhow, createKnowhow, createStageProjectKnowhow, updateGeneralKnowhow, updateKnowhow, updateKnowhowToSetParent } from "../services/knowhowService";
 import { Knowhow, KnowhowDetailInfo } from "@prisma/client";
-import { createAndUpdateKnowhowDetailInfo, updateKnowhowDetailInfo, } from "../services/knowhowDetailInfoService";
+import { createAndUpdateKnowhowDetailInfo, createChildKnowhowDetailInfo, updateKnowhowDetailInfo, } from "../services/knowhowDetailInfoService";
 import { consoleLogFormData } from "../lib/formdata";
+import { Stage, StageProjectDetailData, StageProjectHeaderData } from "../lib/types";
 
 export async function createChildKnowHowWithDetailAction(parentKnowhowId: string, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], imgFormData: any[], pdfFormData: any[]) {
   try {
@@ -15,22 +16,55 @@ export async function createChildKnowHowWithDetailAction(parentKnowhowId: string
     await updateKnowhowToSetParent(parentKnowhowId, knowhow);
     await createAndUpdateKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
   } catch (error) {
-    throw error;   
+    throw error;
   }
   revalidatePath('/');
 }
 
-export async function createKnowhowWithProjects(genFormData: any) {
+export const updateStageProjectHeaderAndDetailAction = async (knowhow: Knowhow, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], cdIds: string[], imgFormData: any[], pdfFormData: any[], stage: any, child: any, stageProjectHeader?: StageProjectHeaderData, stageProjectDetail?: StageProjectDetailData) => {
+  await updateKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytData, cdIds, imgFormData, pdfFormData);
+  knowhow.isProjectType = true;
+  await updateGeneralKnowhow(knowhow, genFormData);
+
+  //create stage project header and details as child of the  knowhow
+  //check stage project header contains all the value needed
+  // -stage title
+  // -stage description
+  // -stage
+  // -level in stage //! not included heare
+  // thumbnail
+
+
+
+
+  console.log('stage stageProjectHeader:', stageProjectHeader)
+
+  const childKnowhow = await createChildKnowhow(knowhow.id, stage, child, stageProjectHeader) as Knowhow
+
+  console.log('child knowhow:', childKnowhow)
+
+  const spkdi = await createChildKnowhowDetailInfo(childKnowhow, stageProjectDetail)
+
+  console.log('child knowhowdetail info:', spkdi)
+  // await updateKnowhowToSetParent(knowhow.id, childKnowhow);
+
+
+  // await createStageProjectKnowhow(knowhow, stageProjectHeaderData)
+}
+
+export async function createKnowhowWithDetailInfoAndStageAction(genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], imgFormData: any[], pdfFormData: any[], stages: Stage[]) {
   try {
-    const { otherFormData, thumbNailFormData } = genFormData;
-    consoleLogFormData('createKnowhowWithProjects', otherFormData)
     const knowhow = await createKnowhow(genFormData) as Knowhow;
+    console.log('saved knowhow', knowhow)
     if (!knowhow) {
       return;
     }
-    // await createAndUpdateKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
+    const khdi = await createAndUpdateKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
+
+    console.log('saved knowhow detail', khdi)
+
   } catch (error) {
-    console.log('createKnowhowWithDetailInfoAction error:', error);
+    console.log('createKnowhowWithDetailInfoAndStageAction error:', error);
     throw error
   }
   revalidatePath('/');
@@ -49,7 +83,8 @@ export async function createKnowhowWithDetailInfoAction(genFormData: any, knowho
   revalidatePath('/');
 }
 
-export async function updateKnowHowWithDetailInfoAction(knowhow: Knowhow, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], cdIds: string[], imgFormData: any[], pdfFormData: any[]) {
+
+export const updateKnowHowWithDetailInfoAction = async (knowhow: Knowhow, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], cdIds: string[], imgFormData: any[], pdfFormData: any[]) => {
   try {
     await updateKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytData, cdIds, imgFormData, pdfFormData);
     await updateGeneralKnowhow(knowhow, genFormData);

@@ -1,6 +1,13 @@
 import exp from "constants";
 import styled from "styled-components";
 
+export const Cross = styled.img`
+    width:${props => props.width}px;
+    height:${props => props.height}px;
+    object-fit:contain;
+
+`;
+
 export const Modal = styled.div`
     position: fixed;
     left: 0;

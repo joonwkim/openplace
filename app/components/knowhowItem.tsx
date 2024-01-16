@@ -21,6 +21,7 @@ const KnowhowItem = (props: KnowHowProps) => {
             knowhow.viewCount++;
             await updateKnowHowAction(knowhow);
             router.push(`/${props.knowhow?.id}`);
+            // router.push(`/knowhow/${props.knowhow?.id}`);
         } catch (error) {
             alert('error on handle click on card' + error);
         }

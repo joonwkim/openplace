@@ -195,27 +195,30 @@ export async function getTagsStartsWith(searchTag: string) {
         if (index > -1) {
             filters.splice(index, 1);
         }
-
-        // console.log('lastWord:', lastWord)
-        let tags = await prisma.tag.findMany({
-            where: {
-                name: {
-                    startsWith: lastWord,
-                    mode: 'insensitive',
+        try {
+            // console.log('lastWord:', lastWord)
+            let tags = await prisma.tag.findMany({
+                where: {
+                    name: {
+                        startsWith: lastWord,
+                        mode: 'insensitive',
+                    }
                 }
-            }
-        });
+            });
 
-        filters.forEach(f => {
-            tags = removeItemsWithName(tags, f);
-        });
+            filters.forEach(f => {
+                tags = removeItemsWithName(tags, f);
+            });
 
-        // console.log('tags:', JSON.stringify(tags,null,2));
-        return tags;
+            // console.log('tags:', JSON.stringify(tags,null,2));
+            return tags;
 
 
+        } catch (error) {
+            console.log('getTagsStartsWith error:', error)
+            throw error;
+        }
     }
-
     else
         return null;
 }

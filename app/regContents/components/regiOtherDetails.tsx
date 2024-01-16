@@ -9,9 +9,9 @@ import { consoleLogFormDatas } from '@/app/lib/formdata';
 import { Knowhow } from '@prisma/client';
 
 type OtherDetailProps = {
-  parentKnowhowId: string | undefined,
-  knowhow: any | Knowhow | undefined,
-  editMode: boolean | undefined,
+  parentKnowhowId?: string | undefined,
+  knowhow?: any | Knowhow | undefined,
+  editMode?: boolean | undefined,
   setRegDataToSave: (data: any) => void,
 }
 
@@ -70,7 +70,6 @@ export const RegiOtherDatails = forwardRef<any, OtherDetailProps>((props: OtherD
   const getImgFormData = (data: any) => {
     setImgCdIds([]);
     const { cdIds, imgFormdata } = data;
-    consoleLogFormDatas('image formdata in registration:', imgFormData);
     setImgFormData(imgFormdata);
     setImgCdIds(cdIds);
   };
@@ -79,12 +78,14 @@ export const RegiOtherDatails = forwardRef<any, OtherDetailProps>((props: OtherD
     setPdfCdIds([]);
     const { cdIds, pdfFormdata } = data;
     setPdfFormData(pdfFormdata);
-    consoleLogFormDatas('pdf formdata in registration:', pdfFormdata);
+    // consoleLogFormDatas('pdf formdata in registration:', pdfFormdata);
     setPdfCdIds(cdIds);
+    // console.log('cdIds:', cdIds)
   };
 
   const getTextData = (textData: any) => {
     setText(textData);
+    // console.log('text data:', textData)
   };
 
   return (

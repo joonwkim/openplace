@@ -68,7 +68,6 @@ export const RegiImages = forwardRef<any, RegProps>((props: RegProps, ref) => {
                 const formData = await getFormdata(file, foldername);
                 if (formData) {
                     setImgFormData(prev => [...prev, formData]);
-                    // consoleLogFormData('formdata:', formData);
                 }
             }
         });
@@ -88,13 +87,10 @@ export const RegiImages = forwardRef<any, RegProps>((props: RegProps, ref) => {
         const cfs = files?.filter((file, i) => i !== indexToDelete);
         setFiles(cfs);
     };
-
     return (<>
-
         {showImg && (<div className={`border border-primary ${styles.inputDropNoBg}`}>
             <ImgUploader loaderMessage='이미지를 끌어오거나 선택하세요 ' dropMessage='여기에 놓으세요...' options={options} showUploadIcon={false} />
         </div>)}
-
         <div className='row row-cols-1 row-cols-md-3 row-cols-sm-3 mt-0 gap-0'>
             {files?.length > 0 && (
                 files?.map((file, index) => (
@@ -118,6 +114,7 @@ export const RegiImages = forwardRef<any, RegProps>((props: RegProps, ref) => {
                 ))
             )}
         </div>
+
     </>
     );
 });

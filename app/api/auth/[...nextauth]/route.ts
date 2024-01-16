@@ -29,7 +29,7 @@ export const authOptions: NextAuthOptions = {
           }
           return user;
         } catch (error) {
-          throw JSON.stringify(error);
+          // throw JSON.stringify(error);
         }
         return null;
       },

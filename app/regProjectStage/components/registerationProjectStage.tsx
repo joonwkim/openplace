@@ -45,7 +45,7 @@ const RegisterationProjectStage = ({ parentKnowhowId, knowhow, editMode, project
         if (knowhow) {
             setKnowhowSelected(knowhow);
             setIsProjectType(knowhow.isProjectType)
-            console.log('useEffect isProjectType', knowhow.isProjectType)
+            // console.log('useEffect isProjectType', knowhow.isProjectType)
             // setIsProjectType(knowhow.isProjectType)
         }
     }, [knowhow, parentKnowhowId]);
