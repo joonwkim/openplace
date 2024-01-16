@@ -51,6 +51,7 @@ const DisplayProjectStages = (props: GenProps) => {
         let stage: Stage = {
             stageTitle: stageTitle,
             stage: stages.length,
+            ch
             // levelInStage: 0,
         }
         setStages(prev => [...prev, stage])

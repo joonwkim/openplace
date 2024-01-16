@@ -206,7 +206,7 @@ export const RegiProjectStages = forwardRef<any, GenProps>((props: GenProps, ref
                 <div className='scroll-container' ref={stageScrollContainerRef}>
                     {stages?.length > 0 && stages.map((stage, index) => (
                         <div key={index} className='btn mx-2' onClick={() => setCurrentStage(stage.stage)} onMouseOut={handleMouseOut}>
-                            <RegiStageContents ref={regiStageContentsRef} setRegDataToSave={getStageProjectData} stage={stage} handleCreateProject={handleCreateChildStageProject} />
+                            <RegiStageContents ref={regiStageContentsRef} setRegDataToSave={getStageProjectData} stage={stage} handleCreateProject={handleCreateChildStageProject} editMode={props.editMode} />
                         </div>
                     ))}
                     {props.editMode && <div className='mt-4' data-bs-toggle="modal" data-bs-target="#staticBackdropForAddStageTitle">
