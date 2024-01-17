@@ -28,7 +28,7 @@ export const RegiProjectStages = forwardRef<any, GenProps>((props: GenProps, ref
     const [stageProjectDetailData, setStageProjectDetailData] = useState<any>()
 
     const createinitialStages = useCallback(() => {
-        if (stages.length === 0) {
+        if (stages.length === 0 && props.knowhow) {
             let stg: Stage = {
                 stageTitle: props.knowhow.children[0].title,
                 stage: 0,
