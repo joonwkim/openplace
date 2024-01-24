@@ -9,7 +9,7 @@ import { getThumbnailCloudinaryDataId, uploadImagesToCloudinaryAndCreateCloudina
 import { consoleLogFormData, consoleLogFormDatas } from '../lib/formdata';
 import { CloudinaryFile } from '../lib/cloudinaryLib';
 import { serialize } from 'v8';
-import { ChildStage, Stage, StageProjectHeaderData } from '../lib/types';
+import { ChildStage, Stage, } from '../lib/types';
 import { connect } from 'http2';
 
 export async function getKnowHowTypes() {
@@ -492,8 +492,8 @@ export async function createStageProjectKnowhow(parent: any, stageProjectHeader:
         if (stageProjectHeader === null || parent === null) {
             return;
         }
-        console.log('parent knowhow', parent);
-        console.log('stage project header to save', stageProjectHeader)
+        // console.log('parent knowhow', parent);
+        // console.log('stage project header to save', stageProjectHeader)
         // const { otherFormData, thumbNailFormData } = formData;
         // const thumbnailCdId = await getThumbnailCloudinaryDataId(thumbNailFormData) as string;
         // const tagList = otherFormData.get('tags') as string;
@@ -526,7 +526,7 @@ export async function createStageProjectKnowhow(parent: any, stageProjectHeader:
         console.log('createKnowhow error:', error);
     }
 }
-export async function createChildKnowhow(parentId: string, stage: Stage, child: ChildStage, stageProjectHeader: StageProjectHeaderData | undefined) {
+export async function createChildKnowhow(parentId: string, stage: Stage, child: ChildStage, stageProjectHeader: any | undefined) {
     if (!stageProjectHeader) {
         return;
     }
@@ -684,6 +684,8 @@ async function getRootKnowhow() {
             children: true,
             parent: true,
             thumbnailCloudinaryData: true,
+            bulletinBoards: true,
+
         }
     });
     return knowhows;

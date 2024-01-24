@@ -40,6 +40,8 @@ model User {
 
   membershipProcessedBys MembershipRequest[] @relation("membershipProcessedBys")
   membershipRequestedBys MembershipRequest[] @relation("membershipRequestedBys")
+  BulletinBoard          BulletinBoard[]
+  Comment                Comment[]
 }
 
 model Profile {
@@ -123,7 +125,7 @@ model Knowhow {
 
   isGroupType Boolean @default(false)
 
-  KnowhowType   KnowhowType? @relation(fields: [knowHowTypeId], references: [id])
+  knowhowType   KnowhowType? @relation(fields: [knowHowTypeId], references: [id])
   knowHowTypeId String?      @db.ObjectId
 
   tagIds String[] @db.ObjectId
@@ -139,17 +141,54 @@ model Knowhow {
   knowhowDetailInfo KnowhowDetailInfo?
   membershipRequest MembershipRequest[]
 
-  parentId String?  @db.ObjectId
-  parent   Knowhow? @relation("KnowhowParentChildren", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentId String?   @db.ObjectId
+  parent   Knowhow?  @relation("KnowhowParentChildren", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   children Knowhow[] @relation("KnowhowParentChildren")
 
   thumbnailCloudinaryData CloudinaryData? @relation(fields: [cloudinaryDataId], references: [id])
   cloudinaryDataId        String?         @db.ObjectId
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  bulletinBoards BulletinBoard[]
 
   @@unique([title, authorId])
+}
+
+model BulletinBoard {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  title   String
+  message String
+
+  knowhowId String  @db.ObjectId
+  knowhow   Knowhow @relation(fields: [knowhowId], references: [id])
+
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  comments  Comment[]
+}
+
+model Comment {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  comment String
+
+  bulletinBoardId String        @db.ObjectId
+  bulletinBoard   BulletinBoard @relation(fields: [bulletinBoardId], references: [id])
+
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+
+  parentId String?   @db.ObjectId
+  parent   Comment?  @relation("CommentParentChildren", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children Comment[] @relation("CommentParentChildren")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model KnowhowDetailInfo {

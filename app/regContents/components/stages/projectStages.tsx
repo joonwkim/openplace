@@ -1,7 +1,7 @@
 'use client';
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import './multiItemsCarousel.css';
-import { Stage, ChildStage, ChildHeader, ChildDetail, ChildData } from '@/app/lib/types';
+import { Stage, ChildStage, } from '@/app/lib/types';
 import { any } from 'zod';
 import { EditMode, getThumbnails } from '@/app/lib/convert';
 import { ChildContents, } from './childContents';
@@ -27,7 +27,7 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
     // const [childThumbnail, setChildThumbnail] = useState('')
     // const [childHeader, setChildHeader] = useState<ChildHeader>()
     // const [childDetail, setChildDetail] = useState<ChildDetail>()
-    const [data, setData] = useState<ChildData>()
+    // const [data, setData] = useState<ChildData>()
     useImperativeHandle(
         ref,
         () => ({
@@ -88,9 +88,9 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
     function getValue<T, K extends keyof T>(data: T, key: K) {
         return data[key];
     }
-    const getChildData = (data: ChildData) => {
+    const getChildData = (data: any) => {
         // console.log('data getChildData ProjectStages: ', JSON.stringify(data.header, null, 2))
-        setData(data)
+        // setData(data)
 
     }
     const handleMouseOut = () => {

@@ -36,11 +36,11 @@ export const ChildHeaderPage = forwardRef<any, ChildHeaderProps>(({ setRegDataTo
         () => ({
             handleSubmit() {
                 // console.log('useImperativeHandle')
-                handleSubmit(formRef.current);
+                // handleSubmit(formRef.current);
 
-                setRegDataToSave(child);
-                console.log('useImperativeHandle', child)
-                formRef.current?.reset();
+                // setRegDataToSave(child);
+                // console.log('useImperativeHandle', child)
+                // formRef.current?.reset();
 
             }
         }),
@@ -64,21 +64,21 @@ export const ChildHeaderPage = forwardRef<any, ChildHeaderProps>(({ setRegDataTo
 
     const handleSubmit = async (form: any) => {
         try {
-            console.log('handleSubmit')
+            alert('handleSubmit')
             if (file) {
-                const formData = new FormData(form);
-                const title = formData.get('title') as string;
-                const description = formData.get('description') as string;
-                const td = await getFormdata(file, 'openplace');
-                td.append('path', file.path);
-                const child: ChildStage = {
-                    title: title,
-                    description: description,
-                    thumbnailFormdata: td,
-                    thumbnailUrl: getSecureUrl(td),
-                    authorId: session?.user.id,
-                }
-                setChild(child)
+                // const formData = new FormData(form);
+                // const title = formData.get('title') as string;
+                // const description = formData.get('description') as string;
+                // const td = await getFormdata(file, 'openplace');
+                // td.append('path', file.path);
+                // const child: ChildStage = {
+                //     title: title,
+                //     description: description,
+                //     thumbnailFormdata: td,
+                //     thumbnailUrl: getSecureUrl(td),
+                //     authorId: session?.user.id,
+                // }
+                // setChild(child)
             }
         } catch (error) {
             console.log('handleSubmit in regiGeneral error: ', error);
@@ -98,30 +98,16 @@ export const ChildHeaderPage = forwardRef<any, ChildHeaderProps>(({ setRegDataTo
             <Form ref={formRef} noValidate validated={validated} onSubmit={handleSubmit}>
                 <div className='d-flex mt-3 gap-2'>
                     <div className="card shadow p-3 mb-5 col-4" tabIndex={0}>
-                        {thumbnailSecureUrl ? (<div className='col-5 p-3'>
-                            <Image alt={thumbnailSecureUrl} src={thumbnailSecureUrl} quality={100} fill sizes="100vw" style={{
-                                objectFit: 'contain',
-                            }}
-                            />
-                        </div>) : (<>{file ? (
+                        {file ? (
                             <div className='col-5 p-3'>
-                                <Image
-                                    alt={file.name}
-                                    src={file.secure_url}
-                                    quality={100}
-                                    fill
-                                    sizes="100vw"
-                                    style={{
-                                        objectFit: 'contain',
-                                    }}
-                                />
+                                <Image alt={file.name} src={file.secure_url} quality={100} fill sizes="100vw" style={{ objectFit: 'contain', }} />
                             </div>
                         ) : (<div>
                             <h3 className='text-center mt-3 mb-2'>  썸네일 이미지 등록 <b className={styles.redColor}>*</b></h3>
                             <div className='input-drop-project'>
                                 <ImgUploader loaderMessage='썸네일 이미지를 끌어오거나 선택하세요 ' dropMessage='Drag &amp; drop files here, or click to select files' options={options} showUploadIcon={true} />
                             </div>
-                        </div>)}</>)}
+                        </div>)}
                     </div>
                     <div className="card shadow p-3 mb-5 col-7">
                         <Form.Group controlId="title" className='mb-3'>
