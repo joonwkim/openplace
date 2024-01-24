@@ -6,10 +6,10 @@ import { createChildKnowHowWithDetailAction, createKnowhowWithDetailInfoAction, 
 import { useRouter } from 'next/navigation';
 import { getCloudinaryImgData, getCloudinaryPdfData, } from '@/app/lib/arrayLib';
 import { RegiOtherDatails } from './regiOtherDetails';
-import { RegiProjectStage } from './regiProjectStage';
+// import { RegiProjectStage } from './regiProjectStage';
 import DisplayProjectStages from '@/app/knowhow/[id]/components/displayProjectStages';
 import { Stage } from '@/app/lib/types';
-import { RegiProjectStages } from './regiProjectStages';
+// import { RegiProjectStages } from './regiProjectStages';
 import { consoleLogFormData, consoleLogFormDatas } from '@/app/lib/formdata';
 import { Header } from './headers/header';
 import { SimpleHeader } from './headers/simpleHeader';
