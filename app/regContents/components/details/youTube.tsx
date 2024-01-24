@@ -1,12 +1,12 @@
 'use client';
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import Image from 'next/image';
-import styles from '../page.module.css';
-import { getYoutubeData } from '../../lib/convert';
 import { Alert } from 'react-bootstrap';
 import { YouTubeData } from '@prisma/client';
 import ImgUploader from '@/components/controls/imgUploader';
 import { DropzoneOptions } from 'react-dropzone';
+import { getYoutubeData } from '@/app/lib/convert';
+import styles from '../../page.module.css'
 
 type YTProps = {
   showYtInput: boolean,
@@ -19,7 +19,7 @@ type CanHandleSubmit = {
   handleSubmit: () => void;
 };
 
-export const RegiYoutube = forwardRef<CanHandleSubmit, YTProps>((props: YTProps, ref) => {
+export const Youtube = forwardRef<CanHandleSubmit, YTProps>((props: YTProps, ref) => {
 
   const { showYtInput, setRegDataToSave, initialYtData, editMode } = props;
   const [embedUrl, setEmbedUrl] = useState('');
@@ -111,8 +111,4 @@ export const RegiYoutube = forwardRef<CanHandleSubmit, YTProps>((props: YTProps,
   );
 
 });
-RegiYoutube.displayName = "RegiYoutube"
-
-
-
-
+Youtube.displayName = "Youtube"

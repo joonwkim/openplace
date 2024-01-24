@@ -1,43 +1,40 @@
 'use client';
 import Image from 'next/image';
-import React, { useCallback, forwardRef, useState, useImperativeHandle, useRef } from 'react';
-import { Col, Form, Row, } from 'react-bootstrap';
+import React, { useCallback, useEffect, forwardRef, useState, useImperativeHandle, useRef } from 'react';
+import { Col, Form, Row, Badge } from 'react-bootstrap';
 import styles from '@/app/regContents/page.module.css';
 import { DropzoneOptions } from 'react-dropzone';
+import { useSession, } from 'next-auth/react';
 import ImgUploader from '@/components/controls/imgUploader';
-import './multiItemsCarousel.css';
 import { getFormdata } from '@/app/regContents/lib/formData';
-import { Stage, StageProjectHeaderData } from '@/app/lib/types';
-import { getSecureUrl } from '@/app/lib/formdata';
-import { useSession } from 'next-auth/react';
-// import { consoleLogFormData, getSecureUrl } from '@/app/lib/formdata';
-// import { readFile } from 'fs';
+import { consoleLogFormData } from '@/app/lib/formdata';
 
 type RegProjectKnowhowProps = {
-    stage: Stage,
+
     setRegDataToSave: (data: any) => void,
-    // header?: StageProjectHeaderData | undefined,
     // thumbnailCloudinaryData: CloudinaryData,
-    // knowhow: any | undefined,
+    knowhow: any | undefined,
 };
 
-export const RegiStageProjectHeader = forwardRef<any, RegProjectKnowhowProps>((props: RegProjectKnowhowProps, ref) => {
-    const { stage, setRegDataToSave } = props;
+export const SimpleHeader = forwardRef<any, RegProjectKnowhowProps>((props: RegProjectKnowhowProps, ref) => {
+    const { setRegDataToSave, knowhow } = props;
+    const [otherFormData, setOtherFormData] = useState<any>(null);
+    const [thumbNailFormData, setThumbNailFormData] = useState<any>(null);
+    const { data: session } = useSession();
     const formRef = useRef<any>();
     const [validated, setValidated] = useState(false);
     const [thumbnailSecureUrl, setThumbnailSecureUrl] = useState('');
     const [file, setFile] = useState<any>();
-    const { data: session } = useSession();
-    // const [imgSrc, setImgSrc] = useState('');
-    const [stageProjectHeaderData, setStageProjectHeaderData] = useState<StageProjectHeaderData>()
+    const [canDisable, setCanDisable] = useState(true)
+    const [imgSrc, setImgSrc] = useState('');
 
     useImperativeHandle(
         ref,
         () => ({
             handleSubmit() {
                 handleSubmit(formRef.current);
-
-                setRegDataToSave({ stageProjectHeaderData });
+                // console.log('canDisable in useImperativeHandle', canDisable)
+                setRegDataToSave({ otherFormData, thumbNailFormData, canDisable });
             }
         }),
     );
@@ -47,47 +44,53 @@ export const RegiStageProjectHeader = forwardRef<any, RegProjectKnowhowProps>((p
 
     }, []);
 
+
     const options: DropzoneOptions = {
         accept: { 'image/*': [] }, maxSize: 1024 * 1000, maxFiles: 1, onDrop
     };
 
-
-
     const handleSubmit = async (form: any) => {
         try {
+
+            if (!file && !thumbnailSecureUrl) {
+                // alert('썸네일 이미지를 등록하세요');
+                // setValidDataEntered(false)
+                setCanDisable(true)
+                // console.log('canDisable', canDisable)
+                // return;
+            }
+            else {
+                setCanDisable(false)
+                // console.log('canDisable', canDisable)
+            }
+            if (form.checkValidity() === false) {
+                setCanDisable(true)
+                // console.log('canDisable', canDisable)
+            }
+            else {
+                setCanDisable(false)
+                // console.log('canDisable', canDisable)
+            }
+            setValidated(true);
+            // console.log('authorId:', session?.user.id)
+
             if (file) {
                 const formData = new FormData(form);
-                const description = formData.get('description') as string;
+                formData.append('isGroupType', 'true')
+                formData.append('file', file);
+                formData.append('authorId', session?.user.id);
+                formData.set('thumbNailImage', imgSrc);
+                setOtherFormData(formData);
+                consoleLogFormData('form data', formData)
                 const td = await getFormdata(file, 'openplace');
                 td.append('path', file.path);
-                const header: StageProjectHeaderData = {
-                    stageTitle: props.stage.stageTitle,
-                    description: description,
-                    thumbnailFormdata: td,
-                    thumbnailUrl: getSecureUrl(td),
-                    stage: stage.stage,
-                    authorId: session?.user.id,
-                    // levelInStage: stage.levelInStage
-                }
-                console.log('header created:', header)
-                console.log('stage in header', stage)
-                setStageProjectHeaderData(header)
-                if (description) {
-                    const header: StageProjectHeaderData = {
-                        stageTitle: props.stage.stageTitle,
-                        description: description,
-                        thumbnailFormdata: td,
-                        thumbnailUrl: getSecureUrl(td),
-                        stage: stage.stage,
-                        authorId: session?.user.id,
-                        // levelInStage: stage
-                    }
-                    setStageProjectHeaderData(header)
-                }
+                setThumbNailFormData(td);
             }
+
         } catch (error) {
-            console.log('handleSubmit in regiGeneral error: ', error);
+            console.log('handleSubmit in simpleHeader error: ', error);
         }
+
     };
 
     return (
@@ -121,6 +124,19 @@ export const RegiStageProjectHeader = forwardRef<any, RegProjectKnowhowProps>((p
                         </div>)}</>)}
                     </div>
                     <div className="card shadow p-3 mb-5 col-7">
+                        <Form.Group controlId="title" className='mb-3'>
+                            <Row>
+                                <Form.Label column="lg" lg={3}>
+                                    제목 <b className={styles.redColor}>*</b>
+                                </Form.Label>
+                                <Col>
+                                    <Form.Control size="lg" type="text" required placeholder="제목을 입력하세요" name='title' defaultValue={knowhow?.title} />
+                                    <Form.Control.Feedback type="invalid">
+                                        제목을 입력하세요
+                                    </Form.Control.Feedback>
+                                </Col>
+                            </Row>
+                        </Form.Group>
                         <Form.Group controlId="description" className='mb-3'>
                             <Row>
                                 <Form.Label column="lg" lg={3}>
@@ -145,4 +161,4 @@ export const RegiStageProjectHeader = forwardRef<any, RegProjectKnowhowProps>((p
     )
 });
 
-RegiStageProjectHeader.displayName = "RegiStageProjectHeader"
+SimpleHeader.displayName = "SimpleHeader"

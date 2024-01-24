@@ -15,6 +15,7 @@ import { getCloudinaryImgData, getCloudinaryPdfData, } from '@/app/lib/arrayLib'
 import GroupMemberList from './groupMemberList';
 import './scroll.css';
 import { RegiProjectStages } from '@/app/regContents/components/regiProjectStages';
+import DisplayGroupMember from './displayGroupMember';
 
 type RegProps = {
     knowhow: any | Knowhow,
@@ -95,7 +96,6 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
             alert(`컨텐츠 작성자 (${knowhow.author.name})가 가입을 보류하였습니다.`);
         } else if (membershipRequestBtnText === '그룹 컨텐츠 등록') {
             router.push(`/regContents/?parentKnowhowId=${knowhow.id}`);
-
         } else {
             setMembershipRequestBtnText('그룹 컨텐츠 등록');
         }
@@ -143,6 +143,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
 
     const handleEditContents = () => {
         router.push(`/regContents/?knowhowId=${knowhow.id}&editMode=true`);
+        // router.push(`/regContents/?knowhowId=${knowhow.id}&editMode=true`);
     };
 
     const hideRight = () => {
@@ -168,7 +169,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
                 </button>}
                 <div className='scroll-container' ref={scrollContainerRef}>
                     {isAuthorLoggedIn() && (<button className='me-3 btn btn-primary' type="submit" onClick={handleEditContents}>컨텐츠 수정</button>)}
-                    <button className='me-3 btn btn-primary' type="submit" onClick={handleMembershipRequest} >{membershipRequestBtnText}</button>
+                    {knowhow.isGroupType && <button className='me-3 btn btn-primary' type="submit" onClick={handleMembershipRequest} >{membershipRequestBtnText}</button>}
                     <button className='me-3 btn btn-primary' type="submit" onClick={handleShowDetailContens}>{getContentsBtnText()}</button>
                     <button className='me-3 btn btn-primary' type="submit" onClick={handleShowChildrenContens}>{getChildrenContentsBtnText()}</button>
                     <button className='me-3 btn btn-primary' type="submit" >모임안내</button>
@@ -185,24 +186,33 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
                 </button></>)}
             </div>
             <DispGeneral knowhow={knowhow} session={session} thumbnailSecureUrl={knowhow.thumbnailCloudinaryData?.secure_url} />
-            {showKnowhowContents()}
-            {showChildrenContents && knowhow?.children.length > 0 && (<>
-                <h4 className='mt-3'>그룹멤버</h4>
-                <div>
-                    <GroupMemberList membershipRequest={knowhow?.membershipRequest} groupId={knowhow?.id} />
-                </div>
-                <div className="row row-cols-1 row-cols-md-3 row-cols-sm-2 mt-0 g-4">
-                    {knowhow.isProjectType ? (<>
-                        <RegiProjectStages ref={null} setRegDataToSave={getProjectStageData} rootThumbnailUrl={''} knowhow={knowhow} editMode={false} />
-                    </>) : (<>
-                        {knowhow.children?.map((child: any) => (
-                            <KnowhowItem key={child.id} knowhow={child} />
-                        ))}                    
-                    </>)}
+            {knowhow.isGroupType ? (<>
+                <DisplayGroupMember knowhow={knowhow} />
+            </>) : (<> {showKnowhowContents()}
+                {showChildrenContents && knowhow?.children.length > 0 && (<>
+                    <h4 className='mt-3'>그룹멤버</h4>
+                    <div>
+                        <GroupMemberList membershipRequest={knowhow?.membershipRequest} groupId={knowhow?.id} />
+                    </div>
+                    <div className="row row-cols-1 row-cols-md-3 row-cols-sm-2 mt-0 g-4">
+                            {knowhow.children?.map((child: any) => (
+                                <KnowhowItem key={child.id} knowhow={child} />
+                            ))}
+                            {/* {knowhow.isProjectType ? (
+                                <>
+                                    <RegiProjectStages ref={null} setRegDataToSave={getProjectStageData} rootThumbnailUrl={''} knowhow={knowhow} editMode={false} />
+                                </>) : (
+                                <>
+                                    {knowhow.children?.map((child: any) => (
+                                        <KnowhowItem key={child.id} knowhow={child} />
+                                    ))}
+                                </>)
+                            } */}
 
-                </div>
-            </>
-            )}
+                        </div>
+                    </>
+                )}</>)}
+
         </>
     );
 };

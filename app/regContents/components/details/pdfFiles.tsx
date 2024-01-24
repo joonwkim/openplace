@@ -3,8 +3,8 @@ import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState }
 import styles from '@/app/regContents/page.module.css';
 import { DropzoneOptions, } from 'react-dropzone';
 import FileUploader from '@/components/controls/fileUploader';
-import { getFormdata } from '../lib/formData';
 import { CloudinaryData } from '@prisma/client';
+import { getFormdata } from '../../lib/formData';
 
 type FileProps = {
     showFileInput: boolean;
@@ -13,7 +13,7 @@ type FileProps = {
     editMode: boolean | undefined,
 };
 
-export const RegiPdfFiles = forwardRef<any, FileProps>((props: FileProps, ref) => {
+export const PdfFiles = forwardRef<any, FileProps>((props: FileProps, ref) => {
 
     const { showFileInput, setRegDataToSave, pdfCloudinaryData, editMode } = props;
     const foldername = 'openplace';
@@ -129,4 +129,4 @@ export const RegiPdfFiles = forwardRef<any, FileProps>((props: FileProps, ref) =
         </>
     );
 });
-RegiPdfFiles.displayName = "RegiPdfFiles";
+PdfFiles.displayName = "PdfFiles";

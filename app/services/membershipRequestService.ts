@@ -66,3 +66,20 @@ export async function updateMembershipRequest(statusChanged: any[]) {
     }
     return '';
 }
+export async function updateRequestResponse(requestId: string, status: MembershipRequestStatus) {
+    try {
+        console.log('updateRequestResponse', requestId, status)
+        const res = await prisma?.membershipRequest.update({
+            where: {
+                id: requestId,
+            },
+            data: {
+                membershipRequestStatus: status,
+                processedAt: new Date()
+            }
+        });
+        console.log(requestId, status)
+    } catch (error) {
+
+    }
+}

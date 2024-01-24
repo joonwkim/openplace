@@ -74,6 +74,8 @@ export async function getUserByEmail(emailInput: string) {
         if (user) {
             const requests = user.membershipProcessedBys.filter(s => s.membershipRequestStatus === MembershipRequestStatus.REQUESTED);
             user.notificationCount = requests.length;
+            const approvedRequests = user.membershipRequestedBys.filter(s => s.membershipRequestStatus === MembershipRequestStatus.APPROVED)
+            user.notificationCount += approvedRequests.length;
         }
 
         return user;

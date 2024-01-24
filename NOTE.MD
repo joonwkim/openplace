@@ -70,8 +70,8 @@ model Todo {
   updatedAt   DateTime @updatedAt
 }
 
-pnpx prisma db push
-pnpx prisma generate
+npx prisma db push
+npx prisma generate
 
 //create prisma client
 //prisma.ts 

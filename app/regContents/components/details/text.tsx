@@ -11,7 +11,7 @@ type FileProps = {
     textData: string,
 };
 
-export const RegiText = forwardRef<CanHandleSubmit, FileProps>((props: FileProps, ref) => {
+export const Text = forwardRef<CanHandleSubmit, FileProps>((props: FileProps, ref) => {
     const { showTextEditor, setRegDataToSave, textData } = props;
     const [data, setData] = useState<string>(textData);
 
@@ -31,6 +31,7 @@ export const RegiText = forwardRef<CanHandleSubmit, FileProps>((props: FileProps
             setShowModal(true);
         }
     }, [showTextEditor]);
+
     const setTextData = (data: any) => {
         setData(data);
     };
@@ -53,4 +54,4 @@ export const RegiText = forwardRef<CanHandleSubmit, FileProps>((props: FileProps
         </>
     );
 });
-RegiText.displayName = "RegiText";
+Text.displayName = "Text";

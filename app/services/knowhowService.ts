@@ -10,6 +10,7 @@ import { consoleLogFormData, consoleLogFormDatas } from '../lib/formdata';
 import { CloudinaryFile } from '../lib/cloudinaryLib';
 import { serialize } from 'v8';
 import { ChildStage, Stage, StageProjectHeaderData } from '../lib/types';
+import { connect } from 'http2';
 
 export async function getKnowHowTypes() {
     try {
@@ -19,8 +20,6 @@ export async function getKnowHowTypes() {
         return ({ error });
     }
 }
-
-
 
 export async function createChildKnowHowWithDetailInfo(parentKnowhowId: string, formData: FormData, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">) {
     try {
@@ -83,16 +82,22 @@ export async function createChildKnowHowWithDetailInfo(parentKnowhowId: string, 
 }
 
 export async function updateGeneralKnowhow(knowhowSelected: Knowhow, genFormData: any) {
+    // console.log('updateGeneralKnowhow', knowhowSelected)
     if (!genFormData) {
         return;
     }
     const { otherFormData, thumbNailFormData } = genFormData;
+    // consoleLogFormData('otherFormData', otherFormData)
     let tagConnect: any[] = [];
     if (otherFormData !== null) {
         const tagList = otherFormData.get('tags') as string;
         tagConnect = await createTags(tagList) as any[];
     }
 
+    let isGroupType: boolean = false;
+    if (otherFormData.get('isGroupType') === 'true') {
+        isGroupType = true;
+    }
     let updatedKnowhow: Knowhow = await prisma.knowhow.update({
         where: {
             id: knowhowSelected.id,
@@ -104,6 +109,7 @@ export async function updateGeneralKnowhow(knowhowSelected: Knowhow, genFormData
             categoryId: otherFormData.get('categoryId') as string,
             authorId: otherFormData.get('authorId') as string,
             isProjectType: knowhowSelected.isProjectType,
+            isGroupType: isGroupType,
             tags: {
                 connect: tagConnect,
             },
@@ -134,7 +140,6 @@ export async function updateGeneralKnowhow(knowhowSelected: Knowhow, genFormData
     // console.log('updatedKnowhow:', updatedKnowhow);
     // return updatedKnowhow;
 }
-
 
 export async function updateKnowHowWithDetailInfo(knowhowSelected: Knowhow, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], imgFormData: any[], cloudinaryDataIdsToDelete: string[], pdfFormData: any[]) {
     try {
@@ -360,7 +365,7 @@ export async function createKnowHowWithDetailInfo(genFormData: any, knowhowDetai
                     thumbnailCloudinaryData: true,
                 }
             });
-            console.log('knowhow created:', knowhow);
+            // console.log('knowhow created:', knowhow);
             let ytDataIds: string[] = [];
             ytData?.forEach(async yt => {
                 const ytd = await prisma.youTubeData.create({ data: yt });
@@ -446,20 +451,38 @@ export async function createKnowHowWithDetailInfo(genFormData: any, knowhowDetai
     }
 }
 
+// export async function updateKnowhowToSetParent(parentId: string, knowhow: Knowhow) {
+//     try {
+//     const kh = await prisma.knowhow.update({
+//         where: {
+//             id: knowhow.id,
+//         },
+//         data: {
+//             parentId: parentId,
+//             // parent: {
+//             //     connect: {
+//             //         id: parentId,
+//             //     }
+//             // },
+//         },
+//         include: {
+//             parent: true,
+//             children: true,
+//         }
 
-export async function updateKnowhowToSetParent(parentId: string, knowhow: Knowhow) {
-    const kh = await prisma.knowhow.update({
-        where: {
-            id: knowhow.id,
-        },
-        data: {
-            parentId: parentId,
-        }
+//     });
+//         console.log('set parent ', kh)
+//     } catch (error) {
+//         console.log('update error:', error)
+//     }
 
-    });
-}
+// }
 
 const getProjectType = (value: string) => {
+    if (value === "true") return true;
+    return false;
+}
+const getGroupType = (value: string) => {
     if (value === "true") return true;
     return false;
 }
@@ -526,13 +549,16 @@ export async function createChildKnowhow(parentId: string, stage: Stage, child: 
 
     return knowhow;
 }
-export async function createKnowhow(formData: any) {
+export async function createGroupChildKnowhow(parentId: string, formData: any) {
     try {
         if (formData === null) {
             return;
         }
 
         const { otherFormData, thumbNailFormData } = formData;
+
+        // consoleLogFormData('otherFormData', otherFormData)
+
         const thumbnailCdId = await getThumbnailCloudinaryDataId(thumbNailFormData) as string;
         const tagList = otherFormData.get('tags') as string;
         let tagConnect = await createTags(tagList) as any[];
@@ -546,6 +572,51 @@ export async function createKnowhow(formData: any) {
                     categoryId: otherFormData.get('categoryId') as string,
                     authorId: otherFormData.get('authorId') as string,
                     isProjectType: getProjectType(otherFormData.get('isProjectType')),
+                    isGroupType: getGroupType(otherFormData.get('isGroupType')),
+                    cloudinaryDataId: thumbnailCdId,
+                    parentId: parentId,
+                    tags: {
+                        connect: tagConnect,
+                    },
+                },
+                include: {
+                    tags: true,
+                    parent: true,
+                    children: true,
+                }
+            });
+            return kn;
+        } catch (error) {
+            console.log('knowhow creation error(createKnowHow):', error);
+        }
+    } catch (error) {
+        console.log('createKnowhow error:', error);
+    }
+}
+export async function createKnowhow(formData: any) {
+    try {
+        if (formData === null) {
+            return;
+        }
+
+        const { otherFormData, thumbNailFormData } = formData;
+
+        // consoleLogFormData('otherFormData', otherFormData)
+
+        const thumbnailCdId = await getThumbnailCloudinaryDataId(thumbNailFormData) as string;
+        const tagList = otherFormData.get('tags') as string;
+        let tagConnect = await createTags(tagList) as any[];
+
+        try {
+            const kn = await prisma.knowhow.create({
+                data: {
+                    title: otherFormData.get('title') as string,
+                    description: otherFormData.get('description') as string,
+                    knowHowTypeId: otherFormData.get('knowHowTypeId') as string,
+                    categoryId: otherFormData.get('categoryId') as string,
+                    authorId: otherFormData.get('authorId') as string,
+                    isProjectType: getProjectType(otherFormData.get('isProjectType')),
+                    isGroupType: getGroupType(otherFormData.get('isGroupType')),
                     cloudinaryDataId: thumbnailCdId,
                     tags: {
                         connect: tagConnect,
@@ -611,6 +682,7 @@ async function getRootKnowhow() {
             membershipRequest: true,
             author: true,
             children: true,
+            parent: true,
             thumbnailCloudinaryData: true,
         }
     });
@@ -661,6 +733,7 @@ export async function getKnowhowsBy(registeredOrpaticipated: string | undefined 
     }
     return knowhows;
 }
+
 export async function getKnowhows(searchBy: string | undefined | null,) {
     try {
         let knowhows: Array<Knowhow> = []
@@ -689,7 +762,13 @@ export async function getKnowhows(searchBy: string | undefined | null,) {
                         knowhowDetailInfo: true,
                         membershipRequest: true,
                         author: true,
-                        children: true,
+                        children: {
+                            include: {
+                                knowhowDetailInfo: true,
+                                thumbnailCloudinaryData: true,
+                                author: true,
+                            }
+                        },
                         thumbnailCloudinaryData: true,
                     }
                 });
@@ -710,7 +789,13 @@ export async function getKnowhows(searchBy: string | undefined | null,) {
                     knowhowDetailInfo: true,
                     membershipRequest: true,
                     author: true,
-                    children: true,
+                    children: {
+                        include: {
+                            knowhowDetailInfo: true,
+                            thumbnailCloudinaryData: true,
+                            author: true,
+                        }
+                    },
                     thumbnailCloudinaryData: true,
                 }
             });

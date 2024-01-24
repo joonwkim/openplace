@@ -36,7 +36,7 @@ const DispGeneral = (props: GenProps) => {
                     <Card.Title className='text-center fw-bold'>{knowhow?.title}</Card.Title>
                     <div className='text-center card-text'>
                         <div>
-                            <span>{knowhow?.KnowhowType?.name}</span><span>{` X ${knowhow?.category.name}`}</span>
+                            <span>{knowhow?.KnowhowType?.name}</span><span>{` X ${knowhow?.category?.name}`}</span>
                         </div>
                         <div>{knowhow?.description}</div>
                         <div>

@@ -1,95 +1,100 @@
 'use client';
 import Image from 'next/image';
-import React, { useCallback, useEffect, forwardRef, useState, useImperativeHandle, useRef } from 'react';
-import { Col, Form, Row, Badge } from 'react-bootstrap';
+import React, { useCallback, forwardRef, useState, useImperativeHandle, useRef, useEffect } from 'react';
+import { Col, Form, Row, } from 'react-bootstrap';
 import styles from '@/app/regContents/page.module.css';
-import { Category, CloudinaryData, KnowhowType, Tag } from '@prisma/client';
 import { DropzoneOptions } from 'react-dropzone';
-import { useSession, } from 'next-auth/react';
-import { createTagAction } from '@/app/actions/tagAction';
-import { useRouter } from 'next/navigation';
 import ImgUploader from '@/components/controls/imgUploader';
-import './scroll.css';
+import './multiItemsCarousel.css';
 import { getFormdata } from '@/app/regContents/lib/formData';
+import { getSecureUrl } from '@/app/lib/formdata';
+import { useSession } from 'next-auth/react';
+import { ChildStage, Stage } from '@/app/lib/types';
+// import { consoleLogFormData, getSecureUrl } from '@/app/lib/formdata';
+// import { readFile } from 'fs';
 
-type RegProjectKnowhowProps = {
-
+type ChildHeaderProps = {
+    // stage: Stage,
     setRegDataToSave: (data: any) => void,
+    // header?: StageProjectHeaderData | undefined,
     // thumbnailCloudinaryData: CloudinaryData,
     // knowhow: any | undefined,
 };
 
-export const RegiProjectKnowhowHeader = forwardRef<any, RegProjectKnowhowProps>((props: RegProjectKnowhowProps, ref) => {
-    const { setRegDataToSave, } = props;
-    const [otherFormData, setOtherFormData] = useState<any>(null);
-    const [thumbNailFormData, setThumbNailFormData] = useState<any>(null);
+
+export const ChildHeaderPage = forwardRef<any, ChildHeaderProps>(({ setRegDataToSave }: ChildHeaderProps, ref) => {
     const formRef = useRef<any>();
     const [validated, setValidated] = useState(false);
     const [thumbnailSecureUrl, setThumbnailSecureUrl] = useState('');
     const [file, setFile] = useState<any>();
-    const [canDisable, setCanDisable] = useState(true)
-    const [imgSrc, setImgSrc] = useState('');
+    const { data: session } = useSession();
+    // const [imgSrc, setImgSrc] = useState('');
+    const [child, setChild] = useState<ChildStage>()
 
     useImperativeHandle(
         ref,
         () => ({
             handleSubmit() {
+                // console.log('useImperativeHandle')
                 handleSubmit(formRef.current);
-                // console.log('canDisable in useImperativeHandle', canDisable)
-                setRegDataToSave({ otherFormData, thumbNailFormData, canDisable });
+
+                setRegDataToSave(child);
+                console.log('useImperativeHandle', child)
+                formRef.current?.reset();
+
             }
         }),
     );
 
+    // const resetInput = () => {
+    //     formRef?.current?.reset()
+    //     setFile(null)
+    //     setThumbnailSecureUrl('')
+    // }
     const onDrop = useCallback(async (files: File[]) => {
         setFile(Object.assign(files[0], { secure_url: URL.createObjectURL(files[0]) }));
 
     }, []);
 
-
     const options: DropzoneOptions = {
         accept: { 'image/*': [] }, maxSize: 1024 * 1000, maxFiles: 1, onDrop
     };
 
+
+
     const handleSubmit = async (form: any) => {
         try {
-
-            if (!file && !thumbnailSecureUrl) {
-                // alert('썸네일 이미지를 등록하세요');
-                // setValidDataEntered(false)
-                setCanDisable(true)
-                // console.log('canDisable', canDisable)
-                // return;
+            console.log('handleSubmit')
+            if (file) {
+                const formData = new FormData(form);
+                const title = formData.get('title') as string;
+                const description = formData.get('description') as string;
+                const td = await getFormdata(file, 'openplace');
+                td.append('path', file.path);
+                const child: ChildStage = {
+                    title: title,
+                    description: description,
+                    thumbnailFormdata: td,
+                    thumbnailUrl: getSecureUrl(td),
+                    authorId: session?.user.id,
+                }
+                setChild(child)
             }
-            else {
-                setCanDisable(false)
-                // console.log('canDisable', canDisable)
-            }
-            if (form.checkValidity() === false) {
-                setCanDisable(true)
-                // console.log('canDisable', canDisable)
-            }
-            else {
-                setCanDisable(false)
-                // console.log('canDisable', canDisable)
-            }
-            setValidated(true);
-            const formData = new FormData(form);
-            formData.append('file', file);
-            formData.set('thumbNailImage', imgSrc);
-            setOtherFormData(formData);
-
-            const td = await getFormdata(file, 'openplace');
-            td.append('path', file.path);
-            setThumbNailFormData(td);
         } catch (error) {
             console.log('handleSubmit in regiGeneral error: ', error);
         }
-
     };
+    const getThumbnaile = () => {
+        if (file)
+            return file.secure_url;
+        else
+            return "nofile"
+    }
 
     return (
         <>
+            {getThumbnaile()}
+
             <Form ref={formRef} noValidate validated={validated} onSubmit={handleSubmit}>
                 <div className='d-flex mt-3 gap-2'>
                     <div className="card shadow p-3 mb-5 col-4" tabIndex={0}>
@@ -119,6 +124,19 @@ export const RegiProjectKnowhowHeader = forwardRef<any, RegProjectKnowhowProps>(
                         </div>)}</>)}
                     </div>
                     <div className="card shadow p-3 mb-5 col-7">
+                        <Form.Group controlId="title" className='mb-3'>
+                            <Row>
+                                <Form.Label column="lg" lg={3}>
+                                    제목 <b className={styles.redColor}>*</b>
+                                </Form.Label>
+                                <Col>
+                                    <Form.Control size="lg" type="text" required placeholder="제목을 입력하세요" name='title' />
+                                    <Form.Control.Feedback type="invalid">
+                                        제목을 입력하세요
+                                    </Form.Control.Feedback>
+                                </Col>
+                            </Row>
+                        </Form.Group>
                         <Form.Group controlId="description" className='mb-3'>
                             <Row>
                                 <Form.Label column="lg" lg={3}>
@@ -128,7 +146,7 @@ export const RegiProjectKnowhowHeader = forwardRef<any, RegProjectKnowhowProps>(
                                     <Form.Control required name='description'
                                         as="textarea"
                                         placeholder="자세한 설명을 입력하세요"
-                                        style={{ height: '150px' }}
+                                        style={{ height: '80px' }}
                                         defaultValue=' ' />
                                     <Form.Control.Feedback type="invalid" >
                                         자세한 설명을 입력하세요
@@ -143,4 +161,4 @@ export const RegiProjectKnowhowHeader = forwardRef<any, RegProjectKnowhowProps>(
     )
 });
 
-RegiProjectKnowhowHeader.displayName = "RegiProjectKnowhowHeader"
+ChildHeaderPage.displayName = "ChildHeaderPage"

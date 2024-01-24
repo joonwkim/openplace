@@ -9,8 +9,8 @@ import { useSession, } from 'next-auth/react';
 import { createTagAction } from '@/app/actions/tagAction';
 import { useRouter } from 'next/navigation';
 import ImgUploader from '@/components/controls/imgUploader';
-import { getFormdata } from '../lib/formData';
 import { consoleLogFormData } from '@/app/lib/formdata';
+import { getFormdata } from '../../lib/formData';
 
 type RegProps = {
     categories: Category[],
@@ -20,11 +20,12 @@ type RegProps = {
     knowhow: any | undefined,
     editMode: boolean | undefined,
     thumbnailCloudinaryData: CloudinaryData;
+    // parentKnowhowId: string | undefined,
 };
 
-export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
+export const Header = forwardRef<any, RegProps>((props: RegProps, ref) => {
 
-    const { categories, knowHowTypes, tags, setRegDataToSave, knowhow, editMode, thumbnailCloudinaryData } = props;
+    const { categories, knowHowTypes, tags, setRegDataToSave, knowhow, editMode, thumbnailCloudinaryData, } = props;
     const [otherFormData, setOtherFormData] = useState<any>(null);
     const [thumbNailFormData, setThumbNailFormData] = useState<any>(null);
     const { data: session } = useSession();
@@ -36,8 +37,10 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
     const [thumbnailSecureUrl, setThumbnailSecureUrl] = useState(knowhow?.thumbnailCloudinaryData?.secure_url as string);
     const [initialCategoryId, setInitialCategoryId] = useState(knowhow?.categoryId);
     const [initialKnowhowTypeId, setInitialKnowhowTypeId] = useState(knowhow?.knowHowTypeId);
+    const [isGroupType, setIsGroupType] = useState(knowhow?.isGroupType)
     // const [validDataEntered, setValidDataEntered] = useState(false)
     const [canDisable, setCanDisable] = useState(true)
+
 
     const router = useRouter();
     const formRef = useRef<any>();
@@ -47,6 +50,7 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
         () => ({
             handleSubmit() {
                 handleSubmit(formRef.current);
+                // consoleLogFormData('otherFormdata', otherFormData)
                 setRegDataToSave({ otherFormData, thumbNailFormData, canDisable });
             }
         }),
@@ -137,12 +141,19 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
                 // console.log('canDisable', canDisable)
             }
             setValidated(true);
+            // console.log('file:', file)
             if (file) {
+                // console.log('authorId:', session?.user.id)
+
                 const formData = new FormData(form);
+                if (isGroupType === true) {
+                    formData.append('isGroupType', 'true')
+                }
                 formData.append('file', file);
                 formData.append('authorId', session?.user.id);
                 formData.set('thumbNailImage', imgSrc);
                 setOtherFormData(formData);
+                // consoleLogFormData('form data', formData)
 
                 const td = await getFormdata(file, 'openplace');
                 td.append('path', file.path);
@@ -199,12 +210,12 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
         }
     });
 
-    const getKnowhowTypeSelected = (knowhowTypeId: string) => {
-        if (knowhowTypeId === initialKnowhowTypeId) {
-            return true;
-        }
-        return false;
-    };
+    // const getKnowhowTypeSelected = (knowhowTypeId: string) => {
+    //     if (knowhowTypeId === initialKnowhowTypeId) {
+    //         return true;
+    //     }
+    //     return false;
+    // };
 
     const getCategorySelected = (categoryId: string) => {
         if (categoryId === initialCategoryId) {
@@ -212,6 +223,12 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
         }
         return false;
     };
+
+    const onCheckChange = (value: any) => {
+        alert(value)
+        setIsGroupType(!isGroupType)
+        alert(isGroupType)
+    }
 
     return (<>
         <Form ref={formRef} noValidate validated={validated} onSubmit={handleSubmit}>
@@ -221,24 +238,24 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
                         <div className='col-5 p-3'>
                             <Image alt={thumbnailSecureUrl} src={thumbnailSecureUrl} quality={100} fill sizes="100vw" style={{ objectFit: 'contain', }} />
                         </div>) : (<>{file ? (
-                        <div className='col-5 p-3'>
-                            <Image
-                                alt={file.name}
-                                src={file.secure_url}
-                                quality={100}
-                                fill
-                                sizes="100vw"
-                                style={{
-                                    objectFit: 'contain',
+                            <div className='col-5 p-3'>
+                                <Image
+                                    alt={file.name}
+                                    src={file.secure_url}
+                                    quality={100}
+                                    fill
+                                    sizes="100vw"
+                                    style={{
+                                        objectFit: 'contain',
                                     }} />
-                        </div>
+                            </div>
                         ) : (
                             <div>
                                 <h3 className='text-center mt-3 mb-2'>  썸네일 이미지 등록 <b className={styles.redColor}>*</b></h3>
                                 <div className={styles.inputDrop}>
-                                <ImgUploader loaderMessage='썸네일 이미지를 끌어오거나 선택하세요 ' dropMessage='여기에 놓으세요...' options={options} showUploadIcon={true} />
-                            </div>
-                        </div>)}</>)}
+                                    <ImgUploader loaderMessage='썸네일 이미지를 끌어오거나 선택하세요 ' dropMessage='여기에 놓으세요...' options={options} showUploadIcon={true} />
+                                </div>
+                            </div>)}</>)}
                 </div>
                 <div className="card shadow p-3 mb-5 col-7">
                     <Form.Group controlId="title" className='mb-3'>
@@ -252,28 +269,6 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
                                     제목을 입력하세요
                                 </Form.Control.Feedback>
                             </Col>
-
-                        </Row>
-                    </Form.Group>
-                    <Form.Group controlId="knowhowtype" className='mb-3'>
-                        <Row>
-                            <Form.Label column="lg" lg={3}>
-                                경험유형  <b className={styles.redColor}>*</b>
-                            </Form.Label>
-                            <Col>
-                                <Form.Select id='knowhowtypeId' required aria-label="know how type select" name='knowHowTypeId' >
-                                    <option value="">경험유형(필수)</option>
-                                    {knowHowTypes.map((knowhowType: any, index: number) => (
-                                        <>
-                                            <option key={index} selected={getKnowhowTypeSelected(knowhowType.id)} value={knowhowType.id}>{knowhowType.name}</option>
-                                        </>
-                                    ))}
-                                </Form.Select>
-                                <Form.Control.Feedback type="invalid">
-                                    경험유형을 선택하세요
-                                </Form.Control.Feedback>
-                            </Col>
-
                         </Row>
                     </Form.Group>
                     <Form.Group controlId="categorytype" className='mb-3'>
@@ -292,9 +287,9 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
                                     카테고리를 선택하세요
                                 </Form.Control.Feedback>
                             </Col>
-
                         </Row>
                     </Form.Group>
+
                     <Form.Group controlId="description" className='mb-3'>
                         <Row>
                             <Form.Label column="lg" lg={3}>
@@ -344,6 +339,25 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
                         </Row>
 
                     </Form.Group>
+
+                    <Form.Group controlId="isGroupType" className='mb-3'>
+                        <Row>
+                            <Form.Label column="lg" lg={3}>
+                            </Form.Label>
+                            <Col>
+                                <Form.Check
+                                    type='checkbox'
+                                    id="isGroupType"
+                                    label="그룹인 경우 선택하세요"
+                                    defaultChecked={isGroupType}
+                                    checked={isGroupType}
+                                    onChange={(e) => onCheckChange(e.target.value)}
+                                // defaultValue={isGroupType}
+                                />
+                            </Col>
+                        </Row>
+                    </Form.Group>
+
                 </div>
             </div>
         </Form>
@@ -351,4 +365,4 @@ export const RegiGeneral = forwardRef<any, RegProps>((props: RegProps, ref) => {
     );
 });
 
-RegiGeneral.displayName = "RegiGeneral";
+Header.displayName = "Header";

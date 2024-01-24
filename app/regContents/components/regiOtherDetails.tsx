@@ -1,12 +1,12 @@
 'use client';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState, } from 'react';
-import { RegiYoutube } from './regiYoutube';
-import { RegiImages } from './regiImages';
-import { RegiText } from './regiText';
-import { RegiPdfFiles } from './regiPdfFiles';
 import { getCloudinaryImgData, getCloudinaryPdfData, } from '@/app/lib/arrayLib';
 import { consoleLogFormDatas } from '@/app/lib/formdata';
 import { Knowhow } from '@prisma/client';
+import { Youtube } from './details/youTube';
+import { Images } from './details/images';
+import { PdfFiles } from './details/pdfFiles';
+import { Text } from './details/text'
 
 type OtherDetailProps = {
   parentKnowhowId?: string | undefined,
@@ -92,19 +92,19 @@ export const RegiOtherDatails = forwardRef<any, OtherDetailProps>((props: OtherD
     <div>
       <div className='mt-3' onMouseLeave={handleMouseLeaveOnYtFile}>
         <p onClick={() => { setShowYoutube(!showYoutube); setShowImg(false); setShowFile(false); setShowTextEditor(false); }}><span className='btn btn-light'>{editMode ? (<>유튜브 변경하기</>) : (<>유튜브 등록하기</>)}</span></p>
-        <RegiYoutube ref={ytRef} setRegDataToSave={getYtData} showYtInput={showYoutube} initialYtData={ytData} editMode={editMode} />
+        <Youtube ref={ytRef} setRegDataToSave={getYtData} showYtInput={showYoutube} initialYtData={ytData} editMode={editMode} />
       </div>
       <div className='mt-3' onMouseLeave={handleMouseLeaveOnImgFile}>
         <p onClick={() => { setShowImg(!showImg); setShowYoutube(false); setShowFile(false); setShowTextEditor(false); }}><span className='btn btn-light'>  {editMode ? (<>이미지 변경하기</>) : (<>이미지 등록하기</>)}</span></p>
-        <RegiImages ref={imgRef} setRegDataToSave={getImgFormData} showImg={showImg} imgCloudinaryData={imgCloudinaryData} editMode={editMode} />
+        <Images ref={imgRef} setRegDataToSave={getImgFormData} showImg={showImg} imgCloudinaryData={imgCloudinaryData} editMode={editMode} />
       </div>
       <div className='mt-3' onMouseLeave={handleMouseLeaveOnPdfFile}>
         <p onClick={() => { setShowFile(!showFile); setShowImg(false); setShowYoutube(false); setShowTextEditor(false); }}><span className='btn btn-light'>{editMode ? (<>PDF 파일 변경하기</>) : (<>PDF 파일 등록하기</>)}</span></p>
-        <RegiPdfFiles ref={pdfFileRef} setRegDataToSave={getPdfFiles} showFileInput={showFile} pdfCloudinaryData={pdfCloudinaryData} editMode={editMode} />
+        <PdfFiles ref={pdfFileRef} setRegDataToSave={getPdfFiles} showFileInput={showFile} pdfCloudinaryData={pdfCloudinaryData} editMode={editMode} />
       </div>
       <div className='mt-3' onMouseLeave={handleMouseLeaveOnText}>
         <p onClick={() => { setShowTextEditor(!showTextEditor); setShowFile(false); setShowImg(false); setShowYoutube(false); }}><span className='btn btn-light'>{editMode ? (<>텍스트와 이미지 변경하기</>) : (<>텍스트와 이미지 등록하기</>)}</span></p>
-        <RegiText ref={textRef} setRegDataToSave={getTextData} showTextEditor={showTextEditor} textData={knowhow?.knowhowDetailInfo?.detailText} />
+        <Text ref={textRef} setRegDataToSave={getTextData} showTextEditor={showTextEditor} textData={knowhow?.knowhowDetailInfo?.detailText} />
       </div>
     </div>
   )

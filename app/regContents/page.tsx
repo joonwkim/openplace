@@ -4,10 +4,10 @@ import { getKnowhow, getKnowHowTypes } from '../services/knowhowService';
 import { getTags, getTagsStartsWith } from '../services/tagService';
 import dynamic from 'next/dynamic';
 
-const RegContentPage = async ({ searchParams }: { searchParams: { searchBy: string, parentKnowhowId: string; knowhowId: string, editMode: boolean, isProjectType: boolean; }; }) => {
+const RegContentPage = async ({ searchParams }: { searchParams: { searchBy: string, parentKnowhowId: string; knowhowId: string, editMode: boolean, isProjectType: boolean; requestId: string, status: string }; }) => {
   let knowhow: Knowhow | undefined;
 
-  const { searchBy, parentKnowhowId, knowhowId, editMode, isProjectType } = searchParams;
+  const { searchBy, parentKnowhowId, knowhowId, editMode, isProjectType, requestId, status } = searchParams;
   if (editMode) {
     knowhow = await getKnowhow(knowhowId) as Knowhow;
   }
@@ -18,8 +18,9 @@ const RegContentPage = async ({ searchParams }: { searchParams: { searchBy: stri
     ssr: false,
   });
 
+
   return (<>
-    <Registeration categories={categories} knowHowTypes={knowHowTypes} tags={tags} parentKnowhowId={parentKnowhowId} knowhow={knowhow} editMode={editMode} projectType={isProjectType} />
+    <Registeration categories={categories} knowHowTypes={knowHowTypes} tags={tags} parentKnowhowId={parentKnowhowId} knowhow={knowhow} editMode={editMode} projectType={isProjectType} requestId={requestId} status={status} />
   </>
   );
 };

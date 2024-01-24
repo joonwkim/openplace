@@ -1,20 +1,19 @@
 'use server'
 import { revalidatePath } from "next/cache";
-import { addKnowhowViewCount, createChildKnowhow, createKnowhow, createStageProjectKnowhow, updateGeneralKnowhow, updateKnowhow, updateKnowhowToSetParent } from "../services/knowhowService";
+import { addKnowhowViewCount, createChildKnowhow, createGroupChildKnowhow, createKnowhow, createStageProjectKnowhow, updateGeneralKnowhow, updateKnowhow, updateKnowhowToSetParent } from "../services/knowhowService";
 import { Knowhow, KnowhowDetailInfo } from "@prisma/client";
 import { createAndUpdateKnowhowDetailInfo, createChildKnowhowDetailInfo, updateKnowhowDetailInfo, } from "../services/knowhowDetailInfoService";
 import { consoleLogFormData } from "../lib/formdata";
 import { Stage, StageProjectDetailData, StageProjectHeaderData } from "../lib/types";
+import { getFontDefinitionFromNetwork } from "next/dist/server/font-utils";
 
 export async function createChildKnowHowWithDetailAction(parentKnowhowId: string, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], imgFormData: any[], pdfFormData: any[]) {
   try {
-
-    const knowhow = await createKnowhow(genFormData) as Knowhow;
-    if (!knowhow) {
-      return;
-    }
-    await updateKnowhowToSetParent(parentKnowhowId, knowhow);
-    await createAndUpdateKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
+    const knowhow = await createGroupChildKnowhow(parentKnowhowId, genFormData)
+    // await updateKnowhowToSetParent(parentKnowhowId, knowhow);
+    if (knowhow) {
+      await createAndUpdateKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
+    }   
   } catch (error) {
     throw error;
   }

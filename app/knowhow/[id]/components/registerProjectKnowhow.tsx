@@ -1,8 +1,9 @@
 'use client'
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState, } from 'react';
-import { RegiProjectKnowhowHeader } from './regiProjectKnowhowHeader';
+// import { RegiProjectKnowhowHeader } from './regiProjectKnowhowHeader';
 import { RegiOtherDatails } from '@/app/regContents/components/regiOtherDetails';
 import { consoleLogFormData } from '@/app/lib/formdata';
+import { SimpleHeader } from '@/app/regContents/components/headers/simpleHeader';
 
 export type RegProps = {
     setRegDataToSave: (data: any) => void,
@@ -64,8 +65,9 @@ export const RegisterProjectKnowhow = forwardRef<any, RegProps>(({ setRegDataToS
     return (
         <>
             <div onMouseLeave={handleOnMouseLeave}>
-                <RegiProjectKnowhowHeader ref={regiProjectKnowhowHeaderRef} setRegDataToSave={getProjectKnowhowHeaderData} />
+                <SimpleHeader ref={regiProjectKnowhowHeaderRef} setRegDataToSave={getProjectKnowhowHeaderData} />
             </div>
+
 
             {/* <RegiProjectKnowhowDetail /> */}
             <div onMouseLeave={handleOnMouseLeave}>

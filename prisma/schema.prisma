@@ -121,6 +121,8 @@ model Knowhow {
   category   Category? @relation(fields: [categoryId], references: [id])
   categoryId String?   @db.ObjectId
 
+  isGroupType Boolean @default(false)
+
   KnowhowType   KnowhowType? @relation(fields: [knowHowTypeId], references: [id])
   knowHowTypeId String?      @db.ObjectId
 
@@ -128,12 +130,9 @@ model Knowhow {
   tags   Tag[]    @relation(fields: [tagIds], references: [id])
 
   isProjectType Boolean @default(false)
-  stageTitle String?
-  stage Int @default(0)
-  levelInStage Int @default(0)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  stageTitle    String?
+  stage         Int     @default(0)
+  levelInStage  Int     @default(0)
 
   votes Vote[]
 
@@ -142,11 +141,13 @@ model Knowhow {
 
   parentId String?  @db.ObjectId
   parent   Knowhow? @relation("KnowhowParentChildren", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
   children Knowhow[] @relation("KnowhowParentChildren")
 
   thumbnailCloudinaryData CloudinaryData? @relation(fields: [cloudinaryDataId], references: [id])
   cloudinaryDataId        String?         @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([title, authorId])
 }
@@ -213,8 +214,10 @@ enum MembershipRequestStatus {
   NONE
   REQUESTED
   APPROVED
+  JOINED
   REJECTED
   PENDING
+  CLOSED
 }
 
 model Tag {

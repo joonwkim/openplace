@@ -17,14 +17,11 @@ const PlaceHomePage = async ({ searchParams }: { searchParams: { searchText: str
     knowhows = (await getKnowhows(null) as Array<Knowhow>);
   }
   const tags = getTagsFromKnowhows(knowhows);
-  // console.log('tags:', JSON.stringify(tags, null, 2))
-
   const tagsSortedByName = removeDuplicatedObject(tags).sort(compareByName)
   const ntags = tagsSortedByName.map((tag: any) => {
     Object.assign(tag, { checked: false });
     return tag
   })
-  // console.log('ntags:', JSON.stringify(ntags, null, 2))
   const filterByTags = (selectedTagIds: string[]) => {
     let filteredKnowhow: Knowhow[] = [];
     knowhows.forEach(s => {
@@ -51,12 +48,11 @@ const PlaceHomePage = async ({ searchParams }: { searchParams: { searchText: str
 
   return (
     <>
-      {/* <TagList tags={ntags} searchParams={searchParams} /> */}
       {knowhows?.length > 0 ? (<div className="row row-cols-1 row-cols-md-3 row-cols-sm-2 mt-0 g-4">
         {knowhows?.map(knowhow => (
           <KnowhowItem key={knowhow.id} knowhow={knowhow} />
         ))}
-      </div>) : (<div className='mt-3 text-center'><h2>{`내가 참여중인 그룹 컨텐츠가 없습니다.`}</h2></div>)}
+      </div>) : (<div className='mt-3 text-center'><h2>{`등록된 컨텐츠가 없습니다.`}</h2></div>)}
     </>
   );
 };

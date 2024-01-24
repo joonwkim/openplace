@@ -142,18 +142,18 @@ export const GeneralFooter = (props: FooterProps) => {
                 {getDaysOrHoursFromNow()}
                 <EyeFill className='ms-3 me-2' />
                 <span>{knowhow?.viewCount}</span>
-                <span className="ms-3 me-2">
+                <span className="ms-2 me-2">
                     <Thumbup className={`ms-1 ${style.cursorHand}`} onClick={handleThumbUp} fill={thumbsStatus === ThumbsStatus.ThumbsUp ? "red" : ''} title="좋아요" />
-                    <span className="ms-2 me-3">{knowhow.thumbsUpCount}</span>
+                    <span className="ms-2 me-2">{knowhow.thumbsUpCount}</span>
                     <ThumbDown className={`ms-1 ${style.cursorHand}`} onClick={handleThumbDown} fill={thumbsStatus === ThumbsStatus.ThumbsDown ? "red" : ''} title="싫어요" />
                     <span className="ms-2 me-3">{knowhow.thumbsDownCount}</span>
                     <span className="mt-3">
                         <Fork className={`ms-1 mt-1 ${style.cursorHand}`} onClick={handleforked} fill={forked ? "red" : ''} title="찜했어요" />
                     </span>
                 </span>
-                <span className='ms-3'>
+                {/* <span className='ms-3'>
                     {getMembershipApprovalStatus(session?.user, knowhow.id)}
-                </span>
+                </span> */}
             </small>
         </div>
     );

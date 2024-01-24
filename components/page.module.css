@@ -6,3 +6,14 @@
     font-size: 6pt;
     color:red;
 }
+.notificationPopover {
+    --bs-popover-max-width: 400px;
+}
+
+.icon-green {
+    color: green;
+}
+
+.icon-red {
+    color: red;
+}

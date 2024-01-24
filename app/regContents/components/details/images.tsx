@@ -5,8 +5,8 @@ import styles from '@/app/regContents/page.module.css';
 import { DropzoneOptions } from 'react-dropzone';
 import ImgUploader from '@/components/controls/imgUploader';
 import Alert from 'react-bootstrap/Alert';
-import { getFormdata } from '../lib/formData';
 import { CloudinaryData } from '@prisma/client';
+import { getFormdata } from '../../lib/formData';
 
 type RegProps = {
     showImg: boolean;
@@ -14,7 +14,8 @@ type RegProps = {
     imgCloudinaryData: CloudinaryData[],
     editMode: boolean | undefined,
 };
-export const RegiImages = forwardRef<any, RegProps>((props: RegProps, ref) => {
+
+export const Images = forwardRef<any, RegProps>((props: RegProps, ref) => {
     const { showImg, setRegDataToSave, imgCloudinaryData, editMode } = props;
     const foldername = 'openplace';
     const [files, setFiles] = useState<any[]>(imgCloudinaryData);
@@ -118,4 +119,4 @@ export const RegiImages = forwardRef<any, RegProps>((props: RegProps, ref) => {
     </>
     );
 });
-RegiImages.displayName = "RegiImages";
+Images.displayName = "Images";

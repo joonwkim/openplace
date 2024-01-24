@@ -1,7 +1,7 @@
 export const consoleLogFormData = (name: string, formData: FormData | undefined) => {
     if (formData) {
         const formDataObj = Object.fromEntries(formData.entries());
-    // console.log(name, JSON.stringify(formDataObj, null, 2));
+        console.log(name, JSON.stringify(formDataObj, null, 2));
     }
 
 };
