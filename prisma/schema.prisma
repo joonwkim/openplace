@@ -15,6 +15,14 @@ model Todo {
   updatedAt   DateTime @updatedAt
 }
 
+model Profile {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  cellPhoneNumber String?
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique @db.ObjectId
+}
 model User {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
   name          String
@@ -28,8 +36,6 @@ model User {
   googleLogin   Boolean   @default(false)
   provider      String?
   refreshToken  String[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
 
   notificationCount Int @default(0)
 
@@ -42,16 +48,69 @@ model User {
   membershipRequestedBys MembershipRequest[] @relation("membershipRequestedBys")
   BulletinBoard          BulletinBoard[]
   Comment                Comment[]
+
+  userGroups        UserGroup[]
+  messages          Message[]
+  messageRecipients MessageRecipient[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model Profile {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+model Group {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  isActive Boolean @default(true)
 
-  cellPhoneNumber String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  userGroups        UserGroup[]
+  messageRecipients MessageRecipient[]
+}
 
+model UserGroup {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  // user   User   @relation(fields: [userId], references: [id])
   user   User   @relation(fields: [userId], references: [id])
-  userId String @unique @db.ObjectId
+  userId String @db.ObjectId
+
+  group   Group  @relation(fields: [groupId], references: [id])
+  groupId String @db.ObjectId
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, groupId])
 }
+
+model Message {
+  id      String  @id @default(auto()) @map("_id") @db.ObjectId
+  title   String?
+  message String
+
+  creator   User   @relation(fields: [creatorId], references: [id])
+  creatorId String @db.ObjectId
+
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  messageRecipients MessageRecipient[]
+}
+
+model MessageRecipient {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  recepient   User?   @relation(fields: [recepientId], references: [id])
+  recepientId String? @db.ObjectId
+
+  message   Message @relation(fields: [messageId], references: [id])
+  messageId String  @db.ObjectId
+
+  group   Group?  @relation(fields: [groupId], references: [id])
+  groupId String? @db.ObjectId
+  isRead  Boolean @default(false)
+}
+
+
 
 model KnowhowType {
   id   String @id @default(auto()) @map("_id") @db.ObjectId
@@ -148,8 +207,8 @@ model Knowhow {
   thumbnailCloudinaryData CloudinaryData? @relation(fields: [cloudinaryDataId], references: [id])
   cloudinaryDataId        String?         @db.ObjectId
 
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
   bulletinBoards BulletinBoard[]
 
   @@unique([title, authorId])
