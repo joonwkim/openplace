@@ -1,6 +1,6 @@
 'use client';
 import React, { CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
-import { Knowhow } from '@prisma/client';
+import { Knowhow, Stage } from '@prisma/client';
 import { DispYoutube } from './dispYoutube';
 import { DispImages } from './dispImages';
 import { DispText } from './dispText';
@@ -14,14 +14,16 @@ import KnowhowItem from '@/app/components/knowhowItem';
 import { getCloudinaryImgData, getCloudinaryPdfData, } from '@/app/lib/arrayLib';
 import GroupMemberList from './groupMemberList';
 import './scroll.css';
-import { RegiProjectStages } from '@/app/regContents/components/regiProjectStages';
 import DisplayGroupMember from './displayGroupMember';
+import { ProjectStages } from '@/app/regContents/components/stages/projectStages';
+
 
 type RegProps = {
     knowhow: any | Knowhow,
 };
 
 const KnowhowDetails = ({ knowhow }: RegProps) => {
+    const projectStagesRef = useRef<any>(null)
     const router = useRouter();
     const { data: session } = useSession();
     const [showDetailContents, setShowDetailContents] = useState(false);
@@ -31,6 +33,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     const pdfCloudinaryDatas = getCloudinaryPdfData(knowhow);
     const [left, setLeft] = useState<number>(0);
     const [right, setRight] = useState<number>(0);
+    const [stages, setStages] = useState<Stage[]>([])
     const isLoggedIn = useCallback(() => {
         return session?.user;
     }, [session?.user]);
@@ -156,8 +159,11 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     const handleMeetButtonClicked = () => {
         window.open(`https://s3.ap-northeast-2.amazonaws.com/depot.opensrcdesign.com/build/index.html?room=${knowhow.id}&auth=${session?.user.id}`, "vmeet");
     };
-    const getProjectStageData = (data: any) => {
-
+    const getStages = (data: Stage[]) => {
+        // console.log('getStages', data)
+        setStages(data)
+    // setStageProjectHeaderData(stageProjectHeaderData)
+    // setStageProjectDetailData(stageProjectDetailData)
     }
     return (
         <>
@@ -198,21 +204,17 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
                             {knowhow.children?.map((child: any) => (
                                 <KnowhowItem key={child.id} knowhow={child} />
                             ))}
-                            {/* {knowhow.isProjectType ? (
-                                <>
-                                    <RegiProjectStages ref={null} setRegDataToSave={getProjectStageData} rootThumbnailUrl={''} knowhow={knowhow} editMode={false} />
-                                </>) : (
-                                <>
-                                    {knowhow.children?.map((child: any) => (
-                                        <KnowhowItem key={child.id} knowhow={child} />
-                                    ))}
-                                </>)
-                            } */}
-
                         </div>
+
                     </>
                 )}</>)}
 
+            <div>
+                <ProjectStages key={1} ref={projectStagesRef} setRegDataToSave={getStages} rootThumbnailUrl='' knowhow={knowhow} editMode={false} />
+                {/* {knowhow.stages?.map((stage: any, index: number) => (
+                                <ProjectStages key={index} ref={projectStagesRef} setRegDataToSave={getStages} rootThumbnailUrl={"test"} knowhow={knowhow} editMode={false} />
+                            ))} */}
+            </div>
         </>
     );
 };

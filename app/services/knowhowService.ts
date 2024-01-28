@@ -11,6 +11,7 @@ import { CloudinaryFile } from '../lib/cloudinaryLib';
 import { serialize } from 'v8';
 import { ChildStage, Stage, } from '../lib/types';
 import { connect } from 'http2';
+import { number } from 'zod';
 
 export async function getKnowHowTypes() {
     try {
@@ -95,7 +96,7 @@ export async function updateGeneralKnowhow(knowhowSelected: Knowhow, genFormData
     }
 
     let isGroupType: boolean = false;
-    if (otherFormData.get('isGroupType') === 'true') {
+    if (otherFormData?.get('isGroupType') === 'true') {
         isGroupType = true;
     }
     let updatedKnowhow: Knowhow = await prisma.knowhow.update({
@@ -103,7 +104,7 @@ export async function updateGeneralKnowhow(knowhowSelected: Knowhow, genFormData
             id: knowhowSelected.id,
         },
         data: {
-            title: otherFormData.get('title') as string,
+            title: otherFormData?.get('title') as string,
             description: otherFormData.get('description') as string,
             knowHowTypeId: otherFormData.get('knowHowTypeId') as string,
             categoryId: otherFormData.get('categoryId') as string,
@@ -185,7 +186,7 @@ export async function updateKnowHowWithDetailInfo(knowhowSelected: Knowhow, genF
                     id: knowhowSelected.id,
                 },
                 data: {
-                    title: otherFormData.get('title') as string,
+                    title: otherFormData?.get('title') as string,
                     description: otherFormData.get('description') as string,
                     knowHowTypeId: otherFormData.get('knowHowTypeId') as string,
                     categoryId: otherFormData.get('categoryId') as string,
@@ -348,7 +349,7 @@ export async function createKnowHowWithDetailInfo(genFormData: any, knowhowDetai
             const file: any = otherFormData.get('file');
             const knowhow = await prisma.knowhow.create({
                 data: {
-                    title: otherFormData.get('title') as string,
+                    title: otherFormData?.get('title') as string,
                     description: otherFormData.get('description') as string,
                     // thumbnailFilename: file.name,
                     knowHowTypeId: otherFormData.get('knowHowTypeId') as string,
@@ -487,41 +488,58 @@ const getGroupType = (value: string) => {
     return false;
 }
 
-export async function createStageProjectKnowhow(parent: any, stageProjectHeader: any) {
+export async function createStages(parent: Knowhow, stages: Stage[]) {
     try {
-        if (stageProjectHeader === null || parent === null) {
+        if (parent === null || stages === null) {
             return;
         }
-        // console.log('parent knowhow', parent);
-        // console.log('stage project header to save', stageProjectHeader)
-        // const { otherFormData, thumbNailFormData } = formData;
-        // const thumbnailCdId = await getThumbnailCloudinaryDataId(thumbNailFormData) as string;
-        // const tagList = otherFormData.get('tags') as string;
-        // let tagConnect = await createTags(tagList) as any[];
 
-        // try {
-        //     const kn = await prisma.knowhow.create({
-        //         data: {
-        //             title: otherFormData.get('title') as string,
-        //             description: otherFormData.get('description') as string,
-        //             knowHowTypeId: otherFormData.get('knowHowTypeId') as string,
-        //             categoryId: otherFormData.get('categoryId') as string,
-        //             authorId: otherFormData.get('authorId') as string,
-        //             isProjectType: getProjectType(otherFormData.get('isProjectType')),
-        //             cloudinaryDataId: thumbnailCdId,
-        //             tags: {
-        //                 connect: tagConnect,
-        //             }
-        //         },
-        //         include: {
-        //             tags: true,
-        //         }
-        //     });
-        //     console.log('create Knowhow:', JSON.stringify(kn, null, 2))
-        //     return kn;
-        // } catch (error) {
-        //     console.log('knowhow creation error(createKnowHow):', error);
-        // }
+        if (stages.length > 0) {
+            stages.forEach(async (stage: Stage, stageIndex: number) => {
+                let stageId = stage.id;
+                if (!stage.id) {
+                    const s = await prisma.stage.create({
+                        data: {
+                            stageTitle: stage.stageTitle,
+                            stage: stageIndex,
+                            parentKnowhowId: parent.id,
+                        }
+                    })
+                    stageId = s.id
+                } else {
+                    console.log('stage available: ', stageIndex)
+                    stageId = stage.id;
+                }
+                if (stage.children.length > 0) {
+                    stage.children.forEach(async (child: ChildStage, childIndex: number) => {
+
+                        if (!child.id && child.title !== 'new') {
+                            console.log('child to created: ', stageIndex, childIndex)
+                            const fd = child.thumbnailFormdata;
+                            if (child.thumbnailFormdata) {
+                                consoleLogFormData('child stage formdata: ', child.thumbnailFormdata);
+                                const thumbnailCdId = await getThumbnailCloudinaryDataId(child.thumbnailFormdata) as string;
+                                console.log('cloudinary Formdata:', thumbnailCdId)
+                                const c = await prisma.childStage.create({
+                                    data: {
+                                        title: child.title,
+                                        description: child.description,
+                                        stageId: stageId,
+                                        cloudinaryDataId: thumbnailCdId,
+                                    }
+                                })
+                                console.log('child created:', c)
+                            }
+                        }
+                        else {
+                            console.log('child already created: ', stageIndex, childIndex)
+                        }
+
+                    })
+
+                }
+            });
+        }
     } catch (error) {
         console.log('createKnowhow error:', error);
     }
@@ -566,7 +584,7 @@ export async function createGroupChildKnowhow(parentId: string, formData: any) {
         try {
             const kn = await prisma.knowhow.create({
                 data: {
-                    title: otherFormData.get('title') as string,
+                    title: otherFormData?.get('title') as string,
                     description: otherFormData.get('description') as string,
                     knowHowTypeId: otherFormData.get('knowHowTypeId') as string,
                     categoryId: otherFormData.get('categoryId') as string,
@@ -610,7 +628,7 @@ export async function createKnowhow(formData: any) {
         try {
             const kn = await prisma.knowhow.create({
                 data: {
-                    title: otherFormData.get('title') as string,
+                    title: otherFormData?.get('title') as string,
                     description: otherFormData.get('description') as string,
                     knowHowTypeId: otherFormData.get('knowHowTypeId') as string,
                     categoryId: otherFormData.get('categoryId') as string,
@@ -822,9 +840,17 @@ export async function getKnowhow(id: string) {
                 tags: true,
                 author: true,
                 votes: true,
-                KnowhowType: true,
                 category: true,
                 thumbnailCloudinaryData: true,
+                stages: {
+                    include: {
+                        childStages: {
+                            include: {
+                                thumbnailCloudinaryData: true,
+                            }
+                        }
+                    }
+                },
                 membershipRequest: {
                     include: {
                         membershipRequestedBy: true,

@@ -18,7 +18,7 @@ export default function GoogleLogin({ searchParams }: { searchParams: any; }) {
       if (accessToken) {
         // console.log('accessToken:', accessToken)
         // dispatch(setCredentials({ accessToken }))
-        router.push('/');
+        // router.push('/');
       }
 
     } catch (error: any) {

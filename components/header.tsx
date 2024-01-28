@@ -38,7 +38,7 @@ const Header = () => {
 
   const handleCancelBtnClicked = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     setSearch('');
-    router.push('/');
+    // router.push('/');
   };
 
   const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {

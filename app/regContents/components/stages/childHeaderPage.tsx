@@ -66,19 +66,19 @@ export const ChildHeaderPage = forwardRef<any, ChildHeaderProps>(({ setRegDataTo
         try {
             alert('handleSubmit')
             if (file) {
-                // const formData = new FormData(form);
-                // const title = formData.get('title') as string;
-                // const description = formData.get('description') as string;
-                // const td = await getFormdata(file, 'openplace');
-                // td.append('path', file.path);
-                // const child: ChildStage = {
-                //     title: title,
-                //     description: description,
-                //     thumbnailFormdata: td,
-                //     thumbnailUrl: getSecureUrl(td),
-                //     authorId: session?.user.id,
-                // }
-                // setChild(child)
+                const formData = new FormData(form);
+                const title = formData.get('title') as string;
+                const description = formData.get('description') as string;
+                const td = await getFormdata(file, 'openplace');
+                td.append('path', file.path);
+                const child: ChildStage = {
+                    title: title,
+                    description: description,
+                    thumbnailFormdata: td,
+                    thumbnailUrl: getSecureUrl(td),
+                    authorId: session?.user.id,
+                }
+                setChild(child)
             }
         } catch (error) {
             console.log('handleSubmit in regiGeneral error: ', error);

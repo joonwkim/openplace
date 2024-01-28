@@ -2,12 +2,11 @@
 import React, { useEffect, useRef, useState, } from 'react';
 import { Category, Knowhow, KnowhowDetailInfo, KnowhowType, MembershipRequestStatus, Tag, ThumbnailType } from '@prisma/client';
 // import { RegiGeneral } from './regiGeneral';
-import { createChildKnowHowWithDetailAction, createKnowhowWithDetailInfoAction, createKnowhowWithDetailInfoAndStageAction, updateKnowHowWithDetailInfoAction, updateStageProjectHeaderAndDetailAction } from '@/app/actions/knowhowAction';
+import { createChildKnowHowWithDetailAction, createKnowhowWithDetailInfoAction, createKnowhowWithDetailInfoAndStageAction, updateKnowHowWithDetailInfoAction, updateKnowhowAndDetailStagesAction, } from '@/app/actions/knowhowAction';
 import { useRouter } from 'next/navigation';
 import { getCloudinaryImgData, getCloudinaryPdfData, } from '@/app/lib/arrayLib';
 import { RegiOtherDatails } from './regiOtherDetails';
 // import { RegiProjectStage } from './regiProjectStage';
-import DisplayProjectStages from '@/app/knowhow/[id]/components/displayProjectStages';
 import { Stage } from '@/app/lib/types';
 // import { RegiProjectStages } from './regiProjectStages';
 import { consoleLogFormData, consoleLogFormDatas } from '@/app/lib/formdata';
@@ -83,16 +82,17 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
             let uniqueCdIds = [...imgCdIds, ...pdfCdIds];
             if (stages.length > 0) {
                 console.log('stages.length > 0')
-                stages.forEach(async (stage, stageIndex) => {
-                    if (stage.children && stage.children.length > 0) {
-                        stage.children.forEach(async (child, index) => {
-                            if (index !== 0) {
-                                console.log('update or create stage project knowhow')
-                                // await updateStageProjectHeaderAndDetailAction(knowhowSelected, genFormData, knowhowDetailInfo, ytData, uniqueCdIds, imgFormData, pdfFormData, stage, child, child.StageProject?.StageProjectHeaderData, child.StageProject?.StageProjectDetailData);
-                            }
-                        })
-                    }
-                });
+                await updateKnowhowAndDetailStagesAction(knowhowSelected, genFormData, knowhowDetailInfo, ytData, uniqueCdIds, imgFormData, pdfFormData, stages);
+                // stages.forEach(async (stage, stageIndex) => {
+                //     if (stage.children && stage.children.length > 0) {
+                //         stage.children.forEach(async (child, index) => {
+                //             if (index !== 0) {
+                //                 console.log('update or create stage project knowhow')
+                //                 await updateStageProjectHeaderAndDetailAction(knowhowSelected, genFormData, knowhowDetailInfo, ytData, uniqueCdIds, imgFormData, pdfFormData, stage, child, child.StageProject?.StageProjectHeaderData, child.StageProject?.StageProjectDetailData);
+                //             }
+                //         })
+                //     }
+                // });
 
             } else {
                 console.log('stages.length === 0')
@@ -109,10 +109,13 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
                 }
                 // router.push(`/regContents/?knowhowId=${parentId}`);
             } else {
+                console.log('not parentId')
                 if (stages.length > 0) {
-                    stages.forEach(async stage => {
-                        // await createKnowhowWithDetailInfoAndStageAction(genFormData, knowhowDetailInfo, ytData, imgFormData, pdfFormData, stages);
-                    })
+                    console.log('stages count:', stages.length)
+                    await createKnowhowWithDetailInfoAndStageAction(genFormData, knowhowDetailInfo, ytData, imgFormData, pdfFormData, stages);
+                    // stages.forEach(async stage => {
+                    //     await createKnowhowWithDetailInfoAndStageAction(genFormData, knowhowDetailInfo, ytData, imgFormData, pdfFormData, stages);
+                    // })
                 } else {
 
                     await createKnowhowWithDetailInfoAction(genFormData, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
@@ -123,7 +126,7 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
     };
 
     const handleCancelBtnClick = () => {
-        router.push('/');
+        // router.push('/');
     };
 
     const handleMouseLeaveGenInfo = () => {
@@ -159,8 +162,8 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
         setText(text);
     };
 
-    const getProjectStageData = (data: Stage[]) => {
-        // console.log('getProjectStageData', data)
+    const getStages = (data: Stage[]) => {
+    // console.log('getStages', data)
         setStages(data)
     // setStageProjectHeaderData(stageProjectHeaderData)
     // setStageProjectDetailData(stageProjectDetailData)
@@ -189,11 +192,11 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
 
                 </div>}
             {/* <DisplayProjectStages /> */}
+            <div onMouseLeave={handleMouseLeaveOnRegiProjectStages}>
+                <ProjectStages ref={projectStagesRef} setRegDataToSave={getStages} rootThumbnailUrl={rootThumnailUrl} knowhow={knowhow} editMode={editMode} />
+            </div>
             {/* <div onMouseLeave={handleMouseLeaveOnRegiProjectStages}>
-                <ProjectStages ref={projectStagesRef} setRegDataToSave={getProjectStageData} rootThumbnailUrl={rootThumnailUrl} knowhow={knowhow} editMode={editMode} />
-            </div> */}
-            {/* <div onMouseLeave={handleMouseLeaveOnRegiProjectStages}>
-                <RegiProjectStages ref={regiProjectStagesRef} setRegDataToSave={getProjectStageData} rootThumbnailUrl={rootThumnailUrl} knowhow={knowhow} editMode={editMode} />
+                <RegiProjectStages ref={regiProjectStagesRef} setRegDataToSave={getStages} rootThumbnailUrl={rootThumnailUrl} knowhow={knowhow} editMode={editMode} />
             </div> */}
             <div className='mt-3'>
                 {/* <button className='me-3 btn btn-primary' disabled={disableSaveBtn} onClick={handleSaveBtnClick} type="submit">저장</button> */}

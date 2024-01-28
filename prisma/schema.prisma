@@ -23,6 +23,7 @@ model Profile {
   user   User   @relation(fields: [userId], references: [id])
   userId String @unique @db.ObjectId
 }
+
 model User {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
   name          String
@@ -110,8 +111,6 @@ model MessageRecipient {
   isRead  Boolean @default(false)
 }
 
-
-
 model KnowhowType {
   id   String @id @default(auto()) @map("_id") @db.ObjectId
   name String @unique
@@ -165,6 +164,35 @@ model MembershipRequest {
   updatedAt DateTime @updatedAt
 }
 
+model ChildStage {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  title       String?
+  description String?
+
+  stageId String @db.ObjectId
+  stage   Stage  @relation(fields: [stageId], references: [id])
+
+  thumbnailCloudinaryData CloudinaryData? @relation(fields: [cloudinaryDataId], references: [id])
+  cloudinaryDataId        String?         @db.ObjectId
+
+  knowhowDetailInfo   KnowhowDetailInfo? @relation(fields: [knowhowDetailInfoId], references: [id])
+  knowhowDetailInfoId String?            @db.ObjectId
+}
+
+model Stage {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  stageTitle String
+
+  stage Int @default(0)
+
+  parentKnowhowId String  @db.ObjectId
+  parentKnowhow   Knowhow @relation(fields: [parentKnowhowId], references: [id])
+
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  childStages  ChildStage[]
+}
+
 model Knowhow {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
@@ -203,6 +231,8 @@ model Knowhow {
   parentId String?   @db.ObjectId
   parent   Knowhow?  @relation("KnowhowParentChildren", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   children Knowhow[] @relation("KnowhowParentChildren")
+
+  stages Stage[]
 
   thumbnailCloudinaryData CloudinaryData? @relation(fields: [cloudinaryDataId], references: [id])
   cloudinaryDataId        String?         @db.ObjectId
@@ -265,6 +295,7 @@ model KnowhowDetailInfo {
 
   cloudinaryDatas   CloudinaryData[] @relation(fields: [cloudinaryDataIds], references: [id])
   cloudinaryDataIds String[]         @db.ObjectId
+  childStages       ChildStage[]
 }
 
 model YouTubeData {
@@ -304,6 +335,7 @@ model CloudinaryData {
 
   knowhowDetailInfos   KnowhowDetailInfo[] @relation(fields: [knowhowDetailInfoIds], references: [id])
   knowhowDetailInfoIds String[]            @db.ObjectId
+  childStages          ChildStage[]
 
   @@unique([folder, path])
 }

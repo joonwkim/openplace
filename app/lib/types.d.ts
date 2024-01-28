@@ -3,21 +3,18 @@ export type CanHandleSubmit = {
 };
 
 export type Stage = {
+    id?: string,
     stageTitle: string,
     stage: number,
-    // levelInStage: number,
-    // thumbnailUrl?: string,
-    // StageProject?: StageProject,
     children: ChildStage[],
 }
-
 export type ChildStage = {
-    // description?: string,
+    id?: string,
     title: string,
-    description: string,
+    description?: string,
     thumbnailUrl?: string,
     authorId: string,
-    thumbnailFormdata: FormData,
+    thumbnailFormdata?: FormData,
     ChildDetail?: ChildDetail,
 }
 

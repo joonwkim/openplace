@@ -9,9 +9,7 @@ import { getCloudinaryImgData, getCloudinaryPdfData, } from '@/app/lib/arrayLib'
 import './scroll.css';
 
 import DispGeneral from '@/app/[id]/components/dispGeneral';
-import DispSelfContents from './displaySelfContents';
 import { ImportsNotUsedAsValues } from 'typescript';
-import DisplayProjectStages from './displayProjectStages';
 import { url } from 'inspector';
 import { Card } from 'react-bootstrap';
 import { Stage } from '@/app/lib/types';
@@ -56,33 +54,33 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
         }
     };
 
-    useEffect(() => {
-        if (knowhow && stages.length === 0) {
-            setStages([])
-            for (let i = 0; i < 3; i++) {
-                const stg: Stage = {
-                    stageTitle: `${i + 1} 단계`,
-                    stage: i,
-                    // levelInStage: 0,
-                    thumbnailUrl: knowhow.thumbnailCloudinaryData?.secure_url,
-                    children: [],
-                }
-                for (let j = 0; j < 1; j++) {
-                    const stgj: Stage = {
-                        stageTitle: '',
-                        stage: i,
-                        // levelInStage: j,
-                        thumbnailUrl: knowhow.thumbnailCloudinaryData?.secure_url,
-                        children: [],
-                    }
-                    if (stg.children) {
-                        stg.children.push(stgj);
-                    }
-                }
-                setStages(prev => [...prev, stg])
-            }
-        }
-    }, [knowhow, stages.length])
+    // useEffect(() => {
+    //     if (knowhow && stages.length === 0) {
+    //         setStages([])
+    //         for (let i = 0; i < 3; i++) {
+    //             const stg: Stage = {
+    //                 stageTitle: `${i + 1} 단계`,
+    //                 stage: i,
+    //                 // levelInStage: 0,
+    //                 thumbnailUrl: knowhow.thumbnailCloudinaryData?.secure_url,
+    //                 children: [],
+    //             }
+    //             for (let j = 0; j < 1; j++) {
+    //                 const stgj: Stage = {
+    //                     stageTitle: '',
+    //                     stage: i,
+    //                     // levelInStage: j,
+    //                     thumbnailUrl: knowhow.thumbnailCloudinaryData?.secure_url,
+    //                     children: [],
+    //                 }
+    //                 if (stg.children) {
+    //                     stg.children.push(stgj);
+    //                 }
+    //             }
+    //             setStages(prev => [...prev, stg])
+    //         }
+    //     }
+    // }, [knowhow, stages.length])
 
     useEffect(() => {
         const fetch = () => {
@@ -210,7 +208,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
             </div>
             <DispGeneral knowhow={knowhow} session={session} thumbnailSecureUrl={knowhow.thumbnailCloudinaryData?.secure_url} />
 
-            <DisplayProjectStages />
+            {/* <DisplayProjectStages /> */}
 
 
 

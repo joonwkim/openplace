@@ -197,11 +197,11 @@ export const upsertCloudinaryData = async (formdatas: FormData[]) => {
     return ids;
 };
 
-export const getThumbnailCloudinaryDataId = async (formData: any) => {
+export const getThumbnailCloudinaryDataId = async (formData: FormData) => {
     try {
 
         try {
-            const path = formData.get('path') as string;
+            const path = formData?.get('path') as string;
             console.log('path', path);
             if (path) {
                 const cdData = await prisma.cloudinaryData.findFirst({

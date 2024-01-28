@@ -1,11 +1,12 @@
 'use server'
 import { revalidatePath } from "next/cache";
-import { addKnowhowViewCount, createChildKnowhow, createGroupChildKnowhow, createKnowhow, createStageProjectKnowhow, updateGeneralKnowhow, updateKnowhow, updateKnowhowToSetParent } from "../services/knowhowService";
+import { addKnowhowViewCount, createChildKnowhow, createGroupChildKnowhow, createKnowhow, createStages, updateGeneralKnowhow, updateKnowhow, } from "../services/knowhowService";
 import { Knowhow, KnowhowDetailInfo } from "@prisma/client";
 import { createAndUpdateKnowhowDetailInfo, createChildKnowhowDetailInfo, updateKnowhowDetailInfo, } from "../services/knowhowDetailInfoService";
 import { consoleLogFormData } from "../lib/formdata";
-import { Stage, StageProjectDetailData, StageProjectHeaderData } from "../lib/types";
+import { Stage } from "../lib/types";
 import { getFontDefinitionFromNetwork } from "next/dist/server/font-utils";
+import { getKnowhowById } from "../services/bulletinBoardService";
 
 export async function createChildKnowHowWithDetailAction(parentKnowhowId: string, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], imgFormData: any[], pdfFormData: any[]) {
   try {
@@ -20,47 +21,32 @@ export async function createChildKnowHowWithDetailAction(parentKnowhowId: string
   revalidatePath('/');
 }
 
-export const updateStageProjectHeaderAndDetailAction = async (knowhow: Knowhow, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], cdIds: string[], imgFormData: any[], pdfFormData: any[], stage: any, child: any, stageProjectHeader?: StageProjectHeaderData, stageProjectDetail?: StageProjectDetailData) => {
+export const updateKnowhowAndDetailStagesAction = async (knowhow: Knowhow, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], cdIds: string[], imgFormData: any[], pdfFormData: any[], stages: Stage[],) => {
   await updateKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytData, cdIds, imgFormData, pdfFormData);
-  knowhow.isProjectType = true;
   await updateGeneralKnowhow(knowhow, genFormData);
-
-  //create stage project header and details as child of the  knowhow
-  //check stage project header contains all the value needed
-  // -stage title
-  // -stage description
-  // -stage
-  // -level in stage //! not included heare
-  // thumbnail
-
-
-
-
-  console.log('stage stageProjectHeader:', stageProjectHeader)
-
-  const childKnowhow = await createChildKnowhow(knowhow.id, stage, child, stageProjectHeader) as Knowhow
-
-  console.log('child knowhow:', childKnowhow)
-
-  const spkdi = await createChildKnowhowDetailInfo(childKnowhow, stageProjectDetail)
-
-  console.log('child knowhowdetail info:', spkdi)
-  // await updateKnowhowToSetParent(knowhow.id, childKnowhow);
-
-
-  // await createStageProjectKnowhow(knowhow, stageProjectHeaderData)
+  const results = await createStages(knowhow, stages);
 }
 
 export async function createKnowhowWithDetailInfoAndStageAction(genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], imgFormData: any[], pdfFormData: any[], stages: Stage[]) {
   try {
-    const knowhow = await createKnowhow(genFormData) as Knowhow;
-    console.log('saved knowhow', knowhow)
+    console.log('createKnowhowWithDetailInfoAndStageAction')
+    // const knowhow = await createKnowhow(genFormData) as Knowhow;
+
+    const knowhow = await getKnowhowById('createStages')
+    // console.log('saved knowhow', knowhow)
     if (!knowhow) {
       return;
     }
-    const khdi = await createAndUpdateKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
+    // const khdi = await createAndUpdateKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
 
-    console.log('saved knowhow detail', khdi)
+
+
+    //save stages
+    console.log('start saving  stages', knowhow)
+
+
+    const results = await createStages(knowhow, stages);
+    // console.log('saved knowhow detail', khdi)
 
   } catch (error) {
     console.log('createKnowhowWithDetailInfoAndStageAction error:', error);

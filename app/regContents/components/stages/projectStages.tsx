@@ -1,10 +1,19 @@
 'use client';
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import './multiItemsCarousel.css';
-import { Stage, ChildStage, } from '@/app/lib/types';
-import { any } from 'zod';
-import { EditMode, getThumbnails } from '@/app/lib/convert';
-import { ChildContents, } from './childContents';
+import { Stage, ChildStage, ChildDetail, } from '@/app/lib/types';
+import ImgUploader from '@/components/controls/imgUploader';
+import { Col, Form, Row, } from 'react-bootstrap';
+import { DropzoneOptions } from 'react-dropzone';
+import Image from 'next/image';
+import StageTitle from '@/app/knowhow/[id]/components/stageTitle';
+import ArrowDown from '@/app/knowhow/[id]/components/arrowDown';
+import ChildThumbnail from './childThumbnail';
+import new_logo_cross from '@/public/svgs/new_logo_cross.svg'
+import { useSession } from 'next-auth/react';
+import { getFormdata } from '../../lib/formData';
+// import { title } from 'process';
+// import { useRouter } from 'next/navigation';
 
 type ProjectStageProps = {
     setRegDataToSave: (data: any) => void,
@@ -19,23 +28,103 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
     const stageContentsRef = useRef<any>(null);
     const wrapperContainerRef = useRef<HTMLDivElement>(null)
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const childHeaderFormRef = useRef<any>();
     const [leftStage, setLeftStage] = useState<number>(0);
     const [rightStage, setRightStage] = useState<number>(0);
     const [stageTitle, setStageTitle] = useState('')
+
+
     const [stages, setStages] = useState<Stage[]>([])
     const [currentStage, setCurrentStage] = useState(0)
-    // const [childThumbnail, setChildThumbnail] = useState('')
-    // const [childHeader, setChildHeader] = useState<ChildHeader>()
-    // const [childDetail, setChildDetail] = useState<ChildDetail>()
-    // const [data, setData] = useState<ChildData>()
+    const [thumbnail, setThumbnail] = useState('')
+    // const [validated, setValidated] = useState(false);
+    // const [childTitle, setChildTitle] = useState('')
+    // const [childDesc, setChildDesc] = useState('')
+    // const [childFormData, setChildFormData] = useState<FormData>();
+    const [file, setFile] = useState<any>();
+    const [currentChild, setCurrentChild] = useState<ChildStage>()
+    // const addChildBtnRef = useRef<any>(null);
+    const { data: session } = useSession();
+    // const router = useRouter();
+
+    const getChildDetail = (childDetail: any) => {
+        let ch: ChildDetail = {
+
+        }
+        return ch;
+    }
+
+    const getInitialStages = useCallback((knowhow: any) => {
+        // console.log('useCallback knowhow.stages:', knowhow.stages.length)
+        let stgs: Stage[] = []
+        if (knowhow.stages.length > 0) {
+            knowhow.stages.forEach((s: any, index: number) => {
+                console.log('useCallback knowhow.stage:', s)
+                let childStg: ChildStage[] = [];
+                if (s.childStages.length > 0) {
+                    s.childStages.forEach((c: any, ci: number) => {
+                        console.log('useCallback childStage:', c)
+                        const child: ChildStage = {
+                            id: c.id,
+                            title: c.title,
+                            description: c.description,
+                            authorId: knowhow.author.id,
+                            thumbnailUrl: c.thumbnailCloudinaryData?.secure_url,
+                            ChildDetail: getChildDetail(c),
+                        }
+                        childStg.push(child);
+                    })
+                }
+                const stg: Stage = {
+                    id: s.id,
+                    stageTitle: s.stageTitle,
+                    stage: s.stage,
+                    children: childStg,
+                }
+                if (editMode) {
+                    let child: ChildStage = {
+                        title: 'new',
+                        authorId: session?.user.id,
+                        description: '',
+                        thumbnailUrl: '',
+                    }
+                    stg.children.push(child);
+                }
+                stgs.push(stg)
+            });
+        }
+        console.log('initial stages: ', JSON.stringify(stgs, null, 2))
+        return stgs;
+
+    }, [editMode, session?.user.id])
+
+
+    useEffect(() => {
+        const stgs = getInitialStages(knowhow)
+        setStages(stgs)
+    }, [getInitialStages, knowhow])
+
     useImperativeHandle(
         ref,
         () => ({
             handleSubmit() {
-                // setRegDataToSave(stages)
+                setRegDataToSave(stages)
             }
         }),
     );
+    const onDrop = useCallback(async (files: File[]) => {
+        try {
+            setFile(null)
+            setFile(Object.assign(files[0], { secure_url: URL.createObjectURL(files[0]) }));
+            setThumbnail(URL.createObjectURL(files[0]))
+        } catch (error) {
+
+        }
+    }, []);
+
+    const options: DropzoneOptions = {
+        accept: { 'image/*': [] }, maxSize: 1024 * 1000, maxFiles: 1, onDrop
+    };
 
     const handleStageItemsScrollContent = (direction: 'left' | 'right') => {
         const wraperContainer = wrapperContainerRef.current;
@@ -50,68 +139,85 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
     };
 
     const createRootStageChild = () => {
-        // console.log('create root stage and root child', stages)
+        let stg: Stage;
         if (editMode) {
-            let stg: Stage = {
+            stg = {
                 stageTitle: stageTitle,
                 stage: 0,
                 children: []
             }
             stages.push(stg);
         } else {
-            // console.log('create root stage and root child not edit mode', stages)
-            let stg: Stage = {
+            stg = {
                 stageTitle: stageTitle,
                 stage: 0,
                 children: []
             }
             setStages(prev => [...prev, stg])
         }
+        return stg;
     }
-    const createAddContentsBtn = () => {
-        let stage: Stage = {
-            stageTitle: stageTitle,
-            stage: stages.length,
-            children: [],
+
+    const createAddChildContentsBtn = (stg: Stage | undefined) => {
+        if (stg) {
+            let child: ChildStage = {
+                title: 'new',
+                authorId: session?.user.id,
+                description: '',
+                thumbnailUrl: '',
+            }
+            stg.children.push(child);
         }
-        stages.push(stage);
     }
+
     const handleAddStage = () => {
         setStageTitle('')
 
-        if (stages.length === 0) {
-            createRootStageChild();
-        } else {
-            createAddContentsBtn();
-        }
-    }
-    function getValue<T, K extends keyof T>(data: T, key: K) {
-        return data[key];
-    }
-    const getChildData = (data: any) => {
-        // console.log('data getChildData ProjectStages: ', JSON.stringify(data.header, null, 2))
-        // setData(data)
-
+        let stg: Stage;
+        stg = createRootStageChild();
+        createAddChildContentsBtn(stg);
     }
     const handleMouseOut = () => {
         stageContentsRef.current?.handleSubmit();
     }
-    const hcc = () => {
-        // alert('hcc')
-        // console.log('header:', data?.header)
-        // const header = data?.header
-        // if (header) {
-        //     const child: ChildStage = {
-        //         title: header.title,
-        //         description: header.description,
-        //         thumbnailUrl: header?.thumbnailUrl,
-        //     }
-        //     stages[currentStage].children.push(child)
-        // }
+
+    const handleCreateChildStage = async (child: ChildStage) => {
+        child.thumbnailUrl = thumbnail;
+        setCurrentChild(child);
+        setThumbnail('')
+    }
+
+    const handleShowContents = (child: ChildStage) => {
+        // alert('handleShowContents clicked')
+    }
+
+    const handlAddChildContents = (stage: Stage) => {
+        createAddChildContentsBtn(stage)
+        setThumbnail('')
+    }
+
+    const handleAction = async (formData: FormData) => {
+        try {
+            if (file) {
+                const title = formData.get('title') as string;
+                const description = formData.get('description') as string;
+                const td = await getFormdata(file, 'openplace');
+                td.append('path', file.path);
+                if (currentChild) {
+                    currentChild.title = title;
+                    currentChild.description = description;
+                    currentChild.authorId = session?.user.id;
+                    currentChild.thumbnailFormdata = td;
+                }
+            }
+        } catch (error) {
+            console.log('handleSubmit in regiGeneral error: ', error);
+        }
     }
 
     return (
         <>
+            {JSON.stringify(editMode)}
             <div className='scroll-wrapper mt-3' ref={wrapperContainerRef}>
                 {stages.length > 0 && <button type='button' className='btn btn-outline-light border rounded-circle scroll-button left' onClick={() => handleStageItemsScrollContent('left')} title='Move Left'>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" className="bi bi-chevron-left" viewBox="0 0 16 16">
@@ -119,17 +225,104 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
                     </svg>
                 </button>}
                 <div className='scroll-container' ref={scrollContainerRef}>
-                    {stages?.length > 0 && stages.map((s: Stage, index: number) => (
-                        <div key={index} className='btn mx-2' onClick={() => setCurrentStage(index)} onMouseOut={handleMouseOut}>
-                            <ChildContents ref={stageContentsRef} setRegDataToSave={getChildData} stage={s} editMode={editMode} handleCreateChild={hcc} />
+                    {stages?.length > 0 && stages.map((stage: Stage, stageIndex: number) => (<>
+                        <div key={stageIndex} className='btn mx-2' onClick={() => setCurrentStage(stageIndex)} onMouseOut={handleMouseOut}>
+                            {stage && <div className='mt-3 mx-2' onMouseOut={handleMouseOut}>
+                                <StageTitle title={stage.stageTitle} />
+                                <ArrowDown />
+                                {stage.children && stage.children?.length > 0 && (<>
+                                    {stage.children.map((child: ChildStage, childIndex: number) => (<>
+                                        <div key={childIndex}>
+                                            {child.thumbnailUrl ? <ChildThumbnail key={childIndex} title={child.title} src={child.thumbnailUrl} onClick={() => handleShowContents(child)} /> :
+                                                <div className='cross-container mt-2' onClick={() => handlAddChildContents(stage)} data-bs-toggle="modal" data-bs-target={`#staticBackdropForChild${stageIndex}${childIndex}`}>
+                                                    <div className='cross-btn mt-5'>
+                                                        <Image priority src={new_logo_cross} height={100} width={100} alt="cross" />
+                                                    </div>
+                                                    <div className='add-stage-btn text-center'>컨텐츠 등록하기</div>
+                                                </div>}
+                                        </div>
+                                        <div className="modal modal-xl fade" id={`staticBackdropForChild${stageIndex}${childIndex}`} data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropForAddKnowhowProjectLabel" aria-hidden="true">
+                                            <div className="modal-dialog">
+                                                <div className="modal-content">
+                                                    <div className="modal-header">
+                                                        <h3 className="modal-title" id="staticBackdropForAddKnowhowProjectLabel">단계별 프로젝트</h3>
+                                                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div className="modal-body">
+                                                        <div className='row text-center'>
+                                                        </div>
+                                                        <Form id={`createChildForm${stageIndex}${childIndex}`} ref={childHeaderFormRef} action={handleAction}>
+                                                            <div className='d-flex mt-3 gap-2'>
+                                                                <div className="card shadow p-3 mb-5 col-4" tabIndex={0}>
+                                                                    {thumbnail ? (
+                                                                        <div className='col-5 p-3'>
+                                                                            <Image alt={thumbnail} src={thumbnail} quality={100} fill sizes="100vw" style={{ objectFit: 'contain', }} />
+                                                                        </div>
+                                                                    ) : (<div>
+                                                                        <h3 className='text-center mt-3 mb-2'>  썸네일 이미지 등록 <b className='danger'>*</b></h3>
+                                                                        <div className='input-drop-project'>
+                                                                            <ImgUploader loaderMessage='썸네일 이미지를 끌어오거나 선택하세요 ' dropMessage='Drag &amp; drop files here, or click to select files' options={options} showUploadIcon={true} />
+                                                                        </div>
+                                                                    </div>)}
+                                                                </div>
+                                                                <div className="card shadow p-3 mb-5 col-7">
+                                                                    <Form.Group controlId="title" className='mb-3'>
+                                                                        <Row>
+                                                                            <Form.Label column="lg" lg={3}>
+                                                                                제목 <b className='danger'>*</b>
+                                                                            </Form.Label>
+                                                                            <Col>
+                                                                                <Form.Control size="lg" type="text" required placeholder="제목을 입력하세요" name='title' />
+                                                                                <Form.Control.Feedback type="invalid">
+                                                                                    제목을 입력하세요
+                                                                                </Form.Control.Feedback>
+                                                                            </Col>
+                                                                        </Row>
+                                                                    </Form.Group>
+                                                                    <Form.Group controlId="description" className='mb-3'>
+                                                                        <Row>
+                                                                            <Form.Label column="lg" lg={3}>
+                                                                                설명:
+                                                                            </Form.Label>
+                                                                            <Col>
+                                                                                <Form.Control required name='description'
+                                                                                    as="textarea"
+                                                                                    placeholder="자세한 설명을 입력하세요"
+                                                                                    style={{ height: '80px' }}
+                                                                                    defaultValue=' ' />
+                                                                                <Form.Control.Feedback type="invalid" >
+                                                                                    자세한 설명을 입력하세요
+                                                                                </Form.Control.Feedback>
+                                                                            </Col>
+                                                                        </Row>
+                                                                    </Form.Group>
+                                                                </div>
+                                                            </div>
+                                                        </Form>
+                                                        {/* <RegiOtherDatails ref={childDetailsRef} setRegDataToSave={getChildDetails} /> */}
+                                                    </div>
+                                                    <div className="modal-footer">
+                                                        <button type="submit" className="btn btn-primary" form={`createChildForm${stageIndex}${childIndex}`} data-bs-dismiss="modal" onClick={() => handleCreateChildStage(child)}>단계 생성</button>
+                                                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </>
+                                    ))}
+                                </>)}
+
+                            </div>}
                         </div>
+                    </>
                     ))}
-                    <div className='mt-4' data-bs-toggle="modal" data-bs-target="#staticBackdropForAddStageTitle">
+                    {editMode && <div className='mt-4' data-bs-toggle="modal" data-bs-target="#staticBackdropForAddStageTitle">
                         <button className='btn btn-primary p-2'>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-plus-lg" viewBox="0 0 16 16"  >
                                 <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
                             </svg>단계 생성하기</button>
-                    </div>
+                    </div>}
+
                 </div>
                 {stages.length > 0 && <button type='button' className='ms-3 btn btn-outline-light border rounded-circle scroll-button right' onClick={() => handleStageItemsScrollContent('right')} title='Move Right'>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="grey" className="bi bi-chevron-right" viewBox="0 0 16 16">
@@ -152,13 +345,17 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button type="submit" form="profileChangeForm" className="btn btn-primary" data-bs-dismiss="modal" onClick={handleAddStage}>생성</button>
+                            <button type="submit" className="btn btn-primary" data-bs-dismiss="modal" onClick={handleAddStage}>생성</button>
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                         </div>
                     </div>
                 </div>
             </div>
+
+
+
         </>
     )
 });
+
 ProjectStages.displayName = "ProjectStages"

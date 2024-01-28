@@ -65,7 +65,7 @@ export const RegisterProjectKnowhow = forwardRef<any, RegProps>(({ setRegDataToS
     return (
         <>
             <div onMouseLeave={handleOnMouseLeave}>
-                <SimpleHeader ref={regiProjectKnowhowHeaderRef} setRegDataToSave={getProjectKnowhowHeaderData} />
+                <SimpleHeader ref={regiProjectKnowhowHeaderRef} setRegDataToSave={getProjectKnowhowHeaderData} knowhow={null} />
             </div>
 
 
