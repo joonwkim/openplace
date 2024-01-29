@@ -6,7 +6,7 @@ import { createAndUpdateKnowhowDetailInfo, createChildKnowhowDetailInfo, updateK
 import { consoleLogFormData } from "../lib/formdata";
 import { Stage } from "../lib/types";
 import { getFontDefinitionFromNetwork } from "next/dist/server/font-utils";
-import { getKnowhowById } from "../services/bulletinBoardService";
+// import { getKnowhowById } from "../services/bulletinBoardService";
 
 export async function createChildKnowHowWithDetailAction(parentKnowhowId: string, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], imgFormData: any[], pdfFormData: any[]) {
   try {
@@ -30,23 +30,15 @@ export const updateKnowhowAndDetailStagesAction = async (knowhow: Knowhow, genFo
 export async function createKnowhowWithDetailInfoAndStageAction(genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], imgFormData: any[], pdfFormData: any[], stages: Stage[]) {
   try {
     console.log('createKnowhowWithDetailInfoAndStageAction')
-    // const knowhow = await createKnowhow(genFormData) as Knowhow;
-
-    const knowhow = await getKnowhowById('createStages')
-    // console.log('saved knowhow', knowhow)
+    const knowhow = await createKnowhow(genFormData) as Knowhow;
     if (!knowhow) {
       return;
     }
-    // const khdi = await createAndUpdateKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
-
-
-
-    //save stages
-    console.log('start saving  stages', knowhow)
-
-
+    await createAndUpdateKnowhowDetailInfo(knowhow, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
     const results = await createStages(knowhow, stages);
-    // console.log('saved knowhow detail', khdi)
+
+    revalidatePath('/');
+
 
   } catch (error) {
     console.log('createKnowhowWithDetailInfoAndStageAction error:', error);

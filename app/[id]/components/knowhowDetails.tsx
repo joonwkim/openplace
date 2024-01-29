@@ -196,10 +196,10 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
                 <DisplayGroupMember knowhow={knowhow} />
             </>) : (<> {showKnowhowContents()}
                 {showChildrenContents && knowhow?.children.length > 0 && (<>
-                    <h4 className='mt-3'>그룹멤버</h4>
+                        {/* <h4 className='mt-3'>그룹멤버</h4>
                     <div>
                         <GroupMemberList membershipRequest={knowhow?.membershipRequest} groupId={knowhow?.id} />
-                    </div>
+                    </div> */}
                     <div className="row row-cols-1 row-cols-md-3 row-cols-sm-2 mt-0 g-4">
                             {knowhow.children?.map((child: any) => (
                                 <KnowhowItem key={child.id} knowhow={child} />

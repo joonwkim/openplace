@@ -35,7 +35,6 @@ const PlaceHomePage = async ({ searchParams }: { searchParams: { searchText: str
     })
     return filteredKnowhow;
   }
-
   if (searchParams?.selectedTagList?.length > 0) {
     const selectedTagIds = searchParams.selectedTagList.split(',')
     knowhows = filterByTags(selectedTagIds)
@@ -45,7 +44,6 @@ const PlaceHomePage = async ({ searchParams }: { searchParams: { searchText: str
       ntags.forEach(s => s.checked = false)
     }
   }
-
   return (
     <>
       {knowhows?.length > 0 ? (<div className="row row-cols-1 row-cols-md-3 row-cols-sm-2 mt-0 g-4">

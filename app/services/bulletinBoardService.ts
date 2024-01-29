@@ -17,37 +17,37 @@ export async function getBulletinBoards() {
 }
 
 //sample
-export async function getKnowhowById(knowid: string) {
-    const knowhows = await prisma.knowhow.findFirst({
-        where: {
-            id: knowid,
-        },
-        orderBy: [
-            {
-                createdAt: 'desc'
-            }
-        ],
-        include: {
-            tags: true,
-            votes: true,
-            knowhowDetailInfo: true,
-            membershipRequest: true,
-            author: true,
-            children: true,
-            parent: true,
-            thumbnailCloudinaryData: true,
-            bulletinBoards: {
-                include: {
-                    user: true,
-                    comments: {
-                        include: {
-                            parent: true,
-                            children: true,
-                        }
-                    }
-                }
-            }
-        }
-    });
-    return knowhows;
-}
+// export async function getKnowhowById(knowid: string) {
+//     const knowhows = await prisma.knowhow.findFirst({
+//         where: {
+//             id: knowid,
+//         },
+//         orderBy: [
+//             {
+//                 createdAt: 'desc'
+//             }
+//         ],
+//         include: {
+//             tags: true,
+//             votes: true,
+//             knowhowDetailInfo: true,
+//             membershipRequest: true,
+//             author: true,
+//             children: true,
+//             parent: true,
+//             thumbnailCloudinaryData: true,
+//             bulletinBoards: {
+//                 include: {
+//                     user: true,
+//                     comments: {
+//                         include: {
+//                             parent: true,
+//                             children: true,
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     });
+//     return knowhows;
+// }

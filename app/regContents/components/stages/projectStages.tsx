@@ -57,8 +57,8 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
     const getInitialStages = useCallback((knowhow: any) => {
         // console.log('useCallback knowhow.stages:', knowhow.stages.length)
         let stgs: Stage[] = []
-        if (knowhow.stages.length > 0) {
-            knowhow.stages.forEach((s: any, index: number) => {
+        if (knowhow?.stages.length > 0) {
+            knowhow?.stages.forEach((s: any, index: number) => {
                 console.log('useCallback knowhow.stage:', s)
                 let childStg: ChildStage[] = [];
                 if (s.childStages.length > 0) {
@@ -214,10 +214,8 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
             console.log('handleSubmit in regiGeneral error: ', error);
         }
     }
-
     return (
         <>
-            {JSON.stringify(editMode)}
             <div className='scroll-wrapper mt-3' ref={wrapperContainerRef}>
                 {stages.length > 0 && <button type='button' className='btn btn-outline-light border rounded-circle scroll-button left' onClick={() => handleStageItemsScrollContent('left')} title='Move Left'>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" className="bi bi-chevron-left" viewBox="0 0 16 16">

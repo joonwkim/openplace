@@ -210,13 +210,6 @@ export const Header = forwardRef<any, RegProps>((props: RegProps, ref) => {
         }
     });
 
-    // const getKnowhowTypeSelected = (knowhowTypeId: string) => {
-    //     if (knowhowTypeId === initialKnowhowTypeId) {
-    //         return true;
-    //     }
-    //     return false;
-    // };
-
     const getCategorySelected = (categoryId: string) => {
         if (categoryId === initialCategoryId) {
             return true;
@@ -225,9 +218,9 @@ export const Header = forwardRef<any, RegProps>((props: RegProps, ref) => {
     };
 
     const onCheckChange = (value: any) => {
-        alert(value)
+        // alert(value)
         setIsGroupType(!isGroupType)
-        alert(isGroupType)
+        // alert(isGroupType)
     }
 
     return (<>
@@ -289,7 +282,6 @@ export const Header = forwardRef<any, RegProps>((props: RegProps, ref) => {
                             </Col>
                         </Row>
                     </Form.Group>
-
                     <Form.Group controlId="description" className='mb-3'>
                         <Row>
                             <Form.Label column="lg" lg={3}>
@@ -319,7 +311,6 @@ export const Header = forwardRef<any, RegProps>((props: RegProps, ref) => {
                                     관련 태그를 입력하세요
                                 </Form.Control.Feedback>
                             </Col>
-
                         </Row>
                         <Row>
                             <Form.Label column="lg" lg={3}>
@@ -335,11 +326,8 @@ export const Header = forwardRef<any, RegProps>((props: RegProps, ref) => {
                                     ))
                                 }</div> : <></>}
                             </Col>
-
                         </Row>
-
                     </Form.Group>
-
                     <Form.Group controlId="isGroupType" className='mb-3'>
                         <Row>
                             <Form.Label column="lg" lg={3}>
@@ -357,7 +345,6 @@ export const Header = forwardRef<any, RegProps>((props: RegProps, ref) => {
                             </Col>
                         </Row>
                     </Form.Group>
-
                 </div>
             </div>
         </Form>

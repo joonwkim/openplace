@@ -44,7 +44,7 @@ const DisplayMemberItem = (props: KnowHowProps) => {
         }
     }
     const handleDisplayGroupItem = () => {
-        alert('handle DisplayGroupItem later')
+        router.push(`/${knowhow?.id}`);
     }
     return (
         <div key={knowhow?.id} className='col-sm btn' onClick={handleDisplayGroupItem}>
@@ -53,7 +53,7 @@ const DisplayMemberItem = (props: KnowHowProps) => {
                 <Card.Body onClick={handleClickOnCard} className="card-body p-0">
                     <Card.Title className='text-center fw-bold'>{knowhow?.title}</Card.Title>
                     <div className='text-center card-text'>
-                        <div>  {knowhow?.description}</div>
+                        <div className="scrollabletextbox">{knowhow?.description}</div>
                         <div>
                             <span className="me-2">작성자:</span>
                             <span className="me-2">{knowhow.author?.name}</span>

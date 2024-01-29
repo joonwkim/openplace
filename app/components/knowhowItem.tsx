@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useSession } from "next-auth/react";
 import { updateKnowHowAction } from "../actions/knowhowAction";
 import GeneralFooter from "./controls/generalFooter";
+import './page.module.css'
 
 type KnowHowProps = {
     knowhow: any,
@@ -35,7 +36,6 @@ const KnowhowItem = (props: KnowHowProps) => {
         else {
             return '';
         }
-
     }
     return (
         <>
@@ -45,7 +45,7 @@ const KnowhowItem = (props: KnowHowProps) => {
                     <Card.Body onClick={handleClickOnCard} >
                         <Card.Title className='text-center fw-bold'>{knowhow?.title}</Card.Title>
                         <div className='text-center card-text'>
-                            <div>  {knowhow?.description}</div>
+                            <div className="scrollabletextbox">{knowhow?.description}</div>
                             <div>
                                 <span className="me-2">작성자:</span>
                                 <span className="me-2">{knowhow.author?.name}</span>

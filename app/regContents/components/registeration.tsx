@@ -53,6 +53,7 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
     const [disableSaveBtn, setDisableSaveBtn] = useState(true)
     const [stages, setStages] = useState<Stage[]>([])
     const [rootThumnailUrl, setRootThumbnailUrl] = useState('')
+    const [isGroupType, setIsGroupType] = useState(false)
     // const [stageProjectHeaderData, setStageProjectHeaderData] = useState<any>()
     // const [stageProjectDetailData, setStageProjectDetailData] = useState<any>()
 
@@ -83,24 +84,13 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
             if (stages.length > 0) {
                 console.log('stages.length > 0')
                 await updateKnowhowAndDetailStagesAction(knowhowSelected, genFormData, knowhowDetailInfo, ytData, uniqueCdIds, imgFormData, pdfFormData, stages);
-                // stages.forEach(async (stage, stageIndex) => {
-                //     if (stage.children && stage.children.length > 0) {
-                //         stage.children.forEach(async (child, index) => {
-                //             if (index !== 0) {
-                //                 console.log('update or create stage project knowhow')
-                //                 await updateStageProjectHeaderAndDetailAction(knowhowSelected, genFormData, knowhowDetailInfo, ytData, uniqueCdIds, imgFormData, pdfFormData, stage, child, child.StageProject?.StageProjectHeaderData, child.StageProject?.StageProjectDetailData);
-                //             }
-                //         })
-                //     }
-                // });
 
             } else {
-                console.log('stages.length === 0')
-                // await updateKnowHowWithDetailInfoAction(knowhowSelected, genFormData, knowhowDetailInfo, ytData, uniqueCdIds, imgFormData, pdfFormData);
+                await updateKnowHowWithDetailInfoAction(knowhowSelected, genFormData, knowhowDetailInfo, ytData, uniqueCdIds, imgFormData, pdfFormData);
             }
         }
         else {
-            console.log('not knowhowSelected')
+            console.log('no knowhowSelected')
             if (parentId) {
                 // await createChildKnowHowWithDetailAction(parentId, genFormData, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
                 if (requestId) {
@@ -109,31 +99,26 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
                 }
                 // router.push(`/regContents/?knowhowId=${parentId}`);
             } else {
-                console.log('not parentId')
+                console.log('no parentId')
                 if (stages.length > 0) {
                     console.log('stages count:', stages.length)
                     await createKnowhowWithDetailInfoAndStageAction(genFormData, knowhowDetailInfo, ytData, imgFormData, pdfFormData, stages);
-                    // stages.forEach(async stage => {
-                    //     await createKnowhowWithDetailInfoAndStageAction(genFormData, knowhowDetailInfo, ytData, imgFormData, pdfFormData, stages);
-                    // })
                 } else {
-
                     await createKnowhowWithDetailInfoAction(genFormData, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
                 }
             }
         }
-        // router.push('/');
+        router.push('/');
     };
 
     const handleCancelBtnClick = () => {
-        // router.push('/');
+        router.push('/');
     };
 
     const handleMouseLeaveGenInfo = () => {
         regGenRef.current?.handleSubmit();
     };
     const handleMouseOutGenInfo = () => {
-        // console.log('mouse out')
         regGenRef.current?.handleSubmit();
     };
 
@@ -143,13 +128,16 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
 
     const getFormGenData = (data: any) => {
         const { otherFormData, thumbNailFormData, canDisable } = data;
-
         const file = otherFormData?.get('file')
         setRootThumbnailUrl(file?.secure_url)
-
         otherFormData?.append('isProjectType', isProjectType);
         setDisableSaveBtn(canDisable);
         setGenFormData(data);
+
+        const gt = otherFormData?.get('isGroupType') as boolean;
+        setIsGroupType(gt);
+        // consoleLogFormData('header formdata', otherFormData)
+        // consoleLogFormData('thumbNailFormData formdata', thumbNailFormData)
     };
 
     const getOtherDetails = (data: any) => {
@@ -163,48 +151,39 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
     };
 
     const getStages = (data: Stage[]) => {
-    // console.log('getStages', data)
+        // console.log('getStages', data)
         setStages(data)
-    // setStageProjectHeaderData(stageProjectHeaderData)
-    // setStageProjectDetailData(stageProjectDetailData)
+        // setStageProjectHeaderData(stageProjectHeaderData)
+        // setStageProjectDetailData(stageProjectDetailData)
     }
+
     const handleMouseLeaveOnRegiProjectStages = () => {
         projectStagesRef.current?.handleSubmit();
     }
+
     return (
         <>
             <div className='mt-3'>
                 <button className='me-3 btn btn-primary' disabled={disableSaveBtn} onClick={handleSaveBtnClick} type="submit">저장</button>
                 <button className='btn btn-secondary' onClick={handleCancelBtnClick} type="submit">취소</button>
             </div>
-
             <div onMouseOut={handleMouseOutGenInfo}>
-                {parentKnowhowId ? (<SimpleHeader ref={regGenRef} setRegDataToSave={getFormGenData} knowhow={knowhow} />) : (<Header ref={regGenRef} setRegDataToSave={getFormGenData} categories={categories} knowHowTypes={knowHowTypes} tags={tags} knowhow={knowhow} editMode={editMode} thumbnailCloudinaryData={knowhow?.thumbnailCloudinaryData} />)}
+                {parentKnowhowId ? (<SimpleHeader ref={regGenRef} setRegDataToSave={getFormGenData} knowhow={knowhow} />) :
+                    (<Header ref={regGenRef} setRegDataToSave={getFormGenData} categories={categories} knowHowTypes={knowHowTypes} tags={tags} knowhow={knowhow} editMode={editMode} thumbnailCloudinaryData={knowhow?.thumbnailCloudinaryData} />)}
             </div>
-
-            {showProjectStages &&
-                <div onMouseLeave={handleMouseLeaveOtherDetails}>
-
-                </div>}
             {showDetail &&
                 <div onMouseLeave={handleMouseLeaveOtherDetails}>
                     <Detail ref={regOtherDetailsRef} setRegDataToSave={getOtherDetails} knowhow={knowhow} editMode={editMode} />
-
                 </div>}
             {/* <DisplayProjectStages /> */}
             <div onMouseLeave={handleMouseLeaveOnRegiProjectStages}>
-                <ProjectStages ref={projectStagesRef} setRegDataToSave={getStages} rootThumbnailUrl={rootThumnailUrl} knowhow={knowhow} editMode={editMode} />
+                <ProjectStages ref={projectStagesRef} setRegDataToSave={getStages} rootThumbnailUrl={rootThumnailUrl} knowhow={knowhow} editMode={!isGroupType} />
             </div>
-            {/* <div onMouseLeave={handleMouseLeaveOnRegiProjectStages}>
-                <RegiProjectStages ref={regiProjectStagesRef} setRegDataToSave={getStages} rootThumbnailUrl={rootThumnailUrl} knowhow={knowhow} editMode={editMode} />
-            </div> */}
             <div className='mt-3'>
                 {/* <button className='me-3 btn btn-primary' disabled={disableSaveBtn} onClick={handleSaveBtnClick} type="submit">저장</button> */}
                 <button className='me-3 btn btn-primary' onClick={handleSaveBtnClick} type="submit">저장</button>
                 <button className='btn btn-secondary' onClick={handleCancelBtnClick} type="submit">취소</button>
             </div>
-
-
         </>
     );
 };
