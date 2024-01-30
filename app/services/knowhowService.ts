@@ -843,13 +843,19 @@ export async function getKnowhow(id: string) {
                 category: true,
                 thumbnailCloudinaryData: true,
                 stages: {
+                    orderBy: [
+                        {
+                            stage: 'asc'
+                        }
+                    ],
                     include: {
                         childStages: {
                             include: {
                                 thumbnailCloudinaryData: true,
                             }
                         }
-                    }
+                    },
+
                 },
                 membershipRequest: {
                     include: {
