@@ -507,19 +507,19 @@ export async function createStages(parent: Knowhow, stages: Stage[]) {
                     })
                     stageId = s.id
                 } else {
-                    console.log('stage available: ', stageIndex)
+                    // console.log('stage available: ', stageIndex)
                     stageId = stage.id;
                 }
                 if (stage.children.length > 0) {
                     stage.children.forEach(async (child: ChildStage, childIndex: number) => {
 
                         if (!child.id && child.title !== 'new') {
-                            console.log('child to created: ', stageIndex, childIndex)
+                            // console.log('child to be created: ', stageIndex, childIndex)
                             const fd = child.thumbnailFormdata;
                             if (child.thumbnailFormdata) {
-                                consoleLogFormData('child stage formdata: ', child.thumbnailFormdata);
+                                // consoleLogFormData('child stage formdata: ', child.thumbnailFormdata);
                                 const thumbnailCdId = await getThumbnailCloudinaryDataId(child.thumbnailFormdata) as string;
-                                console.log('cloudinary Formdata:', thumbnailCdId)
+                                // console.log('cloudinary Formdata:', thumbnailCdId)
                                 const c = await prisma.childStage.create({
                                     data: {
                                         title: child.title,
@@ -528,11 +528,11 @@ export async function createStages(parent: Knowhow, stages: Stage[]) {
                                         cloudinaryDataId: thumbnailCdId,
                                     }
                                 })
-                                console.log('child created:', c)
+                                // console.log('child created:', c)
                             }
                         }
                         else {
-                            console.log('child already created: ', stageIndex, childIndex)
+                            // console.log('child already created: ', stageIndex, childIndex)
                         }
 
                     })

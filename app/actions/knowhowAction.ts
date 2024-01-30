@@ -29,7 +29,7 @@ export const updateKnowhowAndDetailStagesAction = async (knowhow: Knowhow, genFo
 
 export async function createKnowhowWithDetailInfoAndStageAction(genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], imgFormData: any[], pdfFormData: any[], stages: Stage[]) {
   try {
-    console.log('createKnowhowWithDetailInfoAndStageAction')
+    // console.log('createKnowhowWithDetailInfoAndStageAction')
     const knowhow = await createKnowhow(genFormData) as Knowhow;
     if (!knowhow) {
       return;

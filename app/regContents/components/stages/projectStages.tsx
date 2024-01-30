@@ -6,8 +6,8 @@ import ImgUploader from '@/components/controls/imgUploader';
 import { Col, Form, Row, } from 'react-bootstrap';
 import { DropzoneOptions } from 'react-dropzone';
 import Image from 'next/image';
-import StageTitle from '@/app/knowhow/[id]/components/stageTitle';
-import ArrowDown from '@/app/knowhow/[id]/components/arrowDown';
+import StageTitle from '@/app/regContents/components/stages/stageTitle';
+import ArrowDown from '@/app/regContents/components/stages/arrowDown';
 import ChildThumbnail from './childThumbnail';
 import new_logo_cross from '@/public/svgs/new_logo_cross.svg'
 import { useSession } from 'next-auth/react';
