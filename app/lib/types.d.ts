@@ -6,16 +6,16 @@ export type Stage = {
     id?: string,
     stageTitle: string,
     stage: number,
-    children: ChildStage[],
+    childContents: ChildContents[],
 }
-export type ChildStage = {
+export type ChildContents = {
     id?: string,
     title: string,
     description?: string,
     thumbnailUrl?: string,
     authorId: string,
     thumbnailFormdata?: FormData,
-    ChildDetail?: ChildDetail,
+    childDetail?: ChildDetail,
 }
 
 // export type ChildData = {

@@ -1,7 +1,7 @@
 'use client';
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import './multiItemsCarousel.css';
-import { Stage, ChildStage, ChildDetail, } from '@/app/lib/types';
+import { Stage, ChildContents, ChildDetail, } from '@/app/lib/types';
 import ImgUploader from '@/components/controls/imgUploader';
 import { Col, Form, Row, } from 'react-bootstrap';
 import { DropzoneOptions } from 'react-dropzone';
@@ -12,6 +12,7 @@ import ChildThumbnail from './childThumbnail';
 import new_logo_cross from '@/public/svgs/new_logo_cross.svg'
 import { useSession } from 'next-auth/react';
 import { getFormdata } from '../../lib/formData';
+import { RegiOtherDatails } from '../regiOtherDetails';
 // import { title } from 'process';
 // import { useRouter } from 'next/navigation';
 
@@ -26,6 +27,7 @@ type ProjectStageProps = {
 
 export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToSave, rootThumbnailUrl, knowhow, editMode, }: ProjectStageProps, ref) => {
     const stageContentsRef = useRef<any>(null);
+    const childDetailsRef = useRef<any>(null)
     const wrapperContainerRef = useRef<HTMLDivElement>(null)
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const childHeaderFormRef = useRef<any>();
@@ -42,7 +44,7 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
     // const [childDesc, setChildDesc] = useState('')
     // const [childFormData, setChildFormData] = useState<FormData>();
     const [file, setFile] = useState<any>();
-    const [currentChild, setCurrentChild] = useState<ChildStage>()
+    const [currentChild, setCurrentChild] = useState<ChildContents>()
     // const addChildBtnRef = useRef<any>(null);
     const { data: session } = useSession();
     // const router = useRouter();
@@ -59,18 +61,18 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
         let stgs: Stage[] = []
         if (knowhow?.stages.length > 0) {
             knowhow?.stages.forEach((s: any, index: number) => {
-                console.log('useCallback knowhow.stage:', s)
-                let childStg: ChildStage[] = [];
-                if (s.childStages.length > 0) {
-                    s.childStages.forEach((c: any, ci: number) => {
-                        console.log('useCallback childStage:', c)
-                        const child: ChildStage = {
+                // console.log('useCallback knowhow.stage:', s)
+                let childStg: ChildContents[] = [];
+                if (s.ChildContentss.length > 0) {
+                    s.ChildContentss.forEach((c: any, ci: number) => {
+                        // console.log('useCallback ChildContents:', c)
+                        const child: ChildContents = {
                             id: c.id,
                             title: c.title,
                             description: c.description,
                             authorId: knowhow.author.id,
                             thumbnailUrl: c.thumbnailCloudinaryData?.secure_url,
-                            ChildDetail: getChildDetail(c),
+                            childDetail: getChildDetail(c),
                         }
                         childStg.push(child);
                     })
@@ -79,21 +81,21 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
                     id: s.id,
                     stageTitle: s.stageTitle,
                     stage: s.stage,
-                    children: childStg,
+                    childContents: childStg,
                 }
                 if (editMode) {
-                    let child: ChildStage = {
+                    let child: ChildContents = {
                         title: 'new',
                         authorId: session?.user.id,
                         description: '',
                         thumbnailUrl: '',
                     }
-                    stg.children.push(child);
+                    stg.childContents.push(child);
                 }
                 stgs.push(stg)
             });
         }
-        console.log('initial stages: ', JSON.stringify(stgs, null, 2))
+        // console.log('initial stages: ', JSON.stringify(stgs, null, 2))
         return stgs;
 
     }, [editMode, session?.user.id])
@@ -144,29 +146,33 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
             stg = {
                 stageTitle: stageTitle,
                 stage: 0,
-                children: []
+                childContents: []
             }
             stages.push(stg);
         } else {
             stg = {
                 stageTitle: stageTitle,
                 stage: 0,
-                children: []
+                childContents: []
             }
             setStages(prev => [...prev, stg])
         }
         return stg;
     }
 
+    const getChildDetails = () => {
+
+    }
+
     const createAddChildContentsBtn = (stg: Stage | undefined) => {
         if (stg) {
-            let child: ChildStage = {
+            let child: ChildContents = {
                 title: 'new',
                 authorId: session?.user.id,
                 description: '',
                 thumbnailUrl: '',
             }
-            stg.children.push(child);
+            stg.childContents.push(child);
         }
     }
 
@@ -177,17 +183,18 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
         stg = createRootStageChild();
         createAddChildContentsBtn(stg);
     }
+
     const handleMouseOut = () => {
         stageContentsRef.current?.handleSubmit();
     }
 
-    const handleCreateChildStage = async (child: ChildStage) => {
+    const handleCreateChildContents = async (child: ChildContents) => {
         child.thumbnailUrl = thumbnail;
         setCurrentChild(child);
         setThumbnail('')
     }
 
-    const handleShowContents = (child: ChildStage) => {
+    const handleShowContents = (child: ChildContents) => {
         // alert('handleShowContents clicked')
     }
 
@@ -214,6 +221,7 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
             console.log('handleSubmit in regiGeneral error: ', error);
         }
     }
+
     return (
         <>
             <div className='scroll-wrapper mt-3' ref={wrapperContainerRef}>
@@ -228,8 +236,8 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
                             {stage && <div className='mt-3 mx-2' onMouseOut={handleMouseOut}>
                                 <StageTitle title={stage.stageTitle} />
                                 <ArrowDown />
-                                {stage.children && stage.children?.length > 0 && (<>
-                                    {stage.children.map((child: ChildStage, childIndex: number) => (<>
+                                {stage.childContents && stage.childContents?.length > 0 && (<>
+                                    {stage.childContents.map((child: ChildContents, childIndex: number) => (<>
                                         <div key={childIndex}>
                                             {child.thumbnailUrl ? <ChildThumbnail key={childIndex} title={child.title} src={child.thumbnailUrl} onClick={() => handleShowContents(child)} /> :
                                                 <div className='cross-container mt-2' onClick={() => handlAddChildContents(stage)} data-bs-toggle="modal" data-bs-target={`#staticBackdropForChild${stageIndex}${childIndex}`}>
@@ -297,10 +305,10 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
                                                                 </div>
                                                             </div>
                                                         </Form>
-                                                        {/* <RegiOtherDatails ref={childDetailsRef} setRegDataToSave={getChildDetails} /> */}
+                                                        <RegiOtherDatails ref={childDetailsRef} setRegDataToSave={getChildDetails} />
                                                     </div>
                                                     <div className="modal-footer">
-                                                        <button type="submit" className="btn btn-primary" form={`createChildForm${stageIndex}${childIndex}`} data-bs-dismiss="modal" onClick={() => handleCreateChildStage(child)}>단계 생성</button>
+                                                        <button type="submit" className="btn btn-primary" form={`createChildForm${stageIndex}${childIndex}`} data-bs-dismiss="modal" onClick={() => handleCreateChildContents(child)}>컨텐츠 생성</button>
                                                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                                                     </div>
                                                 </div>
@@ -343,7 +351,7 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button type="submit" className="btn btn-primary" data-bs-dismiss="modal" onClick={handleAddStage}>생성</button>
+                            <button type="submit" className="btn btn-primary" data-bs-dismiss="modal" onClick={handleAddStage}>단계 생성</button>
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                         </div>
                     </div>

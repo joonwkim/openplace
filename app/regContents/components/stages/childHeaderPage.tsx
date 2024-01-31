@@ -9,7 +9,7 @@ import './multiItemsCarousel.css';
 import { getFormdata } from '@/app/regContents/lib/formData';
 import { getSecureUrl } from '@/app/lib/formdata';
 import { useSession } from 'next-auth/react';
-import { ChildStage, Stage } from '@/app/lib/types';
+import { ChildContents, Stage } from '@/app/lib/types';
 // import { consoleLogFormData, getSecureUrl } from '@/app/lib/formdata';
 // import { readFile } from 'fs';
 
@@ -29,7 +29,7 @@ export const ChildHeaderPage = forwardRef<any, ChildHeaderProps>(({ setRegDataTo
     const [file, setFile] = useState<any>();
     const { data: session } = useSession();
     // const [imgSrc, setImgSrc] = useState('');
-    const [child, setChild] = useState<ChildStage>()
+    const [child, setChild] = useState<ChildContents>()
 
     useImperativeHandle(
         ref,
@@ -71,7 +71,7 @@ export const ChildHeaderPage = forwardRef<any, ChildHeaderProps>(({ setRegDataTo
                 const description = formData.get('description') as string;
                 const td = await getFormdata(file, 'openplace');
                 td.append('path', file.path);
-                const child: ChildStage = {
+                const child: ChildContents = {
                     title: title,
                     description: description,
                     thumbnailFormdata: td,

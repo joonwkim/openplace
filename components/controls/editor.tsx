@@ -42,15 +42,17 @@ export const Editor = forwardRef<CanHandleSubmit, FileProps>((props: FileProps, 
                     const data = editor.getData();
                     setData(data);
                     setMinHeight(editor);
-                    // console.log({ event, editor, data });
+                    console.log({ event, editor, data });
                 }}
                 onBlur={(event, editor) => {
+                    editor.editing.view.change((writer: any) => writer.setStyle('height', '400px', editor.editing.view.document.getRoot()))
                     // console.log('Blur.', editor);
                 }}
                 onFocus={(event, editor) => {
                     setMinHeight(editor);
                     // console.log('Focus.', editor);
                 }}
+
             />
         </>
     );
