@@ -9,7 +9,7 @@ import { getThumbnailCloudinaryDataId, uploadImagesToCloudinaryAndCreateCloudina
 import { consoleLogFormData, consoleLogFormDatas } from '../lib/formdata';
 import { CloudinaryFile } from '../lib/cloudinaryLib';
 import { serialize } from 'v8';
-import { ChildContents, Stage, } from '../lib/types';
+import { StageContents, Stage, } from '../lib/types';
 import { connect } from 'http2';
 import { number } from 'zod';
 
@@ -511,7 +511,7 @@ export async function createStages(parent: Knowhow, stages: Stage[]) {
                     stageId = stage.id;
                 }
                 if (stage.children.length > 0) {
-                    stage.children.forEach(async (child: ChildContents, childIndex: number) => {
+                    stage.children.forEach(async (child: StageContents, childIndex: number) => {
 
                         if (!child.id && child.title !== 'new') {
                             // console.log('child to be created: ', stageIndex, childIndex)
@@ -520,7 +520,7 @@ export async function createStages(parent: Knowhow, stages: Stage[]) {
                                 // consoleLogFormData('child stage formdata: ', child.thumbnailFormdata);
                                 const thumbnailCdId = await getThumbnailCloudinaryDataId(child.thumbnailFormdata) as string;
                                 // console.log('cloudinary Formdata:', thumbnailCdId)
-                                const c = await prisma.ChildContents.create({
+                                const c = await prisma.StageContents.create({
                                     data: {
                                         title: child.title,
                                         description: child.description,
@@ -544,7 +544,7 @@ export async function createStages(parent: Knowhow, stages: Stage[]) {
         console.log('createKnowhow error:', error);
     }
 }
-export async function createChildKnowhow(parentId: string, stage: Stage, child: ChildContents, stageProjectHeader: any | undefined) {
+export async function createChildKnowhow(parentId: string, stage: Stage, child: StageContents, stageProjectHeader: any | undefined) {
     if (!stageProjectHeader) {
         return;
     }
@@ -849,7 +849,7 @@ export async function getKnowhow(id: string) {
                         }
                     ],
                     include: {
-                        ChildContentss: {
+                        stageContents: {
                             include: {
                                 thumbnailCloudinaryData: true,
                             }

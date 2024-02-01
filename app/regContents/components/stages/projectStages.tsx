@@ -1,7 +1,7 @@
 'use client';
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import './multiItemsCarousel.css';
-import { Stage, ChildContents, ChildDetail, } from '@/app/lib/types';
+import { Stage, StageContents, ChildDetail, } from '@/app/lib/types';
 import ImgUploader from '@/components/controls/imgUploader';
 import { Col, Form, Row, } from 'react-bootstrap';
 import { DropzoneOptions } from 'react-dropzone';
@@ -44,7 +44,7 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
     // const [childDesc, setChildDesc] = useState('')
     // const [childFormData, setChildFormData] = useState<FormData>();
     const [file, setFile] = useState<any>();
-    const [currentChild, setCurrentChild] = useState<ChildContents>()
+    const [currentChild, setCurrentChild] = useState<StageContents>()
     // const addChildBtnRef = useRef<any>(null);
     const { data: session } = useSession();
     // const router = useRouter();
@@ -62,11 +62,11 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
         if (knowhow?.stages.length > 0) {
             knowhow?.stages.forEach((s: any, index: number) => {
                 // console.log('useCallback knowhow.stage:', s)
-                let childStg: ChildContents[] = [];
-                if (s.ChildContentss.length > 0) {
-                    s.ChildContentss.forEach((c: any, ci: number) => {
-                        // console.log('useCallback ChildContents:', c)
-                        const child: ChildContents = {
+                let childStg: StageContents[] = [];
+                if (s.stageContents.length > 0) {
+                    s.stageContents.forEach((c: any, ci: number) => {
+                        // console.log('useCallback StageContents:', c)
+                        const child: StageContents = {
                             id: c.id,
                             title: c.title,
                             description: c.description,
@@ -81,16 +81,16 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
                     id: s.id,
                     stageTitle: s.stageTitle,
                     stage: s.stage,
-                    childContents: childStg,
+                    stageContents: childStg,
                 }
                 if (editMode) {
-                    let child: ChildContents = {
+                    let child: StageContents = {
                         title: 'new',
                         authorId: session?.user.id,
                         description: '',
                         thumbnailUrl: '',
                     }
-                    stg.childContents.push(child);
+                    stg.stageContents.push(child);
                 }
                 stgs.push(stg)
             });
@@ -146,14 +146,14 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
             stg = {
                 stageTitle: stageTitle,
                 stage: 0,
-                childContents: []
+                stageContents: []
             }
             stages.push(stg);
         } else {
             stg = {
                 stageTitle: stageTitle,
                 stage: 0,
-                childContents: []
+                stageContents: []
             }
             setStages(prev => [...prev, stg])
         }
@@ -166,13 +166,13 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
 
     const createAddChildContentsBtn = (stg: Stage | undefined) => {
         if (stg) {
-            let child: ChildContents = {
+            let child: StageContents = {
                 title: 'new',
                 authorId: session?.user.id,
                 description: '',
                 thumbnailUrl: '',
             }
-            stg.childContents.push(child);
+            stg.stageContents.push(child);
         }
     }
 
@@ -188,13 +188,13 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
         stageContentsRef.current?.handleSubmit();
     }
 
-    const handleCreateChildContents = async (child: ChildContents) => {
+    const handleCreateChildContents = async (child: StageContents) => {
         child.thumbnailUrl = thumbnail;
         setCurrentChild(child);
         setThumbnail('')
     }
 
-    const handleShowContents = (child: ChildContents) => {
+    const handleShowContents = (child: StageContents) => {
         // alert('handleShowContents clicked')
     }
 
@@ -236,8 +236,8 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
                             {stage && <div className='mt-3 mx-2' onMouseOut={handleMouseOut}>
                                 <StageTitle title={stage.stageTitle} />
                                 <ArrowDown />
-                                {stage.childContents && stage.childContents?.length > 0 && (<>
-                                    {stage.childContents.map((child: ChildContents, childIndex: number) => (<>
+                                {stage.stageContents && stage.stageContents?.length > 0 && (<>
+                                    {stage.stageContents.map((child: StageContents, childIndex: number) => (<>
                                         <div key={childIndex}>
                                             {child.thumbnailUrl ? <ChildThumbnail key={childIndex} title={child.title} src={child.thumbnailUrl} onClick={() => handleShowContents(child)} /> :
                                                 <div className='cross-container mt-2' onClick={() => handlAddChildContents(stage)} data-bs-toggle="modal" data-bs-target={`#staticBackdropForChild${stageIndex}${childIndex}`}>

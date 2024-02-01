@@ -164,7 +164,7 @@ model MembershipRequest {
   updatedAt DateTime @updatedAt
 }
 
-model ChildContents {
+model StageContents {
   id          String  @id @default(auto()) @map("_id") @db.ObjectId
   title       String?
   description String?
@@ -190,7 +190,7 @@ model Stage {
 
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
-  ChildContentss  ChildContents[]
+  stageContents  StageContents[]
 }
 
 model Knowhow {
@@ -295,7 +295,7 @@ model KnowhowDetailInfo {
 
   cloudinaryDatas   CloudinaryData[] @relation(fields: [cloudinaryDataIds], references: [id])
   cloudinaryDataIds String[]         @db.ObjectId
-  ChildContentss       ChildContents[]
+  stageContents       StageContents[]
 }
 
 model YouTubeData {
@@ -335,7 +335,7 @@ model CloudinaryData {
 
   knowhowDetailInfos   KnowhowDetailInfo[] @relation(fields: [knowhowDetailInfoIds], references: [id])
   knowhowDetailInfoIds String[]            @db.ObjectId
-  ChildContentss          ChildContents[]
+  stageContents          StageContents[]
 
   @@unique([folder, path])
 }

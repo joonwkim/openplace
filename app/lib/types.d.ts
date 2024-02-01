@@ -6,9 +6,9 @@ export type Stage = {
     id?: string,
     stageTitle: string,
     stage: number,
-    childContents: ChildContents[],
+    stageContents: StageContents[],
 }
-export type ChildContents = {
+export type StageContents = {
     id?: string,
     title: string,
     description?: string,

@@ -5,7 +5,7 @@ import './multiItemsCarousel.css';
 import new_logo_cross from '@/public/svgs/new_logo_cross.svg'
 import { MouseEventHandler, forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { any } from 'zod';
-import { ChildDetail, ChildContents, Stage } from '@/app/lib/types';
+import { ChildDetail, StageContents, Stage } from '@/app/lib/types';
 import { ChildProject } from './childProject';
 import { ChildHeaderPage } from './childHeaderPage';
 import { RegiOtherDatails } from '../regiOtherDetails';
@@ -27,7 +27,7 @@ export const AddChildBtn = forwardRef<any, AddChildBtnProps>(({ stage, handleCre
     const childProjectRef = useRef<any>(null)
     const childDetailsRef = useRef<any>(null)
     const [disableCreateBtn, setDisableCreateBtn] = useState(false)
-    const [child, setChild] = useState<ChildContents>()
+    const [child, setChild] = useState<StageContents>()
     const [childDetail, setChildDetail] = useState<ChildDetail>()
     const [currentStage, setCurrentStage] = useState<Stage>()
     const [file, setFile] = useState<any>();
@@ -83,7 +83,7 @@ export const AddChildBtn = forwardRef<any, AddChildBtnProps>(({ stage, handleCre
         // const td = await getFormdata(file, 'openplace');
         // td.append('path', file.path);
 
-        // const child: ChildContents = {
+        // const child: StageContents = {
         //     title: title,
         //     description: description,
         //     thumbnailFormdata: td,
