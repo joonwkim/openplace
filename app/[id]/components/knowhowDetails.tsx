@@ -16,6 +16,7 @@ import GroupMemberList from './groupMemberList';
 import './scroll.css';
 import DisplayGroupMember from './displayGroupMember';
 import { ProjectStages } from '@/app/regContents/components/stages/projectStages';
+import BoardModal from './BulletinBoard/Modal';
 
 
 type RegProps = {
@@ -41,6 +42,8 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
         return session?.user.id === knowhow?.author.id;
     }, [knowhow?.author.id, session?.user.id]);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    
+    const [boardVisible, setBoardVisible] = useState(false);
 
     const handleScrollContent = (direction: 'left' | 'right') => {
         const container = scrollContainerRef.current;
@@ -159,6 +162,9 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     const handleMeetButtonClicked = () => {
         window.open(`https://s3.ap-northeast-2.amazonaws.com/depot.opensrcdesign.com/build/index.html?room=${knowhow.id}&auth=${session?.user.id}`, "vmeet");
     };
+    const handleBoardButtonClicked = ()=>{
+        setBoardVisible(true);
+    };
     const getStages = (data: Stage[]) => {
         // console.log('getStages', data)
         setStages(data)
@@ -166,7 +172,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     // setStageProjectDetailData(stageProjectDetailData)
     }
     return (
-        <>
+        <><BoardModal knowhowdId={knowhow.id} hide={()=>setBoardVisible(false)} closeModal={()=>setBoardVisible(false)} show={boardVisible}/>
             <div className='scroll-wrapper mt-3'>
                 {left > 100 && <button type='button' className='btn btn-outline-light border rounded-circle scroll-button left' onClick={() => handleScrollContent('left')} title='Move Left'>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" className="bi bi-chevron-left" viewBox="0 0 16 16">
@@ -182,8 +188,9 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
                     <button className='me-3 btn btn-primary' type="submit">메시지보내기</button>
                     <button className='me-3 btn btn-primary' type="submit">채 팅</button>
                     <button className='me-3 btn btn-primary' type="submit" onClick={handleMeetButtonClicked}>화상회의</button>
-                    <button className='me-3 btn btn-primary' type="submit">공지사항</button>
-                    <button className='me-3 btn btn-primary' type="submit">게시판</button>
+                    <button className='me-3 btn btn-primary' type="submit" >공지사항</button>
+                    <button className='me-3 btn btn-primary' type="submit"
+                    onClick={handleBoardButtonClicked}>게시판</button>
                 </div>
                 {left > 200 && right < 500 ? (<></>) : (<> <button type='button' className='ms-3 btn btn-outline-light border rounded-circle scroll-button right' onClick={() => handleScrollContent('right')} title='Move Right'>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="grey" className="bi bi-chevron-right" viewBox="0 0 16 16">
