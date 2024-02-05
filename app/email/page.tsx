@@ -66,13 +66,30 @@ const Messenger: React.FC = () => {
   }, [messages]);
 
   // 새 메시지 전송
-  const sendMessage = (text: string) => {
-    const newMessage: Message = {
-      id: messages.length,
+  const sendMessage = async (text: string) => {
+    const messageData = {
       text,
-      sender: 'me',
+      senderId: 'yourSenderId', 
     };
-    setMessages((prevMessages) => [...prevMessages, newMessage]); 
+  
+    try {
+      const response = await fetch('/sendMessage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(messageData),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const newMessage = await response.json();
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    }
   };
 
   const [showSearchInput, setShowSearchInput] = useState(false);
