@@ -47,24 +47,24 @@ export async function createBulletinBoard(data: any) {
   }
 }
 
-export async function updateBulletinBoard(
-  data: UpdateBulletinBoardFormProps,
-  bulletinBoardId: string
-) {
-  try {
-    return await prisma.bulletinBoard.update({
-      where: {
-        id: bulletinBoardId,
-      },
-      data: data,
-      include: {
-        user: true,
-      },
-    });
-  } catch (error) {
-    return { error };
-  }
-}
+// export async function updateBulletinBoard(
+//   data: UpdateBulletinBoardFormProps,
+//   bulletinBoardId: string
+// ) {
+//   try {
+//     return await prisma.bulletinBoard.update({
+//       where: {
+//         id: bulletinBoardId,
+//       },
+//       data: data,
+//       include: {
+//         user: true,
+//       },
+//     });
+//   } catch (error) {
+//     return { error };
+//   }
+// }
 export async function deleteBulletinBoard(bulletinBoardId: string) {
   try {
     await prisma.bulletinBoard.delete({

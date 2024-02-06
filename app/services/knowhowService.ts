@@ -842,6 +842,7 @@ export async function getKnowhow(id: string) {
                 votes: true,
                 category: true,
                 thumbnailCloudinaryData: true,
+                bulletinBoards: true,
                 stages: {
                     include: {
                         childStages: {

@@ -172,7 +172,7 @@ const KnowhowDetails = ({ knowhow }: RegProps) => {
     // setStageProjectDetailData(stageProjectDetailData)
     }
     return (
-        <><BoardModal knowhowdId={knowhow.id} hide={()=>setBoardVisible(false)} closeModal={()=>setBoardVisible(false)} show={boardVisible}/>
+        <><BoardModal knowhow={knowhow} hide={() => setBoardVisible(false)} closeModal={() => setBoardVisible(false)} show={boardVisible} />
             <div className='scroll-wrapper mt-3'>
                 {left > 100 && <button type='button' className='btn btn-outline-light border rounded-circle scroll-button left' onClick={() => handleScrollContent('left')} title='Move Left'>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" className="bi bi-chevron-left" viewBox="0 0 16 16">

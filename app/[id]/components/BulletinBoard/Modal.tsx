@@ -3,6 +3,7 @@ import { getBulletinBoards } from "@/app/services/bulletinBoardService";
 import React, { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { BulletinBoard } from "./types";
+import { Knowhow } from "@prisma/client";
 enum Mode {
   LIST = 0,
   READ,
@@ -10,22 +11,24 @@ enum Mode {
   EDIT,
 }
 type BulletinBoardListProps = {
-  knowhowId: string;
+  knowhow: Knowhow,
+  // knowhowId: string;
 };
 const BulletinBoardList = (props: BulletinBoardListProps) => {
   const [bulletinBoards, setBulletinBoards] = useState<BulletinBoard[]>([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = (await getBulletinBoards(
-        props.knowhowId
-      )) as BulletinBoard[];
-      setBulletinBoards(data);
-      console.log(data);
-    };
+  console.log('knowhow:', props.knowhow)
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const data = (await getBulletinBoards(
+  //       props.knowhowId
+  //     )) as BulletinBoard[];
+  //     setBulletinBoards(data);
+  //     console.log(data);
+  //   };
 
-    fetchData();
-  }, [props.knowhowId]);
+  //   fetchData();
+  // }, [props.knowhowId]);
 
   return (
     <div>
@@ -42,7 +45,8 @@ const BulletinBoardList = (props: BulletinBoardListProps) => {
 };
 type BoardModalProps = {
   show: boolean | undefined;
-  knowhowId: any;
+  // knowhowId: any;
+  knowhow: Knowhow;
   closeModal: React.MouseEventHandler<HTMLButtonElement> | undefined;
   hide: any;
 };
@@ -67,7 +71,7 @@ const BoardModal = (props: BoardModalProps) => {
         <button onClick={() => setMode(Mode.EDIT)}>edit</button>
 
         {mode === Mode.LIST && (
-          <BulletinBoardList knowhowId={props.knowhowId} />
+          <BulletinBoardList knowhow={props.knowhow} />
         )}
 
         {mode === Mode.READ && <>읽기:</>}
