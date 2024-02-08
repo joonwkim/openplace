@@ -12,10 +12,7 @@
 .authPage>div {
   text-align: center
 }
-.registerError {
-  color: red;
-  font-size: 6pt;
-}
+
 
 .emailError {
   color: red;

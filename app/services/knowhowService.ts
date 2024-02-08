@@ -88,6 +88,9 @@ export async function updateGeneralKnowhow(knowhowSelected: Knowhow, genFormData
         return;
     }
     const { otherFormData, thumbNailFormData } = genFormData;
+    if (!otherFormData) {
+        return;
+    }
     // consoleLogFormData('otherFormData', otherFormData)
     let tagConnect: any[] = [];
     if (otherFormData !== null) {
@@ -507,20 +510,23 @@ export async function createStages(parent: Knowhow, stages: Stage[]) {
                     })
                     stageId = s.id
                 } else {
-                    // console.log('stage available: ', stageIndex)
+                    console.log('stage available: ', stageIndex)
                     stageId = stage.id;
                 }
-                if (stage.children.length > 0) {
-                    stage.children.forEach(async (child: StageContents, childIndex: number) => {
+                if (stage.stageContents.length > 0) {
+
+                    // console.log('stage contents: ', JSON.stringify(stage.stageContents))
+
+                    stage.stageContents.forEach(async (child: StageContents, childIndex: number) => {
 
                         if (!child.id && child.title !== 'new') {
-                            // console.log('child to be created: ', stageIndex, childIndex)
+                            console.log('child to be created: ', stageIndex, childIndex)
                             const fd = child.thumbnailFormdata;
                             if (child.thumbnailFormdata) {
-                                // consoleLogFormData('child stage formdata: ', child.thumbnailFormdata);
+                                consoleLogFormData('child stage formdata: ', child.thumbnailFormdata);
                                 const thumbnailCdId = await getThumbnailCloudinaryDataId(child.thumbnailFormdata) as string;
-                                // console.log('cloudinary Formdata:', thumbnailCdId)
-                                const c = await prisma.StageContents.create({
+                                console.log('cloudinary Formdata:', thumbnailCdId)
+                                const c = await prisma.stageContents.create({
                                     data: {
                                         title: child.title,
                                         description: child.description,
@@ -528,11 +534,19 @@ export async function createStages(parent: Knowhow, stages: Stage[]) {
                                         cloudinaryDataId: thumbnailCdId,
                                     }
                                 })
-                                // console.log('child created:', c)
+                                console.log('child created:', c)
                             }
+                        } else if (child.isDeleted) {
+                            const result = await prisma.stageContents.delete({
+                                where: {
+                                    id: child.id,
+                                }
+                            })
+                            console.log('deleted stageContents result: ', result)
                         }
+
                         else {
-                            // console.log('child already created: ', stageIndex, childIndex)
+                            console.log('child already created: ', stageIndex, childIndex)
                         }
 
                     })
@@ -549,7 +563,7 @@ export async function createChildKnowhow(parentId: string, stage: Stage, child: 
         return;
     }
     const thumbnailCdId = await getThumbnailCloudinaryDataId(stageProjectHeader.thumbnailFormdata) as string;
-    const index = stage.children && stage.children?.indexOf(child) > 0 ? stage.children?.indexOf(child) : 0;
+    const index = stage.stageContents && stage.stageContents?.indexOf(child) > 0 ? stage.stageContents?.indexOf(child) : 0;
     const knowhow = await prisma.knowhow.create({
         data: {
             title: stage.stageTitle as string,

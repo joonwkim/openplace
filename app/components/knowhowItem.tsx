@@ -46,14 +46,17 @@ const KnowhowItem = (props: KnowHowProps) => {
                         <Card.Title className='text-center fw-bold'>{knowhow?.title}</Card.Title>
                         <div className='text-center card-text'>
                             <div className="scrollabletextbox">{knowhow?.description}</div>
-                            <div>
-                                <span className="me-2">작성자:</span>
-                                <span className="me-2">{knowhow.author?.name}</span>
+                            <div className="d-flex justify-content-center">
+                                <div>
+                                    <span className="me-2">작성자:</span>
+                                    <span className="me-2">{knowhow.author?.name}</span>
+                                </div>
+                                <div>
+                                    <span className="me-2">태그:</span>
+                                    <span className="me-2">{getTags()}</span>
+                                </div>
                             </div>
-                            <div>
-                                <span className="me-2">태그:</span>
-                                <span className="me-2">{getTags()}</span>
-                            </div>
+
                         </div>
                     </Card.Body>
                     <Card.Footer className="text-center" >

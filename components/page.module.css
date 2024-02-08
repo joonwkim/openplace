@@ -2,10 +2,7 @@
     width: 16px;
     height: 16px;
 }
-.registerError{
-    font-size: 6pt;
-    color:red;
-}
+
 .notificationPopover {
     --bs-popover-max-width: 400px;
 }

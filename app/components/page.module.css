@@ -2,15 +2,3 @@
     width: 16px;
     height: 16px;
 }
-
-.registerError{
-    font-size: 6pt;
-    color:red;
-}
-
-.scrollabletextbox {
-    height: 4rem;
-    font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
-    font-size: 82%;
-    overflow: hidden;
-}

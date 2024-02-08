@@ -7,7 +7,10 @@
   min-height: 100vh;
 }
 
-
+.registerError {
+  color: red;
+  font-size: 6pt;
+}
 
 .description {
   display: inherit;

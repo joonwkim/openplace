@@ -1,4 +1,80 @@
+:root {
+  --context-menu-top: 0px;
+  --context-menu-left: 0px;
+}
+
+.stage-context-menu {
+  top: var(--context-menu-top);
+  left: var(--context-menu-left);
+  position: absolute;
+  z-index: 20;
+
+}
 .error{
   color: red;
   font-size: 6pt;
 }
+.card-body {
+  height: 150px;
+  ;
+}
+
+.scrollabletextbox {
+  max-height: 3.5rem;
+  font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
+  font-size: 82%;
+  overflow: hidden;
+}
+
+/* .desc-height {
+    max-height: 60px;
+    scroll-behavior: auto;
+} */
+/* .card {
+    background: grey;
+} */
+.scroll-wrapper {
+  position: relative;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.scroll-container {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  -ms-overflow-style: none;
+  /* scrollbar-width: none; */
+  white-space: nowrap;
+}
+
+.scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll-button {
+  display: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  background-color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+@media (max-width: 1200px) {
+  .scroll-button {
+    display: block;
+  }
+}
+
+.scroll-button.left {
+  left: 0;
+}
+
+.scroll-button.right {
+  right: 0;
+}
+
+/* .button {} */

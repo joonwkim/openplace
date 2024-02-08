@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useSession } from "next-auth/react";
 import GeneralFooter from "@/app/components/controls/generalFooter";
 import { updateKnowHowAction } from "@/app/actions/knowhowAction";
-import './scroll.css';
+import '@/app/globals.css';
 
 type KnowHowProps = {
     knowhow: any,

@@ -2,8 +2,6 @@
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import './multiItemsCarousel.css';
 import { Stage, StageContents, ChildDetail, } from '@/app/lib/types';
-import ImgUploader from '@/components/controls/imgUploader';
-import { Col, Form, Row, } from 'react-bootstrap';
 import { DropzoneOptions } from 'react-dropzone';
 import Image from 'next/image';
 import StageTitle from '@/app/regContents/components/stages/stageTitle';
@@ -12,9 +10,8 @@ import ChildThumbnail from './childThumbnail';
 import new_logo_cross from '@/public/svgs/new_logo_cross.svg'
 import { useSession } from 'next-auth/react';
 import { getFormdata } from '../../lib/formData';
-import { RegiOtherDatails } from '../regiOtherDetails';
-// import { title } from 'process';
-// import { useRouter } from 'next/navigation';
+import StageContextMenu from './stageContextMenu';
+import RegiStageContentsModal from './regiStageContentsModal';
 
 type ProjectStageProps = {
     setRegDataToSave: (data: any) => void,
@@ -34,20 +31,13 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
     const [leftStage, setLeftStage] = useState<number>(0);
     const [rightStage, setRightStage] = useState<number>(0);
     const [stageTitle, setStageTitle] = useState('')
-
-
+    const [showContextMenu, setShowContextMenu] = useState(false)
     const [stages, setStages] = useState<Stage[]>([])
-    const [currentStage, setCurrentStage] = useState(0)
     const [thumbnail, setThumbnail] = useState('')
-    // const [validated, setValidated] = useState(false);
-    // const [childTitle, setChildTitle] = useState('')
-    // const [childDesc, setChildDesc] = useState('')
-    // const [childFormData, setChildFormData] = useState<FormData>();
+    const [selectedStage, setSelectedStage] = useState<any>()
+    const [selectedStageContents, setSelectedStageContents] = useState<any>()
     const [file, setFile] = useState<any>();
-    const [currentChild, setCurrentChild] = useState<StageContents>()
-    // const addChildBtnRef = useRef<any>(null);
     const { data: session } = useSession();
-    // const router = useRouter();
 
     const getChildDetail = (childDetail: any) => {
         let ch: ChildDetail = {
@@ -55,6 +45,22 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
         }
         return ch;
     }
+
+    const createAddStageContentsBtn = useCallback((stg: Stage | undefined) => {
+        if (stg) {
+            let sc: StageContents = {
+                title: 'new',
+                authorId: session?.user.id,
+                description: '',
+                thumbnailUrl: '',
+                isDeleted: false,
+            }
+            if (!stg.stageContents) {
+                stg.stageContents = [];
+            }
+            stg.stageContents.push(sc);
+        }
+    }, [session?.user.id])
 
     const getInitialStages = useCallback((knowhow: any) => {
         // console.log('useCallback knowhow.stages:', knowhow.stages.length)
@@ -73,6 +79,7 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
                             authorId: knowhow.author.id,
                             thumbnailUrl: c.thumbnailCloudinaryData?.secure_url,
                             childDetail: getChildDetail(c),
+                            isDeleted: false,
                         }
                         childStg.push(child);
                     })
@@ -84,21 +91,15 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
                     stageContents: childStg,
                 }
                 if (editMode) {
-                    let child: StageContents = {
-                        title: 'new',
-                        authorId: session?.user.id,
-                        description: '',
-                        thumbnailUrl: '',
-                    }
-                    stg.stageContents.push(child);
+                    createAddStageContentsBtn(stg)
                 }
                 stgs.push(stg)
             });
         }
-        // console.log('initial stages: ', JSON.stringify(stgs, null, 2))
+        // console.log('initial stages[0]: ', JSON.stringify(stgs[0], null, 2))
         return stgs;
 
-    }, [editMode, session?.user.id])
+    }, [createAddStageContentsBtn, editMode])
 
 
     useEffect(() => {
@@ -160,20 +161,14 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
         return stg;
     }
 
-    const getChildDetails = () => {
+    const getStageContensDetails = () => {
 
     }
 
-    const createAddChildContentsBtn = (stg: Stage | undefined) => {
-        if (stg) {
-            let child: StageContents = {
-                title: 'new',
-                authorId: session?.user.id,
-                description: '',
-                thumbnailUrl: '',
-            }
-            stg.stageContents.push(child);
-        }
+
+
+    const removeAddStageContentsBtn = (stg: Stage | undefined) => {
+
     }
 
     const handleAddStage = () => {
@@ -181,73 +176,138 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
 
         let stg: Stage;
         stg = createRootStageChild();
-        createAddChildContentsBtn(stg);
+        createAddStageContentsBtn(stg);
     }
 
     const handleMouseOut = () => {
         stageContentsRef.current?.handleSubmit();
     }
 
-    const handleCreateChildContents = async (child: StageContents) => {
+    const handlAddStageContentsBtnClick = (stage: Stage, stageContents: StageContents) => {
+        setSelectedStage(stage);
+        setSelectedStageContents(stageContents)
+        createAddStageContentsBtn(stage)
+        setThumbnail('')
+    }
+    const handleCreateStageContentsBtnClick = async (child: StageContents) => {
         child.thumbnailUrl = thumbnail;
-        setCurrentChild(child);
+        setSelectedStageContents(child);
         setThumbnail('')
     }
 
-    const handleShowContents = (child: StageContents) => {
-        // alert('handleShowContents clicked')
-    }
-
-    const handlAddChildContents = (stage: Stage) => {
-        createAddChildContentsBtn(stage)
-        setThumbnail('')
-    }
-
-    const handleAction = async (formData: FormData) => {
+    const handleFormAction = async (formData: FormData) => {
         try {
             if (file) {
                 const title = formData.get('title') as string;
                 const description = formData.get('description') as string;
                 const td = await getFormdata(file, 'openplace');
                 td.append('path', file.path);
-                if (currentChild) {
-                    currentChild.title = title;
-                    currentChild.description = description;
-                    currentChild.authorId = session?.user.id;
-                    currentChild.thumbnailFormdata = td;
+                if (selectedStageContents) {
+                    selectedStageContents.title = title;
+                    selectedStageContents.description = description;
+                    selectedStageContents.authorId = session?.user.id;
+                    selectedStageContents.thumbnailFormdata = td;
+                    setStages(stages)
                 }
+                setSelectedStage(null)
+                setSelectedStageContents(null)
             }
         } catch (error) {
             console.log('handleSubmit in regiGeneral error: ', error);
         }
     }
 
+    const handleCancelBtnClicked = () => {
+        setSelectedStage(null)
+        setSelectedStageContents(null)
+    }
+
+    const handleShowStageContents = (child: StageContents) => {
+        alert('handleShowContents clicked: ' + child.thumbnailUrl)
+    }
+
+    const handleContextMenu = (e: any, stage: Stage, contents: StageContents) => {
+        e.preventDefault()
+        setShowContextMenu(true)
+        setSelectedStage(stage)
+        setSelectedStageContents(contents);
+        const { pageX, pageY } = e
+        document.documentElement.style.setProperty('--context-menu-top', `${pageY - 950}px`)
+        document.documentElement.style.setProperty('--context-menu-left', `${pageX - 110}px`)
+    }
+
+    const handleEditStageContents = () => {
+        if (selectedStageContents) {
+
+
+            setShowContextMenu(false);
+            setSelectedStage(null)
+            setSelectedStageContents(null);
+        }
+        else {
+            setShowContextMenu(false);
+        }
+    }
+    const handleDeleteStageContents = () => {
+        if (selectedStageContents) {
+            selectedStageContents.isDeleted = true;
+            setShowContextMenu(false);
+            setSelectedStage(null)
+            setSelectedStageContents(null);
+        }
+        else {
+            setShowContextMenu(false);
+        }
+    }
+
     return (
         <>
+
             <div className='scroll-wrapper mt-3' ref={wrapperContainerRef}>
                 {stages.length > 0 && <button type='button' className='btn btn-outline-light border rounded-circle scroll-button left' onClick={() => handleStageItemsScrollContent('left')} title='Move Left'>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" className="bi bi-chevron-left" viewBox="0 0 16 16">
                         <path fillRule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
                     </svg>
                 </button>}
+
                 <div className='scroll-container' ref={scrollContainerRef}>
                     {stages?.length > 0 && stages.map((stage: Stage, stageIndex: number) => (<>
-                        <div key={stageIndex} className='btn mx-2' onClick={() => setCurrentStage(stageIndex)} onMouseOut={handleMouseOut}>
+                        <div key={stageIndex} className='btn mx-2' onClick={() => setSelectedStage(stage)} onMouseOut={handleMouseOut}>
                             {stage && <div className='mt-3 mx-2' onMouseOut={handleMouseOut}>
                                 <StageTitle title={stage.stageTitle} />
                                 <ArrowDown />
+                                {showContextMenu && <StageContextMenu editStageContent={handleEditStageContents} deleteStageContent={handleDeleteStageContents} />}
                                 {stage.stageContents && stage.stageContents?.length > 0 && (<>
                                     {stage.stageContents.map((child: StageContents, childIndex: number) => (<>
                                         <div key={childIndex}>
-                                            {child.thumbnailUrl ? <ChildThumbnail key={childIndex} title={child.title} src={child.thumbnailUrl} onClick={() => handleShowContents(child)} /> :
-                                                <div className='cross-container mt-2' onClick={() => handlAddChildContents(stage)} data-bs-toggle="modal" data-bs-target={`#staticBackdropForChild${stageIndex}${childIndex}`}>
-                                                    <div className='cross-btn mt-5'>
-                                                        <Image priority src={new_logo_cross} height={100} width={100} alt="cross" />
-                                                    </div>
-                                                    <div className='add-stage-btn text-center'>컨텐츠 등록하기</div>
-                                                </div>}
+                                            {editMode ? (child.isDeleted ? (<>
+                                            </>) :
+                                                (<>
+                                                    {child.thumbnailUrl ? <ChildThumbnail key={childIndex} title={child.title} src={child.thumbnailUrl} onClick={() => handleShowStageContents(child)} onContextMenu={(e) => handleContextMenu(e, stage, child)} /> :
+                                                        <div className='cross-container mt-2' onClick={() => handlAddStageContentsBtnClick(stage, child)} data-bs-toggle="modal" data-bs-target={`#staticBackdropForStageContents${stageIndex}${childIndex}`}>
+                                                            <div className='cross-btn mt-5'>
+                                                                <Image priority src={new_logo_cross} height={100} width={100} alt="cross" />
+                                                            </div>
+                                                            <div className='add-stage-btn text-center'>컨텐츠 등록하기</div>
+                                                        </div>}
+                                                </>)) : (<>
+                                                    {child.thumbnailUrl ? <ChildThumbnail key={childIndex} title={child.title} src={child.thumbnailUrl} onClick={() => handleShowStageContents(child)} /> :
+                                                        <div className='cross-container mt-2' onClick={() => handlAddStageContentsBtnClick(stage, child)} data-bs-toggle="modal" data-bs-target={`#staticBackdropForStageContents${stageIndex}${childIndex}`}>
+                                                            <div className='cross-btn mt-5'>
+                                                                <Image priority src={new_logo_cross} height={100} width={100} alt="cross" />
+                                                            </div>
+                                                            <div className='add-stage-btn text-center'>컨텐츠 등록하기</div>
+                                                        </div>}
+                                            </>)}
                                         </div>
-                                        <div className="modal modal-xl fade" id={`staticBackdropForChild${stageIndex}${childIndex}`} data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropForAddKnowhowProjectLabel" aria-hidden="true">
+                                        {/* stage contents 등록 모달 */}
+                                        <RegiStageContentsModal modalId={`staticBackdropForStageContents${stageIndex}${childIndex}`} formId={`createChildForm${stageIndex}${childIndex}`} child={child} childHeaderFormRef={childHeaderFormRef}
+                                            childDetailsRef={childDetailsRef} getStageContensDetails={getStageContensDetails} handleAction={handleFormAction} handleCreateStageContents={() => handleCreateStageContentsBtnClick(child)}
+                                            options={options} onDrop={onDrop} thumbnail={thumbnail} handleCancelBtnClicked={handleCancelBtnClicked}
+                                        />
+
+
+                                        {/* <div className="modal modal-xl fade" id={`staticBackdropForStageContents${stageIndex}${childIndex}`} data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropForAddKnowhowProjectLabel" aria-hidden="true">
                                             <div className="modal-dialog">
                                                 <div className="modal-content">
                                                     <div className="modal-header">
@@ -305,15 +365,15 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
                                                                 </div>
                                                             </div>
                                                         </Form>
-                                                        <RegiOtherDatails ref={childDetailsRef} setRegDataToSave={getChildDetails} />
+                                                        <RegiOtherDatails ref={childDetailsRef} setRegDataToSave={getStageContensDetails} />
                                                     </div>
                                                     <div className="modal-footer">
-                                                        <button type="submit" className="btn btn-primary" form={`createChildForm${stageIndex}${childIndex}`} data-bs-dismiss="modal" onClick={() => handleCreateChildContents(child)}>컨텐츠 생성</button>
-                                                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                                                        <button type="submit" className="btn btn-primary" form={`createChildForm${stageIndex}${childIndex}`} data-bs-dismiss="modal" onClick={() => handleCreateStageContents(child)}>컨텐츠 생성</button>
+                                                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleCancelBtnClicked}>취소</button>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> */}
                                     </>
                                     ))}
                                 </>)}
@@ -357,9 +417,6 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
                     </div>
                 </div>
             </div>
-
-
-
         </>
     )
 });

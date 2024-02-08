@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 import KnowhowItem from '@/app/components/knowhowItem';
 import { getCloudinaryImgData, getCloudinaryPdfData, } from '@/app/lib/arrayLib';
 import GroupMemberList from './groupMemberList';
-import './scroll.css';
+import '@/app/globals.css';
 import DisplayGroupMember from './displayGroupMember';
 import { ProjectStages } from '@/app/regContents/components/stages/projectStages';
 

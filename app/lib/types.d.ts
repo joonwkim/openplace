@@ -16,6 +16,7 @@ export type StageContents = {
     authorId: string,
     thumbnailFormdata?: FormData,
     childDetail?: ChildDetail,
+    isDeleted: boolean,
 }
 
 // export type ChildData = {
