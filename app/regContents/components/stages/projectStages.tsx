@@ -165,10 +165,6 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
 
     }
 
-    const removeAddStageContentsBtn = (stg: Stage | undefined) => {
-
-    }
-
     const handleAddStage = () => {
         setStageTitle('')
 
@@ -190,6 +186,7 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
         setShowStageContentsModal(true)
         setThumbnail('')
     }
+
     const handleCreateStageContentsBtnClick = async (stageContents: StageContents | undefined | null) => {
         console.log('handleCreateStageContentsBtnClick: ', handleCreateStageContentsBtnClick)
         if (stageContents) {
@@ -224,10 +221,9 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
     }
 
     const handleCancelBtnClicked = () => {
-        setSelectedStage(null)
-        setSelectedStageContents(null)
         setShowStageContentsModal(false)
         setShowContextMenu(false);
+        selectedStage?.stageContents.pop();
     }
 
     const handleShowStageContents = (stageContents: StageContents) => {
@@ -254,10 +250,6 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
             }
 
             setShowStageContentsModal(true);
-            // setShowContextMenu(false);
-            // setSelectedStage(null)
-            // setSelectedStageContents(null);
-
         }
         else {
             setShowContextMenu(false);
@@ -277,7 +269,6 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
     }
 
     const handleClose = () => setShowStageContentsModal(false);
-    const handleShow = () => setShowStageContentsModal(true);
 
     return (
         <>

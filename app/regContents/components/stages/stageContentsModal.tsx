@@ -28,7 +28,6 @@ const StageContentsModal = ({ show, handleClose, stageContents, options, thumbna
                 </Modal.Header>
                 <Modal.Body>
                     <div>
-                        {JSON.stringify(stageContents)}
                         <Form id='stageContentsForm' action={handleAction}>
                             <div className='d-flex mt-3 gap-2'>
                                 <div className="card shadow p-3 mb-5 col-4" tabIndex={0}>
