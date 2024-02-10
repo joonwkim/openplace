@@ -281,7 +281,6 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
 
     return (
         <>
-
             <div className='scroll-wrapper mt-3' ref={wrapperContainerRef}>
                 {stages.length > 0 && <button type='button' className='btn btn-outline-light border rounded-circle scroll-button left' onClick={() => handleStageItemsScrollContent('left')} title='Move Left'>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" className="bi bi-chevron-left" viewBox="0 0 16 16">
@@ -319,11 +318,6 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
                                                         </div>}
                                             </>)}
                                         </div>
-                                        {/* stage contents 등록 모달 */}
-                                        {/* <RegiStageContentsModal modalId={`staticBackdropForStageContents${stageIndex}${scIndex}`} formId={`createChildForm${stageIndex}${scIndex}`} stageContents={stageContents} childHeaderFormRef={childHeaderFormRef}
-                                            childDetailsRef={childDetailsRef} getStageContensDetails={getStageContensDetails} handleAction={handleFormAction} handleCreateStageContents={() => handleCreateStageContentsBtnClick(stageContents)}
-                                            options={options} onDrop={onDrop} thumbnail={thumbnail} handleCancelBtnClicked={handleCancelBtnClicked}
-                                        /> */}
                                     </>
                                     ))}
                                 </>)}
