@@ -147,10 +147,8 @@ export async function updateGeneralKnowhow(knowhowSelected: Knowhow, genFormData
 
 export async function updateKnowHowWithDetailInfo(knowhowSelected: Knowhow, genFormData: any, knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId">, ytData: any[], imgFormData: any[], cloudinaryDataIdsToDelete: string[], pdfFormData: any[]) {
     try {
-
         // console.log('ytData in updateKnowHowWithDetailInfo: ', ytData);
         // consoleLogFormDatas('pdf file formdata', pdfFormData);
-
         const { otherFormData, thumbNailFormData } = genFormData;
 
         let ytDataIds: string[] = [];
@@ -455,33 +453,6 @@ export async function createKnowHowWithDetailInfo(genFormData: any, knowhowDetai
     }
 }
 
-// export async function updateKnowhowToSetParent(parentId: string, knowhow: Knowhow) {
-//     try {
-//     const kh = await prisma.knowhow.update({
-//         where: {
-//             id: knowhow.id,
-//         },
-//         data: {
-//             parentId: parentId,
-//             // parent: {
-//             //     connect: {
-//             //         id: parentId,
-//             //     }
-//             // },
-//         },
-//         include: {
-//             parent: true,
-//             children: true,
-//         }
-
-//     });
-//         console.log('set parent ', kh)
-//     } catch (error) {
-//         console.log('update error:', error)
-//     }
-
-// }
-
 const getProjectType = (value: string) => {
     if (value === "true") return true;
     return false;
@@ -493,10 +464,10 @@ const getGroupType = (value: string) => {
 
 export async function createStages(parent: Knowhow, stages: Stage[]) {
     try {
+        // console.log('upsert stages: ', JSON.stringify(stages, null, 2))
         if (parent === null || stages === null) {
             return;
         }
-
         if (stages.length > 0) {
             stages.forEach(async (stage: Stage, stageIndex: number) => {
                 let stageId = stage.id;
@@ -514,11 +485,8 @@ export async function createStages(parent: Knowhow, stages: Stage[]) {
                     stageId = stage.id;
                 }
                 if (stage.stageContents.length > 0) {
-
-                    // console.log('stage contents: ', JSON.stringify(stage.stageContents))
-
+                    console.log('stage contents: ', JSON.stringify(stage.stageContents))
                     stage.stageContents.forEach(async (child: StageContents, childIndex: number) => {
-
                         if (!child.id && child.title !== 'new') {
                             console.log('child to be created: ', stageIndex, childIndex)
                             const fd = child.thumbnailFormdata;
@@ -544,13 +512,21 @@ export async function createStages(parent: Knowhow, stages: Stage[]) {
                             })
                             console.log('deleted stageContents result: ', result)
                         }
-
                         else {
-                            console.log('child already created: ', stageIndex, childIndex)
+                            console.log('stage contents: ', JSON.stringify(child, null, 2))
+                            const result = await prisma.stageContents.update({
+                                where: {
+                                    id: child.id,
+                                },
+                                data: {
+                                    title: child.title,
+                                    description: child.description,
+                                    stageId: stageId,
+                                }
+                            })
+                            console.log('child updated: ', stageIndex, childIndex, result)
                         }
-
                     })
-
                 }
             });
         }
@@ -558,6 +534,7 @@ export async function createStages(parent: Knowhow, stages: Stage[]) {
         console.log('createKnowhow error:', error);
     }
 }
+
 export async function createChildKnowhow(parentId: string, stage: Stage, child: StageContents, stageProjectHeader: any | undefined) {
     if (!stageProjectHeader) {
         return;
@@ -577,10 +554,9 @@ export async function createChildKnowhow(parentId: string, stage: Stage, child: 
             parentId: parentId,
         },
     });
-
-
     return knowhow;
 }
+
 export async function createGroupChildKnowhow(parentId: string, formData: any) {
     try {
         if (formData === null) {
@@ -588,9 +564,7 @@ export async function createGroupChildKnowhow(parentId: string, formData: any) {
         }
 
         const { otherFormData, thumbNailFormData } = formData;
-
         // consoleLogFormData('otherFormData', otherFormData)
-
         const thumbnailCdId = await getThumbnailCloudinaryDataId(thumbNailFormData) as string;
         const tagList = otherFormData.get('tags') as string;
         let tagConnect = await createTags(tagList) as any[];
@@ -630,15 +604,11 @@ export async function createKnowhow(formData: any) {
         if (formData === null) {
             return;
         }
-
         const { otherFormData, thumbNailFormData } = formData;
-
         // consoleLogFormData('otherFormData', otherFormData)
-
         const thumbnailCdId = await getThumbnailCloudinaryDataId(thumbNailFormData) as string;
         const tagList = otherFormData.get('tags') as string;
         let tagConnect = await createTags(tagList) as any[];
-
         try {
             const kn = await prisma.knowhow.create({
                 data: {

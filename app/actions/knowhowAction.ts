@@ -38,8 +38,6 @@ export async function createKnowhowWithDetailInfoAndStageAction(genFormData: any
     const results = await createStages(knowhow, stages);
 
     revalidatePath('/');
-
-
   } catch (error) {
     console.log('createKnowhowWithDetailInfoAndStageAction error:', error);
     throw error

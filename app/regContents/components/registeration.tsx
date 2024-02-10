@@ -70,24 +70,28 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
     }, [knowhow, parentKnowhowId]);
 
     const handleSaveBtnClick = async () => {
-        console.log('handleSaveBtnClick')
-
         const knowhowDetailInfo: Omit<KnowhowDetailInfo, "id" | "knowHowId"> = {
             thumbnailType: ThumbnailType.MEDIUM,
             detailText: text,
             youtubeDataIds: [],
             cloudinaryDataIds: []
         };
+        console.log('handleSaveBtnClick')
         if (knowhowSelected) {
             console.log('knowhowSelected')
             let uniqueCdIds = [...imgCdIds, ...pdfCdIds];
-            if (stages.length > 0) {
-                console.log('stages.length > 0')
-                await updateKnowhowAndDetailStagesAction(knowhowSelected, genFormData, knowhowDetailInfo, ytData, uniqueCdIds, imgFormData, pdfFormData, stages);
 
-            } else {
-                await updateKnowHowWithDetailInfoAction(knowhowSelected, genFormData, knowhowDetailInfo, ytData, uniqueCdIds, imgFormData, pdfFormData);
-            }
+            console.log('stages in handleSaveBtnClick: ', JSON.stringify(stages, null, 2))
+
+            await updateKnowhowAndDetailStagesAction(knowhowSelected, genFormData, knowhowDetailInfo, ytData, uniqueCdIds, imgFormData, pdfFormData, stages);
+
+            // if (stages.length > 0) {
+            //     console.log('stages.length > 0')
+            //     await updateKnowhowAndDetailStagesAction(knowhowSelected, genFormData, knowhowDetailInfo, ytData, uniqueCdIds, imgFormData, pdfFormData, stages);
+
+            // } else {
+            //     await updateKnowHowWithDetailInfoAction(knowhowSelected, genFormData, knowhowDetailInfo, ytData, uniqueCdIds, imgFormData, pdfFormData);
+            // }
         }
         else {
             console.log('no knowhowSelected')
@@ -99,7 +103,7 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
                 }
                 // router.push(`/regContents/?knowhowId=${parentId}`);
             } else {
-                console.log('no parentId')
+                // console.log('no parentId')
                 if (stages.length > 0) {
                     console.log('stages count:', stages.length)
                     await createKnowhowWithDetailInfoAndStageAction(genFormData, knowhowDetailInfo, ytData, imgFormData, pdfFormData, stages);
