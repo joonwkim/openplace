@@ -80,18 +80,8 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
         if (knowhowSelected) {
             console.log('knowhowSelected')
             let uniqueCdIds = [...imgCdIds, ...pdfCdIds];
-
-            console.log('stages in handleSaveBtnClick: ', JSON.stringify(stages, null, 2))
-
+            // console.log('stages in handleSaveBtnClick: ', JSON.stringify(stages, null, 2))
             await updateKnowhowAndDetailStagesAction(knowhowSelected, genFormData, knowhowDetailInfo, ytData, uniqueCdIds, imgFormData, pdfFormData, stages);
-
-            // if (stages.length > 0) {
-            //     console.log('stages.length > 0')
-            //     await updateKnowhowAndDetailStagesAction(knowhowSelected, genFormData, knowhowDetailInfo, ytData, uniqueCdIds, imgFormData, pdfFormData, stages);
-
-            // } else {
-            //     await updateKnowHowWithDetailInfoAction(knowhowSelected, genFormData, knowhowDetailInfo, ytData, uniqueCdIds, imgFormData, pdfFormData);
-            // }
         }
         else {
             console.log('no knowhowSelected')

@@ -218,28 +218,6 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
             }
             setSelectedStage(null)
             setSelectedStageContents(null)
-            // if (file) {
-            //     const title = formData.get('title') as string;
-            //     const description = formData.get('description') as string;
-
-
-
-            //     const td = await getFormdata(file, 'openplace');
-            //     td.append('path', file.path);
-            //     if (selectedStageContents) {
-            //         selectedStageContents.title = title;
-            //         selectedStageContents.description = description;
-            //         selectedStageContents.authorId = session?.user.id;
-            //         selectedStageContents.thumbnailFormdata = td;
-            //         setStages(stages)
-            //     }
-            //     setSelectedStage(null)
-            //     setSelectedStageContents(null)
-            // } else {
-            //     console.log('handleFormAction: ', formData)
-            //     const title = formData.get('title') as string;
-            //     const description = formData.get('description') as string;
-            // }
         } catch (error) {
             console.log('handleSubmit in regiGeneral error: ', error);
         }
