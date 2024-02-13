@@ -464,7 +464,7 @@ const getGroupType = (value: string) => {
 
 export async function createStages(parent: Knowhow, stages: Stage[]) {
     try {
-        // console.log('upsert stages: ', JSON.stringify(stages, null, 2))
+        console.log('upsert stages: ', JSON.stringify(stages, null, 2))
         if (parent === null || stages === null) {
             return;
         }
@@ -513,7 +513,7 @@ export async function createStages(parent: Knowhow, stages: Stage[]) {
                             console.log('deleted stageContents result: ', result)
                         }
                         else {
-                            console.log('stage contents: ', JSON.stringify(child, null, 2))
+                            // console.log('stage contents: ', JSON.stringify(child, null, 2))
                             const result = await prisma.stageContents.update({
                                 where: {
                                     id: child.id,
@@ -524,7 +524,7 @@ export async function createStages(parent: Knowhow, stages: Stage[]) {
                                     stageId: stageId,
                                 }
                             })
-                            console.log('child updated: ', stageIndex, childIndex, result)
+                            console.log('stage contents: ', stageIndex, childIndex, result)
                         }
                     })
                 }

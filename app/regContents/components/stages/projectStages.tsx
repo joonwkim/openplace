@@ -11,16 +11,14 @@ import new_logo_cross from '@/public/svgs/new_logo_cross.svg'
 import { useSession } from 'next-auth/react';
 import { getFormdata } from '../../lib/formData';
 import StageContextMenu from './stageContextMenu';
-import RegiStageContentsModal from './regiStageContentsModal';
 import StageContentsModal from './stageContentsModal';
+import StageProcessModal from './stageProcessModal';
 
 type ProjectStageProps = {
     setRegDataToSave: (data: any) => void,
     rootThumbnailUrl: string,
     knowhow: any | undefined,
     editMode: boolean | undefined,
-    // isGroupType: boolean | undefined
-    // stages: Stage[],
 };
 
 export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToSave, rootThumbnailUrl, knowhow, editMode, }: ProjectStageProps, ref) => {
@@ -31,7 +29,6 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
     const childHeaderFormRef = useRef<any>();
     const [leftStage, setLeftStage] = useState<number>(0);
     const [rightStage, setRightStage] = useState<number>(0);
-    const [stageTitle, setStageTitle] = useState('')
     const [showContextMenu, setShowContextMenu] = useState(false)
     const [stages, setStages] = useState<Stage[]>([])
     const [thumbnail, setThumbnail] = useState('')
@@ -40,6 +37,7 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
     const [file, setFile] = useState<any>();
     const { data: session } = useSession();
     const [showStageContentsModal, setShowStageContentsModal] = useState(false);
+    const [showStageProcessModal, setShowStageProcessModal] = useState(false);
 
     const getChildDetail = (childDetail: any) => {
         let ch: ChildDetail = {
@@ -102,7 +100,6 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
 
     useEffect(() => {
         const stgs = getInitialStages(knowhow)
-        // console.log('initial stages[0]:', JSON.stringify(stgs[0], null, 2))
         setStages(stgs)
     }, [getInitialStages, knowhow])
 
@@ -141,18 +138,18 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
         }
     };
 
-    const createRootStageChild = () => {
+    const createRootStage = (title: string) => {
         let stg: Stage;
         if (editMode) {
             stg = {
-                stageTitle: stageTitle,
+                stageTitle: title,
                 stage: 0,
                 stageContents: []
             }
             stages.push(stg);
         } else {
             stg = {
-                stageTitle: stageTitle,
+                stageTitle: title,
                 stage: 0,
                 stageContents: []
             }
@@ -165,19 +162,13 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
 
     }
 
-    const handleAddStage = () => {
-        setStageTitle('')
-
-        let stg: Stage;
-        stg = createRootStageChild();
-        createAddStageContentsBtn(stg);
-    }
-
     const handleMouseOut = () => {
         stageContentsRef.current?.handleSubmit();
     }
 
-    const handlAddStageContentsBtnClick = (stage: Stage | undefined | null, stageContents: StageContents | undefined | null) => {
+    const handlOpenStageContentsModal = (stage: Stage | undefined | null, stageContents: StageContents | undefined | null) => {
+        console.log('handlOpenStageContentsModal stage: ', stage)
+        console.log('handlOpenStageContentsModal stageContents: ', stageContents)
         setSelectedStage(stage);
         setSelectedStageContents(stageContents)
         if (stage) {
@@ -188,7 +179,6 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
     }
 
     const handleCreateStageContentsBtnClick = async (stageContents: StageContents | undefined | null) => {
-        console.log('handleCreateStageContentsBtnClick: ', handleCreateStageContentsBtnClick)
         if (stageContents) {
             stageContents.thumbnailUrl = thumbnail;
             setThumbnail('')
@@ -197,11 +187,11 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
         setShowContextMenu(false);
     }
 
-    const handleFormAction = async (formData: FormData) => {
+    const handleStageContentsFormAction = async (formData: FormData) => {
         try {
-            if (selectedStageContents) {
                 const title = formData.get('title') as string;
                 const description = formData.get('description') as string;
+            if (selectedStageContents) {
                 selectedStageContents.title = title;
                 selectedStageContents.description = description;
                 selectedStageContents.authorId = session?.user.id;
@@ -213,10 +203,16 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
                 }
                 setStages(stages)
             }
+            else {
+
+            }
+
+            setShowStageContentsModal(false)
+            setShowContextMenu(false);
             setSelectedStage(null)
             setSelectedStageContents(null)
         } catch (error) {
-            console.log('handleSubmit in regiGeneral error: ', error);
+            console.log('handleStageContentsFormAction error: ', error);
         }
     }
 
@@ -242,10 +238,7 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
 
     const handleEditContextMenuBtnClicked = () => {
         if (selectedStageContents) {
-
-            console.log('selectedStageContents: ', selectedStageContents)
             if (selectedStageContents.thumbnailUrl) {
-                // thumbnail = selectedStageContents.thumbnailUrl;
                 setThumbnail(selectedStageContents.thumbnailUrl)
             }
 
@@ -268,8 +261,23 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
         }
     }
 
-    const handleClose = () => setShowStageContentsModal(false);
+    const handleCloseStageContentsModal = () => setShowStageContentsModal(false);
+    const handleOpenStageProcessModalBtnClicked = () => setShowStageProcessModal(true);
+    const handleCloseStageProcessModal = () => setShowStageProcessModal(false);
 
+    const handleCreateStagePorcess = () => {
+
+    }
+    const handleAddStageProcessAction = (formData: FormData) => {
+        const title = formData.get('stageTitle') as string;
+        let stg: Stage;
+        stg = createRootStage(title);
+        createAddStageContentsBtn(stg);
+        setShowStageProcessModal(false)
+
+    }
+
+    const handleCancelProcessBtnClicked = () => setShowStageProcessModal(false);
     return (
         <>
             <div className='scroll-wrapper mt-3' ref={wrapperContainerRef}>
@@ -292,7 +300,7 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
                                             </>) :
                                                 (<>
                                                     {stageContents.thumbnailUrl ? <ChildThumbnail key={scIndex} title={stageContents.title} src={stageContents.thumbnailUrl} onClick={() => handleShowStageContents(stageContents)} onContextMenu={(e) => handleContextMenu(e, stage, stageContents)} /> :
-                                                        <div className='cross-container mt-2' onClick={() => { handlAddStageContentsBtnClick(stage, stageContents) }} >
+                                                        <div className='cross-container mt-2' onClick={() => { handlOpenStageContentsModal(stage, stageContents) }} >
                                                             <div className='cross-btn mt-5'>
                                                                 <Image priority src={new_logo_cross} height={100} width={100} alt="cross" />
                                                             </div>
@@ -301,7 +309,7 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
                                                         </div>}
                                                 </>)) : (<>
                                                     {stageContents.thumbnailUrl ? <ChildThumbnail key={scIndex} title={stageContents.title} src={stageContents.thumbnailUrl} onClick={() => handleShowStageContents(stageContents)} /> :
-                                                        <div className='cross-container mt-2' onClick={() => { handlAddStageContentsBtnClick(stage, stageContents) }} >
+                                                        <div className='cross-container mt-2' onClick={() => { handlOpenStageContentsModal(stage, stageContents) }} >
                                                             <div className='cross-btn mt-5'>
                                                                 <Image priority src={new_logo_cross} height={100} width={100} alt="cross" />
                                                             </div>
@@ -317,12 +325,13 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
                         </div>
                     </>
                     ))}
-                    {editMode && <div className='mt-4' data-bs-toggle="modal" data-bs-target="#staticBackdropForAddStageTitle">
-                        <button className='btn btn-primary p-2'>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-plus-lg" viewBox="0 0 16 16"  >
-                                <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
-                            </svg>단계 생성하기</button>
-                    </div>}
+                    {editMode &&
+                        <div className='mt-4'>
+                            <button className='btn btn-primary p-2' onClick={handleOpenStageProcessModalBtnClicked}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-plus-lg" viewBox="0 0 16 16"  >
+                                    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
+                                </svg>단계 생성하기</button>
+                        </div>}
                 </div>
                 {stages.length > 0 && <button type='button' className='ms-3 btn btn-outline-light border rounded-circle scroll-button right' onClick={() => handleStageItemsScrollContent('right')} title='Move Right'>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="grey" className="bi bi-chevron-right" viewBox="0 0 16 16">
@@ -330,29 +339,13 @@ export const ProjectStages = forwardRef<any, ProjectStageProps>(({ setRegDataToS
                     </svg>
                 </button>}
             </div>
-            {/* stage title 단계생성 모달 */}
-            <div className="modal modal-lg fade" id="staticBackdropForAddStageTitle" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropForAddStageTitleLabel" aria-hidden="true">
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h3 className="modal-title" id="staticBackdropForProfileChangeLabel">새단계</h3>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div className="modal-body d-flex">
-                            <div className='col-1'>제목:</div>
-                            <div className='col-11'>
-                                <input id='stageTitleInput' type="text" className="form-control" value={stageTitle} onChange={(e) => setStageTitle(e.target.value)} />
-                            </div>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="submit" className="btn btn-primary" data-bs-dismiss="modal" onClick={handleAddStage}>단계 생성</button>
-                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <StageContentsModal show={showStageContentsModal} handleClose={handleClose} stageContents={selectedStageContents}
-                childDetailsRef={childDetailsRef} getStageContensDetails={getStageContensDetails} handleAction={handleFormAction} handleCreateStageContents={() => handleCreateStageContentsBtnClick(selectedStageContents)}
+
+            <StageProcessModal show={showStageProcessModal} handleCreateStagePorcess={handleCreateStagePorcess}
+                handleStageProcessAction={handleAddStageProcessAction} handleClose={handleCloseStageProcessModal}
+                handleCancelBtnClicked={handleCancelProcessBtnClicked} />
+
+            <StageContentsModal show={showStageContentsModal} handleClose={handleCloseStageContentsModal} stageContents={selectedStageContents}
+                childDetailsRef={childDetailsRef} getStageContensDetails={getStageContensDetails} handleStageContentsAction={handleStageContentsFormAction} handleCreateStageContents={() => handleCreateStageContentsBtnClick(selectedStageContents)}
                 options={options} onDrop={onDrop} thumbnail={thumbnail} handleCancelBtnClicked={handleCancelBtnClicked}
             />
         </>

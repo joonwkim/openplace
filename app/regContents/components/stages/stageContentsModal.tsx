@@ -14,12 +14,18 @@ type BoardModalProps = {
     handleClose: any,
     childDetailsRef: any,
     getStageContensDetails: any,
-    handleAction: (formData: FormData) => void,
-    handleCreateStageContents: (child: any) => void,
+    handleStageContentsAction: (formData: FormData) => void,
+    handleCreateStageContents: (stageContents: any) => void,
     handleCancelBtnClicked: () => void,
 };
 
-const StageContentsModal = ({ show, handleClose, stageContents, options, thumbnail, childDetailsRef, getStageContensDetails, handleAction, handleCreateStageContents, handleCancelBtnClicked }: BoardModalProps) => {
+const StageContentsModal = ({ show, handleClose, stageContents, options, thumbnail, childDetailsRef, getStageContensDetails, handleStageContentsAction, handleCreateStageContents, handleCancelBtnClicked }: BoardModalProps) => {
+    const handleSubmit = (e: any) => {
+        handleCreateStageContents(e)
+    }
+    const handleAction = (formData: FormData) => {
+        handleStageContentsAction(formData)
+    }
     return (
         <>
             <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false} size='xl'>
@@ -28,7 +34,7 @@ const StageContentsModal = ({ show, handleClose, stageContents, options, thumbna
                 </Modal.Header>
                 <Modal.Body>
                     <div>
-                        <Form id='stageContentsForm' action={handleAction}>
+                        <Form id='stageContentsForm' action={handleAction} onSubmit={handleSubmit}>
                             <div className='d-flex mt-3 gap-2'>
                                 <div className="card shadow p-3 mb-5 col-4" tabIndex={0}>
                                     {thumbnail ? (
@@ -77,13 +83,14 @@ const StageContentsModal = ({ show, handleClose, stageContents, options, thumbna
                                     </Form.Group>
                                 </div>
                             </div>
+
                         </Form>
                         <RegiOtherDatails ref={childDetailsRef} setRegDataToSave={getStageContensDetails} />
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <button type="submit" className="btn btn-primary" form='stageContentsForm' data-bs-dismiss="modal" onClick={handleCreateStageContents}>{stageContents?.title !== "new" ? (<div>컨텐츠 수정</div>) : (<div>컨텐츠 생성</div>)}</button>
-                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleCancelBtnClicked} >취소</button>
+                    <button type="submit" className="btn btn-primary" form='stageContentsForm'>{stageContents?.title !== "new" ? (<div>컨텐츠 수정</div>) : (<div>컨텐츠 생성</div>)}</button>
+                    <button type="button" className="btn btn-secondary" onClick={handleCancelBtnClicked} >취소</button>
                 </Modal.Footer>
             </Modal>
         </>)

@@ -93,13 +93,14 @@ const Registeration = ({ categories, knowHowTypes, tags, parentKnowhowId, knowho
                 }
                 // router.push(`/regContents/?knowhowId=${parentId}`);
             } else {
+                await createKnowhowWithDetailInfoAndStageAction(genFormData, knowhowDetailInfo, ytData, imgFormData, pdfFormData, stages);
                 // console.log('no parentId')
-                if (stages.length > 0) {
-                    console.log('stages count:', stages.length)
-                    await createKnowhowWithDetailInfoAndStageAction(genFormData, knowhowDetailInfo, ytData, imgFormData, pdfFormData, stages);
-                } else {
-                    await createKnowhowWithDetailInfoAction(genFormData, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
-                }
+                // if (stages.length > 0) {
+                //     console.log('stages count:', stages.length)
+                //     await createKnowhowWithDetailInfoAndStageAction(genFormData, knowhowDetailInfo, ytData, imgFormData, pdfFormData, stages);
+                // } else {
+                //     await createKnowhowWithDetailInfoAction(genFormData, knowhowDetailInfo, ytData, imgFormData, pdfFormData);
+                // }
             }
         }
         router.push('/');
