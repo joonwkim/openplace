@@ -1,0 +1,138 @@
+.message-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.selectedUsers-list {
+    width: 16vw;
+    height: 80vh;
+    max-height: 90vh;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-top: 40px;
+    margin-right: 30px;
+}
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    width: 50vw;
+    height: 80vh;
+    max-height: 90vh;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 40px;
+}
+
+.message-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    flex-grow: 1;
+    padding: 10px;
+    overflow-y: auto;
+
+    ;
+}
+
+.message-input-container {
+    display: flex;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-top: 1px solid #ccc;
+    width: 100%;
+}
+
+.message-input {
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-right: 10px;
+    resize: none;
+    width: 40vw;
+}
+
+.send-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #0084ff;
+    color: white;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #006bbf;
+    }
+}
+
+.message-header {
+    width: 100%;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 20px;
+    margin-left: 10px;
+    position: relative;
+
+    >span {
+        margin-right: 50px;
+    }
+}
+
+.search-input-wrapper {
+    /* position: absolute; */
+    top: 30px;
+    right: 0;
+    width: 100%;
+    /* display: flex; */
+    justify-content: flex-end;
+}
+
+.userSearch-input {
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    border-radius: 8px;
+    /* margin-left: 3px; */
+}
+
+.message-bubble-sent {
+    border-radius: 20px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    min-width: 50px;
+    max-width: 80%;
+    word-wrap: break-word;
+    background-color: #dcf8c6;
+    /* width: fit-content; */
+    margin-left: auto;
+    /* width: fit-content; */
+}
+
+.message-bubble-received {
+    border-radius: 20px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    min-width: 50px;
+    max-width: 80%;
+    word-wrap: break-word;
+    background-color: skyblue;
+    /* width: fit-content; */
+    margin-right: auto;
+    /* width: fit-content; */
+}
+
+.user-search-dropdown {
+    height: 20em;
+    margin-left: -170px !important;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+/* li {
+    border-top: 1px solid #ccc;
+} */

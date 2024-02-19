@@ -91,6 +91,12 @@ export async function getUserById(id: string) {
         },
         include: {
             profile: true,
+            messages: {
+                include: {
+                    messageRecipients: true,
+                }
+            }
+
         }
     })
     return user;
@@ -167,5 +173,30 @@ export async function findUpdateGoogleUser(email: string, input: GoogleUser) {
         return true;
     } catch (error) {
         return ({ error });
+    }
+}
+
+export async function searchUsersByName(name: string) {
+    try {
+        const users = await prisma.user.findMany({
+            where: {
+                name: {
+                    contains: name.trim(),
+                    mode: 'default',
+                },
+            },
+            include: {
+                profile: true,
+                messages: {
+                    include: {
+                        messageRecipients: true,
+                    }
+                }
+
+            }
+        })
+        return users;
+    } catch (error) {
+        console.log("searchUsersByName:", searchUsersByName)
     }
 }

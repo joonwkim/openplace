@@ -84,6 +84,13 @@ const Header = () => {
       alert('로그인을 하셔야 등록할 수 있습니다.');
     }
   }
+  const handleToSendMessage = () => {
+    if (session?.user) {
+      router.push('/message');
+    } else {
+      alert('로그인을 하셔야 메시지를 확인할 수 있습니다.');
+    }
+  }
   // console.log('membershipApprovals:', membershipApprovals)
 
   return (<>
@@ -109,7 +116,7 @@ const Header = () => {
               handleCancelBtnClick={handleCancelBtnClicked} />
           </Nav>
           <Nav className="ms-2 me-2">
-            <Nav.Link href="/email">
+            <Nav.Link onClick={handleToSendMessage}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"

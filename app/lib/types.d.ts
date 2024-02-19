@@ -41,6 +41,26 @@ export type ChildDetail = {
     text?: string,
 }
 
+export type MessageDelivered = {
+    title: string | null,
+    message: string,
+    deliveryType: string,
+    createdAt: Date,
+    isRead: boolean,
+}
+
+export type MessagingPartner = {
+    id: string,
+    name: string,
+    email: string,
+    image: string | null,
+    lastMsgCreatedAt: Date,
+    profile: object | null,
+    googleLogin: boolean,
+    isActive: boolean,
+    isSelected: boolean,
+}
+
 type KVPairs<T, K extends keyof T = keyof T> = K extends keyof T ? { key: K, val: T[K] } : never;
 
 
