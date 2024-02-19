@@ -21,7 +21,6 @@ const MessagingPartners = ({ partners }: MessageSendersProps) => {
                         {partners?.map((partner: any, index: number) => (<>{partner.isSelected ? (<div key={partner.id} className='ms-3 border-top btn text-start list-group-item active' title={partner.email} aria-current="true"
                             onClick={() => handleOnClick(partner)}>{partner.name}</div>) :
                             (<div key={partner.id} className='ms-3 border-top btn text-start list-group-item' title={partner.email} aria-current="true" onClick={() => handleOnClick(partner)}>{partner.name}</div>)}
-
                         </>))}
                     </div>
                 )}
