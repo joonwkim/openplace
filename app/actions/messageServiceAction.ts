@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 export async function createMessageAction(senderId: string, receiverId: string, message: string) {
     try {
         await createMessage(senderId, receiverId, message);
-        revalidatePath('/email');
+        revalidatePath('/message');
     } catch (error) {
         console.log(error)
     }
