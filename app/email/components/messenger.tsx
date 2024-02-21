@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import plusicon from '../../public/images/plus.png';
+import plusicon from '../../../public/images/plus.png';
 import * as styled from '../styles';
 import { User } from '@prisma/client';
 import MessageInput from './messageInput';
@@ -120,3 +120,4 @@ const Messenger: React.FC = async () => {
 };
 
 export default Messenger;
+

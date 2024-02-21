@@ -2,6 +2,7 @@ import React from 'react'
 import { searchUsersByName } from '../services/userService'
 import { User } from '@prisma/client'
 import MessageSender from './components/messageSender'
+import Messenger from './components/messenger'
 
 const EmailPage = async () => {
 
@@ -26,8 +27,6 @@ const EmailPage = async () => {
 
       </div>
     </div>
-
-
   </>
 
   )
