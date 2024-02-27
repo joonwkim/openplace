@@ -1,4 +1,6 @@
-import React from 'react'
+"use client";
+
+import React, { useEffect, useRef } from 'react';
 import { getUserById, searchUsersByName } from '../services/userService'
 import { User, } from '@prisma/client'
 import MessageSender from './components/messageSender'
@@ -10,8 +12,8 @@ import { getMessagePartners, getMessagesDelivered } from '../services/messageSer
 import { MessageDelivered } from '../lib/types';
 import MessagingPartners from './components/messagingPartners';
 
-const MessagePage = async ({ searchParams }: { searchParams: { searchUser: string, selectedUserId: string } }) => {
 
+const MessagePage = async ({ searchParams }: { searchParams: { searchUser: string, selectedUserId: string } }) => {
     const session = await getServerSession(authOptions);
     let users: User[] = [];
     let partners: any[] = [];
@@ -38,30 +40,51 @@ const MessagePage = async ({ searchParams }: { searchParams: { searchUser: strin
             })
         }
     }
+
+
+    const chatEndRef = useRef<null | HTMLDivElement>(null); 
+
+    const scrollToBottom = () => {
+        chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => { 
+        scrollToBottom();
+    }, [messages]); 
+
     return (
         <>
-            {session?.user ? <div className='message-container'>
-                <div className='selectedUsers-list'>
-                    <SearchUser users={users} />
-                    <MessagingPartners partners={partners} />
-                </div>
-                <div className='chat-container'>
-                    {messages?.length > 0 && (<>
-                        {messages?.map((msg: MessageDelivered, index: number) => (<>
-                            {msg.deliveryType === 'sent' ? <div key={index} className='message-bubble-sent' >{msg.message}</div> :
-                                msg.deliveryType === 'received' ? <div key={index} className='message-bubble-received' >{msg.message}</div> : <></>}
-                        </>))}
-                    </>
-                    )}
-                    <div className='message-list'>
-
+            {session?.user ? (
+                <div className='message-container'>
+                    <div className='selectedUsers-list'>
+                        <SearchUser users={users} />
+                        <MessagingPartners partners={partners} />
                     </div>
-                    <MessageSender sender={session?.user} receiverId={selectedUser?.id} />
+                    <div className='chat-interface'>
+                        <div className='chat-container' >
+                            {messages?.length > 0 && (
+                                <>
+                                    {messages?.map((msg: MessageDelivered, index: number) => (
+                                        <React.Fragment key={index}>
+                                            {msg.deliveryType === 'sent' ? (
+                                                <div className='message-bubble-sent'>{msg.message}</div>
+                                            ) : msg.deliveryType === 'received' ? (
+                                                <div className='message-bubble-received'>{msg.message}</div>
+                                            ) : null}
+                                        </React.Fragment>
+                                    ))}
+                                </>
+                            )}
+                            <div ref={chatEndRef} />
+                        </div>
+                        <MessageSender sender={session?.user} receiverId={selectedUser?.id} />
+                    </div>
                 </div>
-            </div> : <>
+            ) : (
                 <h2 className='mt-3 p-3 text-center'>로그인 하시면 메시지를 사용하실 수 있습니다.</h2>
-            </>}
+            )}
         </>
-    )
+    );
+
 }
 export default MessagePage
