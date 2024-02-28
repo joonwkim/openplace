@@ -1,6 +1,5 @@
-"use client";
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { getUserById, searchUsersByName } from '../services/userService'
 import { User, } from '@prisma/client'
 import MessageSender from './components/messageSender'
@@ -11,6 +10,7 @@ import { authOptions } from '../api/auth/[...nextauth]/route'
 import { getMessagePartners, getMessagesDelivered } from '../services/messageService'
 import { MessageDelivered } from '../lib/types';
 import MessagingPartners from './components/messagingPartners';
+import ChatContainer from './components/chatContainer';
 
 
 const MessagePage = async ({ searchParams }: { searchParams: { searchUser: string, selectedUserId: string } }) => {
@@ -42,16 +42,6 @@ const MessagePage = async ({ searchParams }: { searchParams: { searchUser: strin
     }
 
 
-    const chatEndRef = useRef<null | HTMLDivElement>(null); 
-
-    const scrollToBottom = () => {
-        chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
-
-    useEffect(() => { 
-        scrollToBottom();
-    }, [messages]); 
-
     return (
         <>
             {session?.user ? (
@@ -61,22 +51,7 @@ const MessagePage = async ({ searchParams }: { searchParams: { searchUser: strin
                         <MessagingPartners partners={partners} />
                     </div>
                     <div className='chat-interface'>
-                        <div className='chat-container' >
-                            {messages?.length > 0 && (
-                                <>
-                                    {messages?.map((msg: MessageDelivered, index: number) => (
-                                        <React.Fragment key={index}>
-                                            {msg.deliveryType === 'sent' ? (
-                                                <div className='message-bubble-sent'>{msg.message}</div>
-                                            ) : msg.deliveryType === 'received' ? (
-                                                <div className='message-bubble-received'>{msg.message}</div>
-                                            ) : null}
-                                        </React.Fragment>
-                                    ))}
-                                </>
-                            )}
-                            <div ref={chatEndRef} />
-                        </div>
+                        <ChatContainer messages={messages} />
                         <MessageSender sender={session?.user} receiverId={selectedUser?.id} />
                     </div>
                 </div>
