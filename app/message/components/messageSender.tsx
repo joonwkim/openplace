@@ -36,17 +36,6 @@ const MessageSender = ({ sender, receiverId }: MessageSenderProps) => {
             </button>
             <div></div>
         </div>
-        {/* <styled.ChatContainer>
-            <styled.MessagesList>
-                {sender?.messages.map((message: any, index: number) => (
-                    <styled.MessageBubble sender='me' key={message.id}>
-                        {message.message}
-                    </styled.MessageBubble>
-                ))}
-                <div ref={messagesEndRef} />
-            </styled.MessagesList>
-            <MessageInput onSend={handleOnSend} />
-        </styled.ChatContainer> */}
     </>
 
     )

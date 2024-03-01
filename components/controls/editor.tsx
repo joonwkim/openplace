@@ -8,6 +8,7 @@ type FileProps = {
     // showTextEditor: boolean;
     setRegDataToSave: (data: any) => void;
     initialData: string,
+    initHeight?: string,
 };
 
 
@@ -15,6 +16,7 @@ type FileProps = {
 export const Editor = forwardRef<CanHandleSubmit, FileProps>((props: FileProps, ref) => {
     const { setRegDataToSave, initialData } = props;
     const [data, setData] = useState(initialData);
+    const [height, setHeight] = useState<string>(props.initHeight ? props.initHeight : '400px')
 
     useImperativeHandle(
         ref,
@@ -26,7 +28,7 @@ export const Editor = forwardRef<CanHandleSubmit, FileProps>((props: FileProps, 
         }),
     );
     const setMinHeight = (editor: any) => {
-        editor.ui.view.editable.element.style.minHeight = "400px";
+        editor.ui.view.editable.element.style.minHeight = height;
     };
 
     return (
@@ -42,10 +44,10 @@ export const Editor = forwardRef<CanHandleSubmit, FileProps>((props: FileProps, 
                     const data = editor.getData();
                     setData(data);
                     setMinHeight(editor);
-                    console.log({ event, editor, data });
+                    // console.log({ event, editor, data });
                 }}
                 onBlur={(event, editor) => {
-                    editor.editing.view.change((writer: any) => writer.setStyle('height', '400px', editor.editing.view.document.getRoot()))
+                    editor.editing.view.change((writer: any) => writer.setStyle('height', height, editor.editing.view.document.getRoot()))
                     // console.log('Blur.', editor);
                 }}
                 onFocus={(event, editor) => {

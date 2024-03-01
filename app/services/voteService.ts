@@ -1,6 +1,6 @@
 'use server';
 import prisma from '@/prisma/prisma';
-import { Knowhow, ThumbsStatus, User, Vote } from '@prisma/client';
+import { Knowhow, ThumbsStatus, User, Vote, BulletinComment } from '@prisma/client';
 import exp from 'constants';
 import { disconnect } from 'process';
 import { VoteData } from '../components/knowhowItem';
@@ -12,6 +12,69 @@ export async function getKnowHows() {
         }
     });
 }
+export async function createtCommentVoteAndUpdateComment(comment: BulletinComment, voter: User, voteInput: any) {
+    // console.log('voter:', JSON.stringify(voter,null,2))
+    if (voter === undefined || voteInput === null) {
+        // console.log('undefined')
+        return;
+    }
+    let vote = await prisma.bulletinCommentVote.findFirst({
+        where: {
+            commentId: comment?.id,
+            bulletinCommentVoterId: voter?.id
+        }
+    });
+    // console.log('vote retreived from db:', JSON.stringify(vote,null,2))
+
+    if (vote !== null) {
+        //update vote
+        if (vote.thumbsStatus !== voteInput.thumbsStatus) {
+            if (voteInput.thumbsStatus === ThumbsStatus.None && voteInput.forked === false) {
+                const result = await prisma.bulletinCommentVote.delete({
+                    where: {
+                        id: vote.id,
+                    },
+                });
+                console.log('vote deleted');
+            }
+            else {
+                const result = await prisma.bulletinCommentVote.update({
+                    where: {
+                        id: vote.id,
+                    },
+                    data: {
+                        thumbsStatus: voteInput.thumbsStatus,
+                        forked: voteInput.forked,
+                    }
+                });
+                console.log("comment vote updated", JSON.stringify(result, null, 2));
+            }
+        }
+    }
+    else if (vote === null) {
+        //create vote
+        if (voteInput.thumbsStatus !== ThumbsStatus.None) {
+            vote = await prisma.bulletinCommentVote.create({
+                data: {
+                    thumbsStatus: voteInput.thumbsStatus,
+                    forked: voteInput.forked,
+                    bulletinCommentVoter: {
+                        connect: {
+                            id: voter.id,
+                        }
+                    },
+                    comment: {
+                        connect: {
+                            id: comment.id
+                        }
+                    }
+                },
+            });
+            console.log('comment vote created', JSON.stringify(vote, null, 2));
+        }
+    }
+}
+
 export async function createtVoteAndUpdateKnowHow(knowhow: Knowhow, voter: User, voteInput: VoteData) {
     // console.log('voter:', JSON.stringify(voter,null,2))
     if (voter === undefined || voteInput === null) {

@@ -91,6 +91,9 @@ const Header = () => {
       alert('로그인을 하셔야 메시지를 확인할 수 있습니다.');
     }
   }
+  const handleToSendMail = () => {
+
+  }
   // console.log('membershipApprovals:', membershipApprovals)
 
   return (<>
@@ -117,14 +120,13 @@ const Header = () => {
           </Nav>
           <Nav className="ms-2 me-2">
             <Nav.Link onClick={handleToSendMessage}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="white"
-                className="bi bi-envelope"
-                viewBox="0 0 16 16"
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" className="bi bi-chat-dots" viewBox="0 0 16 16">
+                <path d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
+                <path d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9 9 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.4 10.4 0 0 1-.524 2.318l-.003.011a11 11 0 0 1-.244.637c-.079.186.074.394.273.362a22 22 0 0 0 .693-.125m.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6-3.004 6-7 6a8 8 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a11 11 0 0 0 .398-2" />
+              </svg>
+            </Nav.Link>
+            <Nav.Link onClick={handleToSendMail}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" className="bi bi-envelope" viewBox="0 0 16 16">
                 <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z" />
               </svg>
             </Nav.Link>
@@ -161,7 +163,6 @@ const Header = () => {
               </Overlay>
             </Nav.Link>
 
-
             {/* <Nav.Link href="/regContents"> <button className="btn btn-outline-danger ms-2" type="submit" title='notification'>등록하기</button></Nav.Link> */}
             <Nav.Link onClick={handleToRegister}> <button className="btn btn-outline-danger ms-2" type="submit" title='notification'>등록하기</button></Nav.Link>
           </Nav>
@@ -170,18 +171,18 @@ const Header = () => {
             <Nav className="ms-auto" title={session?.user.name}>
               {session.user.image ? (
                 <Nav.Link ref={ref} onClick={handleUserIconOrNameClick}>
-                <Image id="userpicture" style={{ borderRadius: '50%' }} unoptimized src={session.user.image} alt={session.user.email} width="30" height="30" />
-                <Overlay show={showOverlay} target={ref} placement="left" container={ref} containerPadding={20}>
-                  <Popover id="popover-contained">
-                    <Popover.Header className='bg-dark text-center' as="h3">마이 홈</Popover.Header>
-                    <Popover.Body>
-                      {session.user.googleLogin ? <div className="text-center" data-bs-toggle="modal" data-bs-target="#staticBackdropForProfileChange">내 정보 수정</div> : <></>}
-                      <div className='text-center' onClick={handleShowMyKnowhow}>내가 등록한 컨텐츠 보기</div>
-                      <div className='text-center' onClick={handleShowKnowhowsPaticipate}>내가 참여중인 컨텐츠 보기</div>
-                    </Popover.Body>
-                  </Popover>
-                </Overlay>
-              </Nav.Link>) :
+                  <Image id="userpicture" style={{ borderRadius: '50%' }} unoptimized src={session.user.image} alt={session.user.email} width="30" height="30" />
+                  <Overlay show={showOverlay} target={ref} placement="left" container={ref} containerPadding={20}>
+                    <Popover id="popover-contained">
+                      <Popover.Header className='bg-dark text-center' as="h3">마이 홈</Popover.Header>
+                      <Popover.Body>
+                        {session.user.googleLogin ? <div className="text-center" data-bs-toggle="modal" data-bs-target="#staticBackdropForProfileChange">내 정보 수정</div> : <></>}
+                        <div className='text-center' onClick={handleShowMyKnowhow}>내가 등록한 컨텐츠 보기</div>
+                        <div className='text-center' onClick={handleShowKnowhowsPaticipate}>내가 참여중인 컨텐츠 보기</div>
+                      </Popover.Body>
+                    </Popover>
+                  </Overlay>
+                </Nav.Link>) :
                 (<Nav.Link ref={ref} onClick={handleUserIconOrNameClick}> {session.user.name}
                   <Overlay show={showOverlay} target={ref} placement="left" container={ref} containerPadding={20}>
                     <Popover id="popover-contained">

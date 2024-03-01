@@ -3,7 +3,6 @@ import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState, } 
 import { getCloudinaryImgData, getCloudinaryPdfData, } from '@/app/lib/arrayLib';
 import { consoleLogFormDatas } from '@/app/lib/formdata';
 import { Knowhow } from '@prisma/client';
-import { RegiImages } from '../regiImages';
 import { Text } from './text';
 import { Youtube } from './youTube';
 import { Images } from './images';

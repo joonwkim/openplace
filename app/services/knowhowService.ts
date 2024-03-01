@@ -665,8 +665,8 @@ export async function updateKnowhow(knowhow: Knowhow) {
     } catch (error) {
         console.log('createKnowHow error:', error);
     }
-
 }
+
 async function getRootKnowhow() {
     const knowhows = await prisma.knowhow.findMany({
         where: {
@@ -826,6 +826,26 @@ export async function getKnowhow(id: string) {
                 votes: true,
                 category: true,
                 thumbnailCloudinaryData: true,
+                bulletinBoards: {
+                    include: {
+                        writer: true,
+                        bulletinComments: {
+                            include: {
+                                bulletinBoard: true,
+                                commentWriter: true,
+                                parentBulletinComment: true,
+                                children: {
+                                    include: {
+                                        bulletinBoard: true,
+                                        commentWriter: true,
+                                        parentBulletinComment: true,
+                                        children: true,
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 stages: {
                     orderBy: [
                         {
@@ -862,6 +882,7 @@ export async function getKnowhow(id: string) {
                 },
             }
         });
+        // console.log('knowhow:', JSON.stringify(knowhow, null, 2))
         return knowhow;
     }
     catch (error) {

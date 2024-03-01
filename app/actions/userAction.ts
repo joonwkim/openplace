@@ -99,6 +99,7 @@ export async function loginAction(input: any) {
             process.env.REFRESH_TOKEN_SECRET,
             { expiresIn: process.env.REFRESHTOKEN_VALID_UNTIL }
         );
+
         const ass_tok = cookies().get('ass_tok');
         return user;
     } catch (error: any) {

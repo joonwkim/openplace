@@ -1,0 +1,27 @@
+/* .title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.board-title {
+    margin-left: 450px;
+    font-family: "Spoqa Han Sans Neo";
+    font-weight: 500;
+    font-size: 37px;
+    align-items: center;
+}
+
+.wirte-board {
+    margin-left: 300px;
+    margin-top: 5px;
+    background-color: red;
+} */
+
+.hand-cursor {
+    cursor: pointer;
+}
+
+.scroll-enable {
+    overflow-y: auto;
+}

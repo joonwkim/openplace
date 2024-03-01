@@ -151,9 +151,6 @@ export const GeneralFooter = (props: FooterProps) => {
                         <Fork className={`ms-1 mt-1 ${style.cursorHand}`} onClick={handleforked} fill={forked ? "red" : ''} title="찜했어요" />
                     </span>
                 </span>
-                {/* <span className='ms-3'>
-                    {getMembershipApprovalStatus(session?.user, knowhow.id)}
-                </span> */}
             </small>
         </div>
     );

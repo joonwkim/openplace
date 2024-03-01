@@ -10,6 +10,8 @@ export function makeWatchedObject<Type>(obj: Type): Type & propEvent<Type> {
     return proxy;
 }
 
+
+
 // how to Use
 // const obj = makeWatchedObject({
 //     checked: false,

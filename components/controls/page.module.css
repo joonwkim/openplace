@@ -33,3 +33,15 @@
     box-sizing: border-box;
     padding-left: 55px;
 }
+.thumbnailImageSize {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.thumbnailLetter {
+    position: absolute;
+    font-weight: 600;
+    padding-left: 15px;
+    padding-top: 5px;
+}
