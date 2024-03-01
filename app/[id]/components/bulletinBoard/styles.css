@@ -25,3 +25,7 @@
 .scroll-enable {
     overflow-y: auto;
 }
+.title-container {
+    outline: dashed 1px black;
+    align-items: center;
+}

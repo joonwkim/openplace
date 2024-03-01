@@ -75,9 +75,7 @@ const BulletinBoardModal = ({ show, knowhow, closeModal, hide }: BoardModalProps
             <Modal show={show} onHide={hide} backdrop="static" keyboard={false} size='xl'        >
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        <div className='d-flex justify-content-center align-items-center'>
-                            <div className='board-title'>그룹 게시판</div>
-                        </div>
+                        <div className='ms-5'> 그룹 게시판</div>
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
