@@ -160,9 +160,8 @@ const CommentPage = ({ user, comment }: CommentPageProps) => {
 
                                 {comment?.children.map((child: BulletinComment | any, index: number) => (
                                     <div key={index} className='row mt-1'>
-                                        {/* {JSON.stringify(child, null, 2)} */}
                                         <div className='col'>
-                                            <UserThumbnail user={child.writer} />
+                                            <UserThumbnail user={child.commentWriter} />
                                         </div>
                                         <div className='col-11 mt-1'>
                                             {child.comment}
