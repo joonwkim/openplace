@@ -12,9 +12,10 @@ import { createCommentVoteActionAndUpdateComment } from '@/app/actions/voteActio
 type CommentPageProps = {
     user: User,
     comment: BulletinComment | any,
+    handleSaveReplyComment: (bulletinBoardId: string, parentCommentId: string, userId: string, comment: string) => void,
 }
 
-const CommentPage = ({ user, comment }: CommentPageProps) => {
+const CommentPage = ({ user, comment, handleSaveReplyComment }: CommentPageProps) => {
     const [showChild, setShowChild] = useState(false)
     const { data: session } = useSession();
     const [voter, setVoter] = useState<User>(session?.user);
@@ -122,6 +123,8 @@ const CommentPage = ({ user, comment }: CommentPageProps) => {
         return (<>{mins} <span>분전</span></>);
     };
 
+
+
     return (
         <>
             <div className='row  mt-2'>
@@ -138,7 +141,10 @@ const CommentPage = ({ user, comment }: CommentPageProps) => {
                     </div>
                     <div className='d-flex'>
                         <CommentButtons user={user} parentComment={comment} showAddCommentBtn={true} thumbsStatus={thumbsStatus}
-                            thumbsUpCount={comment.thumbsUpCount} thumbsDownCount={comment.thumbsDownCount} handleThumbUp={() => handleThumbUp(comment)} handleThumbDown={() => handleThumbDown(comment)} />
+                            thumbsUpCount={comment.thumbsUpCount} thumbsDownCount={comment.thumbsDownCount}
+                            handleThumbUp={() => handleThumbUp(comment)} handleThumbDown={() => handleThumbDown(comment)}
+                            handleSaveReplyComment={handleSaveReplyComment}
+                        />
                     </div>
                 </div>
             </div>
@@ -170,7 +176,9 @@ const CommentPage = ({ user, comment }: CommentPageProps) => {
                                                 {child?.createdAt && (<div className='fs-6 ms-4'>{getDaysOrHoursFromNow(child?.createdAt)}</div>)}
                                             </div>
                                             <CommentButtons user={user} parentComment={comment} showAddCommentBtn={false} thumbsStatus={thumbsStatus} thumbsUpCount={child.thumbsUpCount}
-                                                thumbsDownCount={child.thumbsDownCount} handleThumbUp={() => handleThumbUp(child)} handleThumbDown={() => handleThumbDown(child)} />
+                                                thumbsDownCount={child.thumbsDownCount} handleThumbUp={() => handleThumbUp(child)} handleThumbDown={() => handleThumbDown(child)}
+                                                handleSaveReplyComment={handleSaveReplyComment}
+                                            />
                                         </div>
                                     </div>
                                 ))}

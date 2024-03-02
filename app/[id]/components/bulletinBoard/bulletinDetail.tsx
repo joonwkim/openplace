@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import parser from 'html-react-parser';
 import CommentBoard from './commentBoard';
 import { json } from 'stream/consumers';
+import { convertToLocaleDateTime } from '@/lib/dateTimeLib';
 type BulletinDetailProps = {
     user: User,
     bulletin: BulletinBoard | any,
@@ -25,10 +26,10 @@ const BulletinDetail = ({ user, bulletin }: BulletinDetailProps) => {
                 <div className='col-1 bg-secondary text-light '><h5>작성자</h5></div>
                 <div className='col-6 pt-2'>{bulletin.writer.name}</div>
                 <div className='col-1 bg-secondary text-light '><h5>작성일</h5></div>
-                <div className='col-4 pt-2'>{bulletin.createdAt.toLocaleString()}</div>
+                <div className='col-4 pt-2'>{convertToLocaleDateTime(bulletin.createdAt)}</div>
             </div>
             <div className='my-3 p-3'>{parser(bulletin.message)}</div>
-            <CommentBoard comments={rootComments} user={user} bulletinBoardId={bulletin.id} />
+            <CommentBoard user={user} bulletinBoardId={bulletin.id} />
         </div>
 
     )

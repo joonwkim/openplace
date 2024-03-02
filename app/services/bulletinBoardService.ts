@@ -7,12 +7,20 @@ export async function getBulletinComments(bulletinBoardId: string) {
     try {
         const bcs = await prisma.bulletinComment.findMany({
             where: {
-                bulletinBoardId: bulletinBoardId
+                bulletinBoardId: bulletinBoardId,
+                parentBulletinComment: null,
             },
             include: {
                 commentWriter: true,
                 parentBulletinComment: true,
-                children: true,
+                children: {
+                    include: {
+                        bulletinBoard: true,
+                        commentWriter: true,
+                        parentBulletinComment: true,
+                        children: true,
+                    }
+                },
                 bulletinCommentVotes: true,
             }
         })
@@ -89,7 +97,7 @@ export async function createCommentsOnBulletin(bulletinBoardId: string, parentCo
             parentBulletinCommentId: parentCommentId,
         }
     })
-    console.log('comment on bulletin created:', cmt)
+    // console.log('comment on bulletin created:', cmt)
 }
 
 export async function updateComment(comment: BulletinComment) {

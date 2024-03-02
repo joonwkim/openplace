@@ -1,27 +1,47 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BulletinComment, User } from '@prisma/client'
 import UserThumbnail from '@/components/controls/userThumbnail'
-import { createCommentsOnBulletinAction } from '@/app/actions/bulletinAction'
-import CommentPage from './commentPage'
+import { createCommentOnBulletinAction } from '@/app/actions/bulletinAction'
 import CommentsPage from './commentsPage'
 
 type CommentBoardProps = {
     user: User,
     bulletinBoardId: string,
-    comments: BulletinComment[],
 }
-const CommentBoard = ({ user, comments, bulletinBoardId }: CommentBoardProps) => {
+
+async function getBulletinCommentsByBulletinboardId(bulletinBoardId: string): Promise<any> {
+    const res = await fetch(`/api/bulletins/bulletinComments/?bulletinBoardId=${bulletinBoardId}`)
+    return res.json();
+}
+
+const CommentBoard = ({ user, bulletinBoardId }: CommentBoardProps) => {
     const [showComments, setShowComments] = useState(true)
     const [showCommentsInputAndBtn, setShowCommentsInputAndBtn] = useState(false)
+    const [comments, setComments] = useState<BulletinComment[]>([])
     const [comment, setComment] = useState('')
+    const [commentUpdated, setCommentUpdated] = useState(false)
+
+    useEffect(() => {
+        const fetch = async () => {
+            const data = await getBulletinCommentsByBulletinboardId(bulletinBoardId);
+            setComments(data);
+        }
+        fetch();
+        if (commentUpdated) {
+            fetch();
+            setCommentUpdated(false)
+        }
+    }, [bulletinBoardId, commentUpdated])
 
     const handleClickOnChatBtn = () => {
         setShowComments(!showComments)
     }
+
     const handleClickOnSortBtn = () => {
         alert('not implemented yet')
     }
+
     const handleWriteComments = async () => {
         if (!user) {
             alert('로그인 하셔야 댓글을 달 수있습니다.')
@@ -29,15 +49,29 @@ const CommentBoard = ({ user, comments, bulletinBoardId }: CommentBoardProps) =>
         else {
             setShowCommentsInputAndBtn(true)
         }
+    }
 
+    const handleSaveComment = async () => {
+        const result = await createCommentOnBulletinAction(bulletinBoardId, null, user.id, comment)
+        if (result) {
+            setCommentUpdated(true)
+            setShowCommentsInputAndBtn(false)
+            setComment('')
+        }
     }
-    const handleSaveComments = async () => {
-        await createCommentsOnBulletinAction(bulletinBoardId, null, user.id, comment)
-        setShowCommentsInputAndBtn(false)
+
+    const handleSaveReplyComment = async (bulletinBoardId: string, parentCommentId: string, userId: string, comment: string) => {
+        const result = await createCommentOnBulletinAction(bulletinBoardId, parentCommentId, userId, comment)
+        if (result) {
+            setCommentUpdated(true)
+            setShowCommentsInputAndBtn(false)
+        }
     }
+
     const handleCancelComments = () => {
         setShowCommentsInputAndBtn(false)
     }
+
     return (
         <div>
             <div className='d-flex justify-content-start'>
@@ -55,7 +89,6 @@ const CommentBoard = ({ user, comments, bulletinBoardId }: CommentBoardProps) =>
                     </svg>
                 </div>
             </div>
-
             {showComments &&
                 <div className='row  mt-3'>
                     <div className='col'>
@@ -69,20 +102,18 @@ const CommentBoard = ({ user, comments, bulletinBoardId }: CommentBoardProps) =>
                     {showCommentsInputAndBtn && (<>
                         <div className='col-11'>
                             <div className="input-group border-0">
-                                <textarea className="form-control border-0" placeholder="답글을 입력하세요" value={comment} onChange={(e) => setComment(e.target.value)} />
+                                <textarea className="form-control border-0" placeholder="댓글을 입력하세요" value={comment} onChange={(e) => setComment(e.target.value)} />
                             </div>
                             <div className="d-flex justify-content-md-end border-top gap-2">
-                                <button className="btn btn-light" type="button" onClick={handleSaveComments}>저장</button>
+                                <button className="btn btn-light" type="button" onClick={handleSaveComment}>저장</button>
                                 <button className="btn btn-light" type="button" onClick={handleCancelComments}>취소</button>
                             </div>
                         </div>
                     </>)}
                 </div>
             }
-
-            <CommentsPage initComments={comments} user={user} />
+            <CommentsPage user={user} initialComments={comments} handleSaveReplyComment={handleSaveReplyComment} />
         </div>
     )
 }
-
 export default CommentBoard
